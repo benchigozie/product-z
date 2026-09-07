@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgis/postgis:18-3.6
+    environment:
+      POSTGRES_USER: productz
+      POSTGRES_PASSWORD: productz_dev
+      POSTGRES_DB: productz
+    ports:
+      - "5433:5432"
+    volumes:
+      - product-z-postgres-data:/var/lib/postgresql
+
+volumes:
+  product-z-postgres-data:
