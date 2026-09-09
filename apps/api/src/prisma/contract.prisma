@@ -1,5 +1,88 @@
+enum PropertyType {
+   @@type("pg/text@1")
+
+  ESTATE
+  COMPOUND
+  BUILDING
+  HOUSE
+  APARTMENT
+  HOSTEL
+  SHOP
+  OFFICE
+  WAREHOUSE
+  LAND
+}
+
+enum PropertyRelationshipType {
+   @@type("pg/text@1")
+  CONTAINS
+}
+
+model Country {
+  id     String @id @default(cuid(2))
+  name   String
+  code   String @unique
+
+  states State[]
+}
+
+model State {
+  id        String @id @default(cuid(2))
+  name      String
+  code      String
+  countryId String
+
+  country Country @relation(fields: [countryId], references: [id])
+
+  @@unique([countryId, code])
+}
+
+
 model Property {
-  id        String   @id @default(cuid(2))
-  title     String
+  id           String       @id @default(cuid(2))
+  name         String?
+  propertyType PropertyType
+
+  countryId    String
+  stateId      String
+  area         String
+  city         String?
+
+  address      String?
+  landmark     String?
+
+  latitude     Float?
+  longitude    Float?
+
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now())
+
+  country      Country      @relation(fields: [countryId], references: [id])
+  state        State        @relation(fields: [stateId], references: [id])
+
+  parentRelationships PropertyRelationship[] @relation("PropertyAsParent")
+  childRelationships  PropertyRelationship[] @relation("PropertyAsChild")
+}
+
+model PropertyRelationship {
+  id String @id @default(cuid(2))
+
+  parentPropertyId String 
+  childPropertyId  String @unique
+
+  relationshipType PropertyRelationshipType
+
   createdAt DateTime @default(now())
+
+  parentProperty Property @relation(
+    "PropertyAsParent",
+    fields: [parentPropertyId],
+    references: [id]
+  )
+
+  childProperty Property @relation(
+    "PropertyAsChild",
+    fields: [childPropertyId],
+    references: [id]
+  )
 }

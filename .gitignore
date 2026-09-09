@@ -28,3 +28,6 @@ Thumbs.db
 # Local tooling
 .cache/
 .tmp/
+
+# TypeScript build info
+*.tsbuildinfo
