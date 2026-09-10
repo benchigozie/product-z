@@ -21,56 +21,74 @@ await db.connect({
 
 console.log('Database connected');
 
-const nigeria = countries.find(
-  (country) => country.code === 'NG',
-);
+try {
+  for (const country of countries) {
+    await db.orm.public.Country.upsert({
+      create: {
+        name: country.name,
+        code: country.code,
+      },
+      update: {
+        name: country.name,
+      },
+      conflictOn: {
+        code: country.code,
+      },
+    });
+  }
 
-if (!nigeria) {
-  throw new Error('Nigeria not found in seed data');
+  console.log(`Seeded ${countries.length} countries`);
+
+  const countryRows = await db.orm.public.Country.all();
+
+  const countryIds = new Map(
+    countryRows.map((country) => [country.code, country.id]),
+  );
+
+  for (const state of states) {
+    const countryId = countryIds.get(state.countryCode);
+
+    if (!countryId) {
+      throw new Error(
+        `Country not found for state: ${state.name} (${state.countryCode})`,
+      );
+    }
+
+    await db.orm.public.State.upsert({
+      create: {
+        name: state.name,
+        code: state.code,
+        countryId,
+      },
+      update: {
+        name: state.name,
+      },
+      conflictOn: {
+        countryId,
+        code: state.code,
+      },
+    });
+  }
+
+  console.log(`Seeded ${states.length} states/subdivisions`);
+
+  const seededCountries = await db.orm.public.Country.all();
+  const seededStates = await db.orm.public.State.all();
+
+  if (seededCountries.length !== countries.length) {
+    throw new Error(
+      `Expected ${countries.length} countries, found ${seededCountries.length}`,
+    );
+  }
+
+  if (seededStates.length !== states.length) {
+    throw new Error(
+      `Expected ${states.length} states/subdivisions, found ${seededStates.length}`,
+    );
+  }
+
+  console.log('Seed verification passed');
+  console.log('Product Z seed finished');
+} finally {
+  await db.close();
 }
-
-const country = await db.orm.public.Country.upsert({
-  create: {
-    name: nigeria.name,
-    code: nigeria.code,
-  },
-  update: {
-    name: nigeria.name,
-  },
-  conflictOn: {
-    code: nigeria.code,
-  },
-});
-
-console.log('UPSERTED COUNTRY:', country);
-
-const lagos = states.find(
-  (state) =>
-    state.countryCode === 'NG' &&
-    state.code === 'NG-LA',
-);
-
-if (!lagos) {
-  throw new Error('Lagos not found in seed data');
-}
-
-const state = await db.orm.public.State.upsert({
-  create: {
-    name: lagos.name,
-    code: lagos.code,
-    countryId: country.id,
-  },
-  update: {
-    name: lagos.name,
-  },
-  conflictOn: {
-    countryId: country.id,
-    code: lagos.code,
-  },
-});
-
-console.log('UPSERTED STATE:', state);
-
-await db.close();
-
-console.log('Product Z seed finished');
