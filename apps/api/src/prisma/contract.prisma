@@ -1,5 +1,5 @@
 enum PropertyType {
-   @@type("pg/text@1")
+  @@type("pg/text@1")
 
   ESTATE
   COMPOUND
@@ -14,8 +14,17 @@ enum PropertyType {
 }
 
 enum PropertyRelationshipType {
-   @@type("pg/text@1")
+  @@type("pg/text@1")
+
   CONTAINS
+}
+
+enum PlaceType {
+  @@type("pg/text@1")
+
+  DISTRICT
+  SUBDISTRICT
+  AREA
 }
 
 model Country {
@@ -32,33 +41,62 @@ model State {
   code      String
   countryId String
 
-  country Country @relation(fields: [countryId], references: [id])
+  country    Country    @relation(fields: [countryId], references: [id])
+  places     Place[]
+  properties Property[]
 
   @@unique([countryId, code])
 }
 
+model Place {
+  id            String    @id @default(cuid(2))
+  name          String
+  type          PlaceType
+
+  stateId       String
+  parentPlaceId String?
+
+  latitude      Float?
+  longitude     Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  state       State @relation(fields: [stateId], references: [id])
+  parentPlace Place? @relation(
+    "PlaceHierarchy",
+    fields: [parentPlaceId],
+    references: [id]
+  )
+  childPlaces Place[] @relation("PlaceHierarchy")
+
+  properties Property[]
+}
 
 model Property {
   id           String       @id @default(cuid(2))
   name         String?
   propertyType PropertyType
 
-  countryId    String
-  stateId      String
-  area         String
-  city         String?
+  countryId String
+  stateId   String
+  placeId   String?
 
-  address      String?
-  landmark     String?
+  address        String?
+  street         String?
+  houseNumber    String?
+  unitIdentifier String?
+  landmark       String?
 
-  latitude     Float?
-  longitude    Float?
+  latitude  Float?
+  longitude Float?
 
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 
-  country      Country      @relation(fields: [countryId], references: [id])
-  state        State        @relation(fields: [stateId], references: [id])
+  country Country @relation(fields: [countryId], references: [id])
+  state   State   @relation(fields: [stateId], references: [id])
+  place   Place?  @relation(fields: [placeId], references: [id])
 
   parentRelationships PropertyRelationship[] @relation("PropertyAsParent")
   childRelationships  PropertyRelationship[] @relation("PropertyAsChild")
@@ -67,7 +105,7 @@ model Property {
 model PropertyRelationship {
   id String @id @default(cuid(2))
 
-  parentPropertyId String 
+  parentPropertyId String
   childPropertyId  String @unique
 
   relationshipType PropertyRelationshipType

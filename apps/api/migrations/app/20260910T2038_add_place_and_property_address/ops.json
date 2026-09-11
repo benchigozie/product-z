@@ -1,0 +1,949 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.country",
+    "label": "Create table \"country\"",
+    "summary": "Creates table \"country\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "country"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"country\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"country\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"country\"",
+        "sql": "CREATE TABLE \"public\".\"country\" (\n  \"code\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"country\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"country\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.place",
+    "label": "Create table \"place\"",
+    "summary": "Creates table \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"place\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"place\"",
+        "sql": "CREATE TABLE \"public\".\"place\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"latitude\" float8,\n  \"longitude\" float8,\n  \"name\" text NOT NULL,\n  \"parentPlaceId\" text,\n  \"stateId\" text NOT NULL,\n  \"type\" text NOT NULL,\n  \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"place_type_check_1231c8cf\" CHECK (\"type\" IN ('DISTRICT', 'SUBDISTRICT', 'AREA'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"place\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.property",
+    "label": "Create table \"property\"",
+    "summary": "Creates table \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"property\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"property\"",
+        "sql": "CREATE TABLE \"public\".\"property\" (\n  \"address\" text,\n  \"countryId\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"houseNumber\" text,\n  \"id\" text NOT NULL,\n  \"landmark\" text,\n  \"latitude\" float8,\n  \"longitude\" float8,\n  \"name\" text,\n  \"placeId\" text,\n  \"propertyType\" text NOT NULL,\n  \"stateId\" text NOT NULL,\n  \"street\" text,\n  \"unitIdentifier\" text,\n  \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"property_propertyType_check_f6c633bf\" CHECK (\"propertyType\" IN ('ESTATE', 'COMPOUND', 'BUILDING', 'HOUSE', 'APARTMENT', 'HOSTEL', 'SHOP', 'OFFICE', 'WAREHOUSE', 'LAND'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"property\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.propertyRelationship",
+    "label": "Create table \"propertyRelationship\"",
+    "summary": "Creates table \"propertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"propertyRelationship\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"propertyRelationship\"",
+        "sql": "CREATE TABLE \"public\".\"propertyRelationship\" (\n  \"childPropertyId\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"parentPropertyId\" text NOT NULL,\n  \"relationshipType\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"propertyRelationship_relationshipType_check_e9ec8862\" CHECK (\"relationshipType\" IN ('CONTAINS'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"propertyRelationship\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.state",
+    "label": "Create table \"state\"",
+    "summary": "Creates table \"state\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "state"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"state\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"state\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"state\"",
+        "sql": "CREATE TABLE \"public\".\"state\" (\n  \"code\" text NOT NULL,\n  \"countryId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"state\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"state\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.country.country_code_key",
+    "label": "Add unique constraint on \"country\" (code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "country_code_key",
+        "table": "country"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"country_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "country_code_key",
+          "public",
+          "\"public\".\"country\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"country_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"country\" ADD CONSTRAINT \"country_code_key\" UNIQUE (\"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"country_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "country_code_key",
+          "public",
+          "\"public\".\"country\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.propertyRelationship.propertyRelationship_childPropertyId_key",
+    "label": "Add unique constraint on \"propertyRelationship\" (childPropertyId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "propertyRelationship_childPropertyId_key",
+        "table": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"propertyRelationship_childPropertyId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_childPropertyId_key",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"propertyRelationship_childPropertyId_key\"",
+        "sql": "ALTER TABLE \"public\".\"propertyRelationship\" ADD CONSTRAINT \"propertyRelationship_childPropertyId_key\" UNIQUE (\"childPropertyId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"propertyRelationship_childPropertyId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_childPropertyId_key",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.state.state_countryId_code_key",
+    "label": "Add unique constraint on \"state\" (countryId, code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "state_countryId_code_key",
+        "table": "state"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"state_countryId_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "state_countryId_code_key",
+          "public",
+          "\"public\".\"state\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"state_countryId_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"state\" ADD CONSTRAINT \"state_countryId_code_key\" UNIQUE (\"countryId\", \"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"state_countryId_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "state_countryId_code_key",
+          "public",
+          "\"public\".\"state\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.place.place_parentPlaceId_idx_c3920ca3",
+    "label": "Create index \"place_parentPlaceId_idx_c3920ca3\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "place_parentPlaceId_idx_c3920ca3",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"place_parentPlaceId_idx_c3920ca3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_parentPlaceId_idx_c3920ca3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"place_parentPlaceId_idx_c3920ca3\"",
+        "sql": "CREATE INDEX \"place_parentPlaceId_idx_c3920ca3\" ON \"public\".\"place\" (\"parentPlaceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"place_parentPlaceId_idx_c3920ca3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_parentPlaceId_idx_c3920ca3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.place.place_stateId_idx_ca668a8f",
+    "label": "Create index \"place_stateId_idx_ca668a8f\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "place_stateId_idx_ca668a8f",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"place_stateId_idx_ca668a8f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_stateId_idx_ca668a8f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"place_stateId_idx_ca668a8f\"",
+        "sql": "CREATE INDEX \"place_stateId_idx_ca668a8f\" ON \"public\".\"place\" (\"stateId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"place_stateId_idx_ca668a8f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_stateId_idx_ca668a8f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.property.property_countryId_idx_27b43b27",
+    "label": "Create index \"property_countryId_idx_27b43b27\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "property_countryId_idx_27b43b27",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"property_countryId_idx_27b43b27\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_countryId_idx_27b43b27\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"property_countryId_idx_27b43b27\"",
+        "sql": "CREATE INDEX \"property_countryId_idx_27b43b27\" ON \"public\".\"property\" (\"countryId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"property_countryId_idx_27b43b27\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_countryId_idx_27b43b27\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.property.property_placeId_idx_918e92e1",
+    "label": "Create index \"property_placeId_idx_918e92e1\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "property_placeId_idx_918e92e1",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"property_placeId_idx_918e92e1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_placeId_idx_918e92e1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"property_placeId_idx_918e92e1\"",
+        "sql": "CREATE INDEX \"property_placeId_idx_918e92e1\" ON \"public\".\"property\" (\"placeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"property_placeId_idx_918e92e1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_placeId_idx_918e92e1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.property.property_stateId_idx_ca668a8f",
+    "label": "Create index \"property_stateId_idx_ca668a8f\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "property_stateId_idx_ca668a8f",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"property_stateId_idx_ca668a8f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_stateId_idx_ca668a8f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"property_stateId_idx_ca668a8f\"",
+        "sql": "CREATE INDEX \"property_stateId_idx_ca668a8f\" ON \"public\".\"property\" (\"stateId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"property_stateId_idx_ca668a8f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_stateId_idx_ca668a8f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.propertyRelationship.propertyRelationship_parentPropertyId_idx_76fd56d7",
+    "label": "Create index \"propertyRelationship_parentPropertyId_idx_76fd56d7\" on \"propertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "propertyRelationship_parentPropertyId_idx_76fd56d7",
+        "table": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"propertyRelationship_parentPropertyId_idx_76fd56d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"propertyRelationship_parentPropertyId_idx_76fd56d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"propertyRelationship_parentPropertyId_idx_76fd56d7\"",
+        "sql": "CREATE INDEX \"propertyRelationship_parentPropertyId_idx_76fd56d7\" ON \"public\".\"propertyRelationship\" (\"parentPropertyId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"propertyRelationship_parentPropertyId_idx_76fd56d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"propertyRelationship_parentPropertyId_idx_76fd56d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.state.state_countryId_idx_27b43b27",
+    "label": "Create index \"state_countryId_idx_27b43b27\" on \"state\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "state_countryId_idx_27b43b27",
+        "table": "state"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"state_countryId_idx_27b43b27\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"state_countryId_idx_27b43b27\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"state_countryId_idx_27b43b27\"",
+        "sql": "CREATE INDEX \"state_countryId_idx_27b43b27\" ON \"public\".\"state\" (\"countryId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"state_countryId_idx_27b43b27\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"state_countryId_idx_27b43b27\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.place.place_stateId_fkey",
+    "label": "Add foreign key \"place_stateId_fkey\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "place_stateId_fkey",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"place_stateId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_stateId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"place_stateId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"place\"\nADD CONSTRAINT \"place_stateId_fkey\"\nFOREIGN KEY (\"stateId\")\nREFERENCES \"public\".\"state\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"place_stateId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_stateId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.place.place_parentPlaceId_fkey",
+    "label": "Add foreign key \"place_parentPlaceId_fkey\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "place_parentPlaceId_fkey",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"place_parentPlaceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_parentPlaceId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"place_parentPlaceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"place\"\nADD CONSTRAINT \"place_parentPlaceId_fkey\"\nFOREIGN KEY (\"parentPlaceId\")\nREFERENCES \"public\".\"place\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"place_parentPlaceId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_parentPlaceId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.property.property_countryId_fkey",
+    "label": "Add foreign key \"property_countryId_fkey\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "property_countryId_fkey",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"property_countryId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_countryId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"property_countryId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"property\"\nADD CONSTRAINT \"property_countryId_fkey\"\nFOREIGN KEY (\"countryId\")\nREFERENCES \"public\".\"country\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"property_countryId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_countryId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.property.property_stateId_fkey",
+    "label": "Add foreign key \"property_stateId_fkey\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "property_stateId_fkey",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"property_stateId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_stateId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"property_stateId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"property\"\nADD CONSTRAINT \"property_stateId_fkey\"\nFOREIGN KEY (\"stateId\")\nREFERENCES \"public\".\"state\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"property_stateId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_stateId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.property.property_placeId_fkey",
+    "label": "Add foreign key \"property_placeId_fkey\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "property_placeId_fkey",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"property_placeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_placeId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"property_placeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"property\"\nADD CONSTRAINT \"property_placeId_fkey\"\nFOREIGN KEY (\"placeId\")\nREFERENCES \"public\".\"place\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"property_placeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_placeId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.propertyRelationship.propertyRelationship_parentPropertyId_fkey",
+    "label": "Add foreign key \"propertyRelationship_parentPropertyId_fkey\" on \"propertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "propertyRelationship_parentPropertyId_fkey",
+        "table": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"propertyRelationship_parentPropertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_parentPropertyId_fkey",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"propertyRelationship_parentPropertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"propertyRelationship\"\nADD CONSTRAINT \"propertyRelationship_parentPropertyId_fkey\"\nFOREIGN KEY (\"parentPropertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"propertyRelationship_parentPropertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_parentPropertyId_fkey",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.propertyRelationship.propertyRelationship_childPropertyId_fkey",
+    "label": "Add foreign key \"propertyRelationship_childPropertyId_fkey\" on \"propertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "propertyRelationship_childPropertyId_fkey",
+        "table": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"propertyRelationship_childPropertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_childPropertyId_fkey",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"propertyRelationship_childPropertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"propertyRelationship\"\nADD CONSTRAINT \"propertyRelationship_childPropertyId_fkey\"\nFOREIGN KEY (\"childPropertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"propertyRelationship_childPropertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_childPropertyId_fkey",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.state.state_countryId_fkey",
+    "label": "Add foreign key \"state_countryId_fkey\" on \"state\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "state_countryId_fkey",
+        "table": "state"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"state_countryId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "state_countryId_fkey",
+          "public",
+          "\"public\".\"state\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"state_countryId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"state\"\nADD CONSTRAINT \"state_countryId_fkey\"\nFOREIGN KEY (\"countryId\")\nREFERENCES \"public\".\"country\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"state_countryId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "state_countryId_fkey",
+          "public",
+          "\"public\".\"state\""
+        ]
+      }
+    ]
+  }
+]

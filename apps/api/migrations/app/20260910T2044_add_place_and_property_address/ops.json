@@ -1,0 +1,536 @@
+[
+  {
+    "id": "dropColumn.property.area",
+    "label": "Drop column \"area\" from \"property\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "area",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"area\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "area"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"area\"",
+        "sql": "ALTER TABLE \"public\".\"property\" DROP COLUMN \"area\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"area\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "area"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.property.city",
+    "label": "Drop column \"city\" from \"property\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "city",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"city\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "city"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"city\"",
+        "sql": "ALTER TABLE \"public\".\"property\" DROP COLUMN \"city\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"city\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "city"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.place",
+    "label": "Create table \"place\"",
+    "summary": "Creates table \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"place\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"place\"",
+        "sql": "CREATE TABLE \"public\".\"place\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"latitude\" float8,\n  \"longitude\" float8,\n  \"name\" text NOT NULL,\n  \"parentPlaceId\" text,\n  \"stateId\" text NOT NULL,\n  \"type\" text NOT NULL,\n  \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"place_type_check_1231c8cf\" CHECK (\"type\" IN ('DISTRICT', 'SUBDISTRICT', 'AREA'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"place\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.property.houseNumber",
+    "label": "Add column \"houseNumber\" to \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "houseNumber",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"houseNumber\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "houseNumber"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"houseNumber\"",
+        "sql": "ALTER TABLE \"public\".\"property\" ADD COLUMN \"houseNumber\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"houseNumber\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "houseNumber"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.property.placeId",
+    "label": "Add column \"placeId\" to \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "placeId",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"placeId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "placeId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"placeId\"",
+        "sql": "ALTER TABLE \"public\".\"property\" ADD COLUMN \"placeId\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"placeId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "placeId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.property.street",
+    "label": "Add column \"street\" to \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "street",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"street\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "street"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"street\"",
+        "sql": "ALTER TABLE \"public\".\"property\" ADD COLUMN \"street\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"street\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "street"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.property.unitIdentifier",
+    "label": "Add column \"unitIdentifier\" to \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "unitIdentifier",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"unitIdentifier\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "unitIdentifier"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"unitIdentifier\"",
+        "sql": "ALTER TABLE \"public\".\"property\" ADD COLUMN \"unitIdentifier\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"unitIdentifier\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "property",
+          "unitIdentifier"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.place.place_parentPlaceId_idx_c3920ca3",
+    "label": "Create index \"place_parentPlaceId_idx_c3920ca3\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "place_parentPlaceId_idx_c3920ca3",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"place_parentPlaceId_idx_c3920ca3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_parentPlaceId_idx_c3920ca3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"place_parentPlaceId_idx_c3920ca3\"",
+        "sql": "CREATE INDEX \"place_parentPlaceId_idx_c3920ca3\" ON \"public\".\"place\" (\"parentPlaceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"place_parentPlaceId_idx_c3920ca3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_parentPlaceId_idx_c3920ca3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.place.place_stateId_idx_ca668a8f",
+    "label": "Create index \"place_stateId_idx_ca668a8f\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "place_stateId_idx_ca668a8f",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"place_stateId_idx_ca668a8f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_stateId_idx_ca668a8f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"place_stateId_idx_ca668a8f\"",
+        "sql": "CREATE INDEX \"place_stateId_idx_ca668a8f\" ON \"public\".\"place\" (\"stateId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"place_stateId_idx_ca668a8f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_stateId_idx_ca668a8f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.property.property_placeId_idx_918e92e1",
+    "label": "Create index \"property_placeId_idx_918e92e1\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "property_placeId_idx_918e92e1",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"property_placeId_idx_918e92e1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_placeId_idx_918e92e1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"property_placeId_idx_918e92e1\"",
+        "sql": "CREATE INDEX \"property_placeId_idx_918e92e1\" ON \"public\".\"property\" (\"placeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"property_placeId_idx_918e92e1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_placeId_idx_918e92e1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.place.place_stateId_fkey",
+    "label": "Add foreign key \"place_stateId_fkey\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "place_stateId_fkey",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"place_stateId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_stateId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"place_stateId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"place\"\nADD CONSTRAINT \"place_stateId_fkey\"\nFOREIGN KEY (\"stateId\")\nREFERENCES \"public\".\"state\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"place_stateId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_stateId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.place.place_parentPlaceId_fkey",
+    "label": "Add foreign key \"place_parentPlaceId_fkey\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "place_parentPlaceId_fkey",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"place_parentPlaceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_parentPlaceId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"place_parentPlaceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"place\"\nADD CONSTRAINT \"place_parentPlaceId_fkey\"\nFOREIGN KEY (\"parentPlaceId\")\nREFERENCES \"public\".\"place\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"place_parentPlaceId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_parentPlaceId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.property.property_placeId_fkey",
+    "label": "Add foreign key \"property_placeId_fkey\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "property_placeId_fkey",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"property_placeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_placeId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"property_placeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"property\"\nADD CONSTRAINT \"property_placeId_fkey\"\nFOREIGN KEY (\"placeId\")\nREFERENCES \"public\".\"place\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"property_placeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_placeId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  }
+]

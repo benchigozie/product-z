@@ -1,4 +1,6 @@
+
 import { Injectable } from '@nestjs/common';
+
 import { PrismaService } from '../prisma.service.js';
 import { CreatePropertyDto } from './dto/create-property.dto.js';
 
@@ -9,19 +11,21 @@ export class PropertyRepository {
   async findAll() {
     const plan = this.prisma.db.sql.public.property
       .select(
-          'id',
-          'name',
-          'propertyType',
-          'countryId',
-          'stateId',
-          'area',
-          'city',
-          'address',
-          'landmark',
-          'latitude',
-          'longitude',
-          'createdAt',
-          'updatedAt',
+        'id',
+        'name',
+        'propertyType',
+        'countryId',
+        'stateId',
+        'placeId',
+        'address',
+        'street',
+        'houseNumber',
+        'unitIdentifier',
+        'landmark',
+        'latitude',
+        'longitude',
+        'createdAt',
+        'updatedAt',
       )
       .build();
 
@@ -40,9 +44,11 @@ export class PropertyRepository {
           propertyType: data.propertyType,
           countryId: data.countryId,
           stateId: data.stateId,
-          area: data.area,
-          city: data.city,
+          placeId: data.placeId,
           address: data.address,
+          street: data.street,
+          houseNumber: data.houseNumber,
+          unitIdentifier: data.unitIdentifier,
           landmark: data.landmark,
           latitude: data.latitude,
           longitude: data.longitude,
@@ -54,9 +60,11 @@ export class PropertyRepository {
         'propertyType',
         'countryId',
         'stateId',
-        'area',
-        'city',
+        'placeId',
         'address',
+        'street',
+        'houseNumber',
+        'unitIdentifier',
         'landmark',
         'latitude',
         'longitude',
@@ -70,3 +78,4 @@ export class PropertyRepository {
     return result;
   }
 }
+

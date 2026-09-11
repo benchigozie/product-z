@@ -8,6 +8,10 @@
       "model": "Country",
       "namespace": "public"
     },
+    "place": {
+      "model": "Place",
+      "namespace": "public"
+    },
     "property": {
       "model": "Property",
       "namespace": "public"
@@ -25,6 +29,23 @@
     "namespaces": {
       "public": {
         "enum": {
+          "PlaceType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "DISTRICT",
+                "value": "DISTRICT"
+              },
+              {
+                "name": "SUBDISTRICT",
+                "value": "SUBDISTRICT"
+              },
+              {
+                "name": "AREA",
+                "value": "AREA"
+              }
+            ]
+          },
           "PropertyRelationshipType": {
             "codecId": "pg/text@1",
             "members": [
@@ -138,23 +159,177 @@
               "table": "country"
             }
           },
-          "Property": {
+          "Place": {
             "fields": {
-              "address": {
-                "nullable": true,
+              "createdAt": {
+                "nullable": false,
                 "type": {
-                  "codecId": "pg/text@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
-              "area": {
+              "id": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
-              "city": {
+              "latitude": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "longitude": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "parentPlaceId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "stateId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PlaceType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "childPlaces": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "parentPlaceId"
+                  ]
+                },
+                "to": {
+                  "model": "Place",
+                  "namespace": "public"
+                }
+              },
+              "parentPlace": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "parentPlaceId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Place",
+                  "namespace": "public"
+                }
+              },
+              "properties": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "placeId"
+                  ]
+                },
+                "to": {
+                  "model": "Property",
+                  "namespace": "public"
+                }
+              },
+              "state": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "stateId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "State",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "latitude": {
+                  "column": "latitude"
+                },
+                "longitude": {
+                  "column": "longitude"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "parentPlaceId": {
+                  "column": "parentPlaceId"
+                },
+                "stateId": {
+                  "column": "stateId"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "place"
+            }
+          },
+          "Property": {
+            "fields": {
+              "address": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
@@ -172,6 +347,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "houseNumber": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -210,6 +392,13 @@
                   "kind": "scalar"
                 }
               },
+              "placeId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "propertyType": {
                 "nullable": false,
                 "type": {
@@ -225,6 +414,20 @@
               },
               "stateId": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "street": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "unitIdentifier": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -284,6 +487,21 @@
                   "namespace": "public"
                 }
               },
+              "place": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "placeId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Place",
+                  "namespace": "public"
+                }
+              },
               "state": {
                 "cardinality": "N:1",
                 "on": {
@@ -305,17 +523,14 @@
                 "address": {
                   "column": "address"
                 },
-                "area": {
-                  "column": "area"
-                },
-                "city": {
-                  "column": "city"
-                },
                 "countryId": {
                   "column": "countryId"
                 },
                 "createdAt": {
                   "column": "createdAt"
+                },
+                "houseNumber": {
+                  "column": "houseNumber"
                 },
                 "id": {
                   "column": "id"
@@ -332,11 +547,20 @@
                 "name": {
                   "column": "name"
                 },
+                "placeId": {
+                  "column": "placeId"
+                },
                 "propertyType": {
                   "column": "propertyType"
                 },
                 "stateId": {
                   "column": "stateId"
+                },
+                "street": {
+                  "column": "street"
+                },
+                "unitIdentifier": {
+                  "column": "unitIdentifier"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -490,6 +714,36 @@
                   "model": "Country",
                   "namespace": "public"
                 }
+              },
+              "places": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "stateId"
+                  ]
+                },
+                "to": {
+                  "model": "Place",
+                  "namespace": "public"
+                }
+              },
+              "properties": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "stateId"
+                  ]
+                },
+                "to": {
+                  "model": "Property",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -553,6 +807,134 @@
                 }
               ]
             },
+            "place": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('DISTRICT', 'SUBDISTRICT', 'AREA')",
+                  "name": "place_type_check_1231c8cf",
+                  "prefix": "place_type_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "latitude": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "longitude": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "parentPlaceId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "stateId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PlaceType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "stateId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "place"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "state"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "parentPlaceId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "place"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "place"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "parentPlaceId"
+                  ],
+                  "name": "place_parentPlaceId_idx_c3920ca3",
+                  "prefix": "place_parentPlaceId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "stateId"
+                  ],
+                  "name": "place_stateId_idx_ca668a8f",
+                  "prefix": "place_stateId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "property": {
               "checks": [
                 {
@@ -563,16 +945,6 @@
               ],
               "columns": {
                 "address": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "area": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "city": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": true
@@ -590,6 +962,11 @@
                   },
                   "nativeType": "timestamptz",
                   "nullable": false
+                },
+                "houseNumber": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/text@1",
@@ -616,6 +993,11 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "placeId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "propertyType": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -631,6 +1013,16 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "street": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "unitIdentifier": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
@@ -674,6 +1066,22 @@
                     "namespaceId": "public",
                     "tableName": "state"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "placeId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "property"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "place"
+                  }
                 }
               ],
               "indexes": [
@@ -683,6 +1091,14 @@
                   ],
                   "name": "property_countryId_idx_27b43b27",
                   "prefix": "property_countryId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "placeId"
+                  ],
+                  "name": "property_placeId_idx_918e92e1",
+                  "prefix": "property_placeId_idx",
                   "unique": false
                 },
                 {
@@ -870,6 +1286,14 @@
             }
           },
           "valueSet": {
+            "PlaceType": {
+              "kind": "valueSet",
+              "values": [
+                "DISTRICT",
+                "SUBDISTRICT",
+                "AREA"
+              ]
+            },
             "PropertyRelationshipType": {
               "kind": "valueSet",
               "values": [
@@ -897,10 +1321,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b0854eed46485075d8b9797eec1b314dedbe8d59cdd3e17b26f55ecb6c3d346f"
+    "storageHash": "329f229a8b4fdcc726dcd3a5f1a11fab974a93398193adb8941d08130bf7802e"
   },
   "execution": {
-    "executionHash": "75dc92093089aefb3c25838feacbd1f772c43b71137bf8c99f19e77bcbeee56b",
+    "executionHash": "6d8361297269d3d1f27f2b536571964207dd1667c669ff09c17a2972faad815f",
     "mutations": {
       "defaults": [
         {
@@ -912,6 +1336,17 @@
             "column": "id",
             "namespace": "public",
             "table": "country"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "place"
           }
         },
         {
