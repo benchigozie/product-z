@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../prisma.service.js';
 import { CreatePropertyDto } from './dto/create-property.dto.js';
+import type { PropertyListResult, PropertyResult } from './types/property-result.type.js';
 
 @Injectable()
 export class PropertyRepository {
@@ -76,6 +77,16 @@ export class PropertyRepository {
     const result = await this.prisma.db.runtime().query(plan);
 
     return result;
+  }
+
+  async findById(id: string) : Promise<PropertyResult> {
+    return this.prisma.db.orm.public.Property.first({ id });
+  }
+
+  async findByPlaceId(placeId: string) : Promise<PropertyListResult> {
+    return this.prisma.db.orm.public.Property
+      .where({ placeId })
+      .all();
   }
 }
 
