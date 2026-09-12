@@ -4,6 +4,7 @@ import { AppService } from './app.service.js';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma.module.js';
 import { PropertyModule } from './properties/property.module.js';
+import { PlaceModule } from './place/place.module.js';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { PropertyModule } from './properties/property.module.js';
     }),
     PrismaModule,
     PropertyModule,
+    PlaceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
