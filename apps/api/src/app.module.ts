@@ -7,6 +7,8 @@ import { PropertyModule } from './properties/property.module.js';
 import { PlaceModule } from './place/place.module.js';
 import { CountryModule } from './country/country.module.js';
 import { StateModule } from './state/state.module.js';
+import { PropertyRelationshipModule } from './property-relationship/property-relationship.module.js';
+
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { StateModule } from './state/state.module.js';
     PlaceModule,
     CountryModule,
     StateModule,
+    PropertyRelationshipModule
   ],
   controllers: [AppController],
   providers: [AppService],
