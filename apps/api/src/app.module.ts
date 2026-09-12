@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma.module.js';
 import { PropertyModule } from './properties/property.module.js';
 import { PlaceModule } from './place/place.module.js';
 import { CountryModule } from './country/country.module.js';
+import { StateModule } from './state/state.module.js';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CountryModule } from './country/country.module.js';
     PropertyModule,
     PlaceModule,
     CountryModule,
+    StateModule,
   ],
   controllers: [AppController],
   providers: [AppService],
