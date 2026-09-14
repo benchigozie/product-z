@@ -13,10 +13,23 @@ export class StateService {
   }
 
   async findById(id: string): Promise<StateResult> {
-    return this.stateRepository.findById(id);
+
+    const state = await this.stateRepository.findById(id);
+
+    if (!state) {
+      throw new Error(`State not found`);
+    }
+
+    return state;
   }
 
   async findByCountryId(countryId: string) : Promise<StateResult[]> {
-    return this.stateRepository.findByCountryId(countryId);
+    const state = await this.stateRepository.findByCountryId(countryId);
+
+    if (!state) {
+      throw new Error(`State not found`);
+    }
+
+    return state;
   }
 }

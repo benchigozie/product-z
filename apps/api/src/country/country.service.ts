@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import type { CountryResult } from './types/country-result.type.ts';
 
 import { CountryRepository } from './country.repository.js';
@@ -14,6 +14,12 @@ export class CountryService {
   }
 
   async findById(id: string) : Promise<CountryResult> {
-    return this.countryRepository.findById(id);
+    const country = await this.countryRepository.findById(id);
+
+    if (!country) {
+      throw new NotFoundException(`Country not found`);
+    }
+
+    return country;
   }
 }

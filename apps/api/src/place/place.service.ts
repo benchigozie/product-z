@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { CreatePlaceDto } from './dto/create-place.dto.js';
 import type { PlaceResult } from './types/place-result.type.js';
@@ -19,6 +19,12 @@ export class PlaceService {
   }
 
   async findById(id: string): Promise<PlaceResult> {
-    return this.placeRepository.findById(id);
+    const place = await this.placeRepository.findById(id);
+
+    if (!place) {
+      throw new NotFoundException("Place not found");
+    }
+
+    return place;
   }
 }

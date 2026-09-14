@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PropertyRepository } from './property.repository.js';
 import { CreatePropertyDto } from './dto/create-property.dto.js';
 import type { PropertyResult } from './types/property-result.type.js';
@@ -18,10 +18,23 @@ export class PropertyService {
   }
 
   async findById(id: string) : Promise<PropertyResult> {
-    return this.propertyRepository.findById(id);
+    const property = await this.propertyRepository.findById(id);
+
+    if (!property) {
+      throw new NotFoundException(`Property not found`);
+    }
+
+    return property;
   }
 
   async findByPlaceId(placeId: string) {
-    return this.propertyRepository.findByPlaceId(placeId);
+
+    const property = this.propertyRepository.findByPlaceId(placeId);
+
+    if (!property) {
+      throw new NotFoundException(`Property not found`);
+    }
+
+    return property;
   }
 }
