@@ -7,6 +7,10 @@ import {
 import { CreatePropertyRelationshipDto } from './dto/create-property-relationship.dto.js';
 import { PropertyRelationshipRepository } from './property-relationship.repository.js';
 import { PropertyRepository } from '../property/property.repository.js';
+import type {
+  PropertyRelationshipListResult,
+  PropertyRelationshipResult,
+} from './types/property-relationship-result.type.js';
 
 @Injectable()
 export class PropertyRelationshipService {
@@ -58,5 +62,18 @@ export class PropertyRelationshipService {
 
       throw error;
     }
+  }
+
+  async findParentWithProperty(propertyId: string) {
+    return this.propertyRelationshipRepository.findParentWithProperty(
+      propertyId,
+    );
+  }
+  
+
+  async findChildrenWithProperties(propertyId: string) {
+    return this.propertyRelationshipRepository.findChildrenWithProperties(
+      propertyId,
+    );
   }
 }
