@@ -12,6 +12,7 @@ import {
   export class PropertyRelationshipController {
     constructor(
       private readonly propertyRelationshipService: PropertyRelationshipService,
+
     ) {}
   
     @Get()
