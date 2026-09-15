@@ -8,7 +8,6 @@ import { PlaceModule } from './place/place.module.js';
 import { CountryModule } from './country/country.module.js';
 import { StateModule } from './state/state.module.js';
 import { PropertyRelationshipModule } from './property-relationship/property-relationship.module.js';
-import { ClerkTestController } from './clerk/clerk-test.controller.js';
 
 
 @Module({
@@ -22,9 +21,9 @@ import { ClerkTestController } from './clerk/clerk-test.controller.js';
     PlaceModule,
     CountryModule,
     StateModule,
-    PropertyRelationshipModule,
+    PropertyRelationshipModule
   ],
-  controllers: [AppController, ClerkTestController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

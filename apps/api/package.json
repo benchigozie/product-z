@@ -29,7 +29,6 @@
     "db:seed:prod": "NODE_ENV=production tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@clerk/backend": "^3.17.2",
     "@js-temporal/polyfill": "^0.5.1",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.0",
