@@ -8,6 +8,7 @@ import { PlaceModule } from './place/place.module.js';
 import { CountryModule } from './country/country.module.js';
 import { StateModule } from './state/state.module.js';
 import { PropertyRelationshipModule } from './property-relationship/property-relationship.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 
 @Module({
@@ -21,7 +22,8 @@ import { PropertyRelationshipModule } from './property-relationship/property-rel
     PlaceModule,
     CountryModule,
     StateModule,
-    PropertyRelationshipModule
+    PropertyRelationshipModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

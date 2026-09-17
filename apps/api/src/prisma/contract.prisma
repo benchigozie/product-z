@@ -124,3 +124,151 @@ model PropertyRelationship {
     references: [id]
   )
 }
+
+enum UserStatus {
+  @@type("pg/text@1")
+
+  ACTIVE
+  SUSPENDED
+  BANNED
+  DELETED
+}
+
+enum AuthProvider {
+  @@type("pg/text@1")
+
+  GOOGLE
+}
+
+enum VerificationTokenType {
+  @@type("pg/text@1")
+
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  EMAIL_CHANGE
+}
+
+
+model User {
+   id String @id @default(cuid(2))
+
+  email String @unique
+  emailVerified Boolean @default(false)
+
+  status UserStatus @default(ACTIVE)
+
+  profile UserProfile?
+
+  passwordCredential PasswordCredential?
+
+  oauthAccounts OAuthAccount[]
+
+  sessions Session[]
+
+  verificationTokens VerificationToken[]
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+  deletedAt DateTime?
+}
+
+
+model UserProfile {
+  id String @id @default(cuid(2))
+
+  userId String @unique
+
+  username String? @unique
+  displayName String?
+
+  avatarUrl String?
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+}
+
+
+model PasswordCredential {
+   id String @id @default(cuid(2))
+
+  userId String @unique
+
+  passwordHash String
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdAt temporal.createdAt()
+}
+
+
+model OAuthAccount {
+   id String @id @default(cuid(2))
+
+  userId String
+
+  provider AuthProvider
+
+  providerAccountId String
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdAt temporal.createdAt()
+
+  @@unique([provider, providerAccountId])
+}
+
+
+model Session {
+   id String @id @default(cuid(2))
+
+  userId String
+
+  tokenHash String @unique
+
+  expiresAt DateTime
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdAt temporal.createdAt()
+
+}
+
+
+model VerificationToken {
+   id String @id @default(cuid(2))
+
+  userId String
+
+  tokenHash String @unique
+
+  type VerificationTokenType
+
+  expiresAt DateTime
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdAt temporal.createdAt()
+
+}

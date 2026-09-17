@@ -3,6 +3,7 @@ packages:
   - "packages/*"
 
 allowBuilds:
+  bcrypt: false
   esbuild: true
   msgpackr-extract: true
   sharp: false

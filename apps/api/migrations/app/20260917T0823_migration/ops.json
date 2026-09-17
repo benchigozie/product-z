@@ -1,0 +1,1804 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.country",
+    "label": "Create table \"country\"",
+    "summary": "Creates table \"country\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "country"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"country\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"country\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"country\"",
+        "sql": "CREATE TABLE \"public\".\"country\" (\n  \"code\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"country\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"country\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.oAuthAccount",
+    "label": "Create table \"oAuthAccount\"",
+    "summary": "Creates table \"oAuthAccount\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "oAuthAccount"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"oAuthAccount\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oAuthAccount\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"oAuthAccount\"",
+        "sql": "CREATE TABLE \"public\".\"oAuthAccount\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"provider\" text NOT NULL,\n  \"providerAccountId\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"oAuthAccount_provider_check_ced8a431\" CHECK (\"provider\" IN ('GOOGLE'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"oAuthAccount\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oAuthAccount\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.passwordCredential",
+    "label": "Create table \"passwordCredential\"",
+    "summary": "Creates table \"passwordCredential\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "passwordCredential"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"passwordCredential\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"passwordCredential\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"passwordCredential\"",
+        "sql": "CREATE TABLE \"public\".\"passwordCredential\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"passwordHash\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"passwordCredential\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"passwordCredential\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.place",
+    "label": "Create table \"place\"",
+    "summary": "Creates table \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"place\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"place\"",
+        "sql": "CREATE TABLE \"public\".\"place\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"latitude\" float8,\n  \"longitude\" float8,\n  \"name\" text NOT NULL,\n  \"parentPlaceId\" text,\n  \"stateId\" text NOT NULL,\n  \"type\" text NOT NULL,\n  \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"place_type_check_1231c8cf\" CHECK (\"type\" IN ('DISTRICT', 'SUBDISTRICT', 'AREA'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"place\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.property",
+    "label": "Create table \"property\"",
+    "summary": "Creates table \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"property\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"property\"",
+        "sql": "CREATE TABLE \"public\".\"property\" (\n  \"address\" text,\n  \"countryId\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"houseNumber\" text,\n  \"id\" text NOT NULL,\n  \"landmark\" text,\n  \"latitude\" float8,\n  \"longitude\" float8,\n  \"name\" text,\n  \"placeId\" text,\n  \"propertyType\" text NOT NULL,\n  \"stateId\" text NOT NULL,\n  \"street\" text,\n  \"unitIdentifier\" text,\n  \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"property_propertyType_check_f6c633bf\" CHECK (\"propertyType\" IN ('ESTATE', 'COMPOUND', 'BUILDING', 'HOUSE', 'APARTMENT', 'HOSTEL', 'SHOP', 'OFFICE', 'WAREHOUSE', 'LAND'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"property\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.propertyRelationship",
+    "label": "Create table \"propertyRelationship\"",
+    "summary": "Creates table \"propertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"propertyRelationship\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"propertyRelationship\"",
+        "sql": "CREATE TABLE \"public\".\"propertyRelationship\" (\n  \"childPropertyId\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"parentPropertyId\" text NOT NULL,\n  \"relationshipType\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"propertyRelationship_relationshipType_check_e9ec8862\" CHECK (\"relationshipType\" IN ('CONTAINS'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"propertyRelationship\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.session",
+    "label": "Create table \"session\"",
+    "summary": "Creates table \"session\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"session\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"session\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"session\"",
+        "sql": "CREATE TABLE \"public\".\"session\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" text NOT NULL,\n  \"tokenHash\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"session\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"session\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.state",
+    "label": "Create table \"state\"",
+    "summary": "Creates table \"state\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "state"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"state\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"state\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"state\"",
+        "sql": "CREATE TABLE \"public\".\"state\" (\n  \"code\" text NOT NULL,\n  \"countryId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"state\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"state\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.user",
+    "label": "Create table \"user\"",
+    "summary": "Creates table \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"user\"",
+        "sql": "CREATE TABLE \"public\".\"user\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deletedAt\" timestamptz,\n  \"email\" text NOT NULL,\n  \"emailVerified\" bool DEFAULT false NOT NULL,\n  \"id\" text NOT NULL,\n  \"status\" text DEFAULT 'ACTIVE' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"user_status_check_6bfde060\" CHECK (\"status\" IN ('ACTIVE', 'SUSPENDED', 'BANNED', 'DELETED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.userProfile",
+    "label": "Create table \"userProfile\"",
+    "summary": "Creates table \"userProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "userProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"userProfile\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"userProfile\"",
+        "sql": "CREATE TABLE \"public\".\"userProfile\" (\n  \"avatarUrl\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"displayName\" text,\n  \"id\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" text NOT NULL,\n  \"username\" text,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"userProfile\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.verificationToken",
+    "label": "Create table \"verificationToken\"",
+    "summary": "Creates table \"verificationToken\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "verificationToken"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"verificationToken\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"verificationToken\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"verificationToken\"",
+        "sql": "CREATE TABLE \"public\".\"verificationToken\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" text NOT NULL,\n  \"tokenHash\" text NOT NULL,\n  \"type\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"verificationToken_type_check_1d23e6ac\" CHECK (\"type\" IN ('EMAIL_VERIFICATION', 'PASSWORD_RESET', 'EMAIL_CHANGE'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"verificationToken\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"verificationToken\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.country.country_code_key",
+    "label": "Add unique constraint on \"country\" (code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "country_code_key",
+        "table": "country"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"country_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "country_code_key",
+          "public",
+          "\"public\".\"country\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"country_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"country\" ADD CONSTRAINT \"country_code_key\" UNIQUE (\"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"country_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "country_code_key",
+          "public",
+          "\"public\".\"country\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.oAuthAccount.oAuthAccount_provider_providerAccountId_key",
+    "label": "Add unique constraint on \"oAuthAccount\" (provider, providerAccountId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "oAuthAccount_provider_providerAccountId_key",
+        "table": "oAuthAccount"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"oAuthAccount_provider_providerAccountId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oAuthAccount_provider_providerAccountId_key",
+          "public",
+          "\"public\".\"oAuthAccount\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"oAuthAccount_provider_providerAccountId_key\"",
+        "sql": "ALTER TABLE \"public\".\"oAuthAccount\" ADD CONSTRAINT \"oAuthAccount_provider_providerAccountId_key\" UNIQUE (\"provider\", \"providerAccountId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"oAuthAccount_provider_providerAccountId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oAuthAccount_provider_providerAccountId_key",
+          "public",
+          "\"public\".\"oAuthAccount\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.passwordCredential.passwordCredential_userId_key",
+    "label": "Add unique constraint on \"passwordCredential\" (userId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "passwordCredential_userId_key",
+        "table": "passwordCredential"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"passwordCredential_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "passwordCredential_userId_key",
+          "public",
+          "\"public\".\"passwordCredential\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"passwordCredential_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"passwordCredential\" ADD CONSTRAINT \"passwordCredential_userId_key\" UNIQUE (\"userId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"passwordCredential_userId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "passwordCredential_userId_key",
+          "public",
+          "\"public\".\"passwordCredential\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.propertyRelationship.propertyRelationship_childPropertyId_key",
+    "label": "Add unique constraint on \"propertyRelationship\" (childPropertyId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "propertyRelationship_childPropertyId_key",
+        "table": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"propertyRelationship_childPropertyId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_childPropertyId_key",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"propertyRelationship_childPropertyId_key\"",
+        "sql": "ALTER TABLE \"public\".\"propertyRelationship\" ADD CONSTRAINT \"propertyRelationship_childPropertyId_key\" UNIQUE (\"childPropertyId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"propertyRelationship_childPropertyId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_childPropertyId_key",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.session.session_tokenHash_key",
+    "label": "Add unique constraint on \"session\" (tokenHash)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "session_tokenHash_key",
+        "table": "session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"session_tokenHash_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "session_tokenHash_key",
+          "public",
+          "\"public\".\"session\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"session_tokenHash_key\"",
+        "sql": "ALTER TABLE \"public\".\"session\" ADD CONSTRAINT \"session_tokenHash_key\" UNIQUE (\"tokenHash\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"session_tokenHash_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "session_tokenHash_key",
+          "public",
+          "\"public\".\"session\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.state.state_countryId_code_key",
+    "label": "Add unique constraint on \"state\" (countryId, code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "state_countryId_code_key",
+        "table": "state"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"state_countryId_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "state_countryId_code_key",
+          "public",
+          "\"public\".\"state\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"state_countryId_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"state\" ADD CONSTRAINT \"state_countryId_code_key\" UNIQUE (\"countryId\", \"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"state_countryId_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "state_countryId_code_key",
+          "public",
+          "\"public\".\"state\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_email_key",
+    "label": "Add unique constraint on \"user\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_email_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_email_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_email_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.userProfile.userProfile_userId_key",
+    "label": "Add unique constraint on \"userProfile\" (userId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "userProfile_userId_key",
+        "table": "userProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"userProfile_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userProfile_userId_key",
+          "public",
+          "\"public\".\"userProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"userProfile_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"userProfile\" ADD CONSTRAINT \"userProfile_userId_key\" UNIQUE (\"userId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"userProfile_userId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userProfile_userId_key",
+          "public",
+          "\"public\".\"userProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.userProfile.userProfile_username_key",
+    "label": "Add unique constraint on \"userProfile\" (username)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "userProfile_username_key",
+        "table": "userProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"userProfile_username_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userProfile_username_key",
+          "public",
+          "\"public\".\"userProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"userProfile_username_key\"",
+        "sql": "ALTER TABLE \"public\".\"userProfile\" ADD CONSTRAINT \"userProfile_username_key\" UNIQUE (\"username\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"userProfile_username_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userProfile_username_key",
+          "public",
+          "\"public\".\"userProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.verificationToken.verificationToken_tokenHash_key",
+    "label": "Add unique constraint on \"verificationToken\" (tokenHash)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "verificationToken_tokenHash_key",
+        "table": "verificationToken"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"verificationToken_tokenHash_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "verificationToken_tokenHash_key",
+          "public",
+          "\"public\".\"verificationToken\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"verificationToken_tokenHash_key\"",
+        "sql": "ALTER TABLE \"public\".\"verificationToken\" ADD CONSTRAINT \"verificationToken_tokenHash_key\" UNIQUE (\"tokenHash\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"verificationToken_tokenHash_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "verificationToken_tokenHash_key",
+          "public",
+          "\"public\".\"verificationToken\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.oAuthAccount.oAuthAccount_userId_idx_a489d58a",
+    "label": "Create index \"oAuthAccount_userId_idx_a489d58a\" on \"oAuthAccount\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "oAuthAccount_userId_idx_a489d58a",
+        "table": "oAuthAccount"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"oAuthAccount_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oAuthAccount_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"oAuthAccount_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"oAuthAccount_userId_idx_a489d58a\" ON \"public\".\"oAuthAccount\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"oAuthAccount_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oAuthAccount_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.place.place_parentPlaceId_idx_c3920ca3",
+    "label": "Create index \"place_parentPlaceId_idx_c3920ca3\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "place_parentPlaceId_idx_c3920ca3",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"place_parentPlaceId_idx_c3920ca3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_parentPlaceId_idx_c3920ca3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"place_parentPlaceId_idx_c3920ca3\"",
+        "sql": "CREATE INDEX \"place_parentPlaceId_idx_c3920ca3\" ON \"public\".\"place\" (\"parentPlaceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"place_parentPlaceId_idx_c3920ca3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_parentPlaceId_idx_c3920ca3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.place.place_stateId_idx_ca668a8f",
+    "label": "Create index \"place_stateId_idx_ca668a8f\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "place_stateId_idx_ca668a8f",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"place_stateId_idx_ca668a8f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_stateId_idx_ca668a8f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"place_stateId_idx_ca668a8f\"",
+        "sql": "CREATE INDEX \"place_stateId_idx_ca668a8f\" ON \"public\".\"place\" (\"stateId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"place_stateId_idx_ca668a8f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"place_stateId_idx_ca668a8f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.property.property_countryId_idx_27b43b27",
+    "label": "Create index \"property_countryId_idx_27b43b27\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "property_countryId_idx_27b43b27",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"property_countryId_idx_27b43b27\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_countryId_idx_27b43b27\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"property_countryId_idx_27b43b27\"",
+        "sql": "CREATE INDEX \"property_countryId_idx_27b43b27\" ON \"public\".\"property\" (\"countryId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"property_countryId_idx_27b43b27\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_countryId_idx_27b43b27\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.property.property_placeId_idx_918e92e1",
+    "label": "Create index \"property_placeId_idx_918e92e1\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "property_placeId_idx_918e92e1",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"property_placeId_idx_918e92e1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_placeId_idx_918e92e1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"property_placeId_idx_918e92e1\"",
+        "sql": "CREATE INDEX \"property_placeId_idx_918e92e1\" ON \"public\".\"property\" (\"placeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"property_placeId_idx_918e92e1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_placeId_idx_918e92e1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.property.property_stateId_idx_ca668a8f",
+    "label": "Create index \"property_stateId_idx_ca668a8f\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "property_stateId_idx_ca668a8f",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"property_stateId_idx_ca668a8f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_stateId_idx_ca668a8f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"property_stateId_idx_ca668a8f\"",
+        "sql": "CREATE INDEX \"property_stateId_idx_ca668a8f\" ON \"public\".\"property\" (\"stateId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"property_stateId_idx_ca668a8f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"property_stateId_idx_ca668a8f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.propertyRelationship.propertyRelationship_parentPropertyId_idx_76fd56d7",
+    "label": "Create index \"propertyRelationship_parentPropertyId_idx_76fd56d7\" on \"propertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "propertyRelationship_parentPropertyId_idx_76fd56d7",
+        "table": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"propertyRelationship_parentPropertyId_idx_76fd56d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"propertyRelationship_parentPropertyId_idx_76fd56d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"propertyRelationship_parentPropertyId_idx_76fd56d7\"",
+        "sql": "CREATE INDEX \"propertyRelationship_parentPropertyId_idx_76fd56d7\" ON \"public\".\"propertyRelationship\" (\"parentPropertyId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"propertyRelationship_parentPropertyId_idx_76fd56d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"propertyRelationship_parentPropertyId_idx_76fd56d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.session.session_userId_idx_a489d58a",
+    "label": "Create index \"session_userId_idx_a489d58a\" on \"session\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "session_userId_idx_a489d58a",
+        "table": "session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"session_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"session_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"session_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"session_userId_idx_a489d58a\" ON \"public\".\"session\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"session_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"session_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.state.state_countryId_idx_27b43b27",
+    "label": "Create index \"state_countryId_idx_27b43b27\" on \"state\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "state_countryId_idx_27b43b27",
+        "table": "state"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"state_countryId_idx_27b43b27\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"state_countryId_idx_27b43b27\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"state_countryId_idx_27b43b27\"",
+        "sql": "CREATE INDEX \"state_countryId_idx_27b43b27\" ON \"public\".\"state\" (\"countryId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"state_countryId_idx_27b43b27\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"state_countryId_idx_27b43b27\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.verificationToken.verificationToken_userId_idx_a489d58a",
+    "label": "Create index \"verificationToken_userId_idx_a489d58a\" on \"verificationToken\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "verificationToken_userId_idx_a489d58a",
+        "table": "verificationToken"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"verificationToken_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"verificationToken_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"verificationToken_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"verificationToken_userId_idx_a489d58a\" ON \"public\".\"verificationToken\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"verificationToken_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"verificationToken_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.oAuthAccount.oAuthAccount_userId_fkey",
+    "label": "Add foreign key \"oAuthAccount_userId_fkey\" on \"oAuthAccount\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "oAuthAccount_userId_fkey",
+        "table": "oAuthAccount"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"oAuthAccount_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oAuthAccount_userId_fkey",
+          "public",
+          "\"public\".\"oAuthAccount\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"oAuthAccount_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"oAuthAccount\"\nADD CONSTRAINT \"oAuthAccount_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"oAuthAccount_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oAuthAccount_userId_fkey",
+          "public",
+          "\"public\".\"oAuthAccount\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.passwordCredential.passwordCredential_userId_fkey",
+    "label": "Add foreign key \"passwordCredential_userId_fkey\" on \"passwordCredential\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "passwordCredential_userId_fkey",
+        "table": "passwordCredential"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"passwordCredential_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "passwordCredential_userId_fkey",
+          "public",
+          "\"public\".\"passwordCredential\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"passwordCredential_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"passwordCredential\"\nADD CONSTRAINT \"passwordCredential_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"passwordCredential_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "passwordCredential_userId_fkey",
+          "public",
+          "\"public\".\"passwordCredential\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.place.place_stateId_fkey",
+    "label": "Add foreign key \"place_stateId_fkey\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "place_stateId_fkey",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"place_stateId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_stateId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"place_stateId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"place\"\nADD CONSTRAINT \"place_stateId_fkey\"\nFOREIGN KEY (\"stateId\")\nREFERENCES \"public\".\"state\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"place_stateId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_stateId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.place.place_parentPlaceId_fkey",
+    "label": "Add foreign key \"place_parentPlaceId_fkey\" on \"place\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "place_parentPlaceId_fkey",
+        "table": "place"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"place_parentPlaceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_parentPlaceId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"place_parentPlaceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"place\"\nADD CONSTRAINT \"place_parentPlaceId_fkey\"\nFOREIGN KEY (\"parentPlaceId\")\nREFERENCES \"public\".\"place\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"place_parentPlaceId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "place_parentPlaceId_fkey",
+          "public",
+          "\"public\".\"place\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.property.property_countryId_fkey",
+    "label": "Add foreign key \"property_countryId_fkey\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "property_countryId_fkey",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"property_countryId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_countryId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"property_countryId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"property\"\nADD CONSTRAINT \"property_countryId_fkey\"\nFOREIGN KEY (\"countryId\")\nREFERENCES \"public\".\"country\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"property_countryId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_countryId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.property.property_stateId_fkey",
+    "label": "Add foreign key \"property_stateId_fkey\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "property_stateId_fkey",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"property_stateId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_stateId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"property_stateId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"property\"\nADD CONSTRAINT \"property_stateId_fkey\"\nFOREIGN KEY (\"stateId\")\nREFERENCES \"public\".\"state\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"property_stateId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_stateId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.property.property_placeId_fkey",
+    "label": "Add foreign key \"property_placeId_fkey\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "property_placeId_fkey",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"property_placeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_placeId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"property_placeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"property\"\nADD CONSTRAINT \"property_placeId_fkey\"\nFOREIGN KEY (\"placeId\")\nREFERENCES \"public\".\"place\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"property_placeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_placeId_fkey",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.propertyRelationship.propertyRelationship_parentPropertyId_fkey",
+    "label": "Add foreign key \"propertyRelationship_parentPropertyId_fkey\" on \"propertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "propertyRelationship_parentPropertyId_fkey",
+        "table": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"propertyRelationship_parentPropertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_parentPropertyId_fkey",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"propertyRelationship_parentPropertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"propertyRelationship\"\nADD CONSTRAINT \"propertyRelationship_parentPropertyId_fkey\"\nFOREIGN KEY (\"parentPropertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"propertyRelationship_parentPropertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_parentPropertyId_fkey",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.propertyRelationship.propertyRelationship_childPropertyId_fkey",
+    "label": "Add foreign key \"propertyRelationship_childPropertyId_fkey\" on \"propertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "propertyRelationship_childPropertyId_fkey",
+        "table": "propertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"propertyRelationship_childPropertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_childPropertyId_fkey",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"propertyRelationship_childPropertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"propertyRelationship\"\nADD CONSTRAINT \"propertyRelationship_childPropertyId_fkey\"\nFOREIGN KEY (\"childPropertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"propertyRelationship_childPropertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "propertyRelationship_childPropertyId_fkey",
+          "public",
+          "\"public\".\"propertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.session.session_userId_fkey",
+    "label": "Add foreign key \"session_userId_fkey\" on \"session\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "session_userId_fkey",
+        "table": "session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"session_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "session_userId_fkey",
+          "public",
+          "\"public\".\"session\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"session_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"session\"\nADD CONSTRAINT \"session_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"session_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "session_userId_fkey",
+          "public",
+          "\"public\".\"session\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.state.state_countryId_fkey",
+    "label": "Add foreign key \"state_countryId_fkey\" on \"state\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "state_countryId_fkey",
+        "table": "state"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"state_countryId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "state_countryId_fkey",
+          "public",
+          "\"public\".\"state\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"state_countryId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"state\"\nADD CONSTRAINT \"state_countryId_fkey\"\nFOREIGN KEY (\"countryId\")\nREFERENCES \"public\".\"country\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"state_countryId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "state_countryId_fkey",
+          "public",
+          "\"public\".\"state\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.userProfile.userProfile_userId_fkey",
+    "label": "Add foreign key \"userProfile_userId_fkey\" on \"userProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "userProfile_userId_fkey",
+        "table": "userProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"userProfile_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userProfile_userId_fkey",
+          "public",
+          "\"public\".\"userProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"userProfile_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"userProfile\"\nADD CONSTRAINT \"userProfile_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"userProfile_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userProfile_userId_fkey",
+          "public",
+          "\"public\".\"userProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.verificationToken.verificationToken_userId_fkey",
+    "label": "Add foreign key \"verificationToken_userId_fkey\" on \"verificationToken\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "verificationToken_userId_fkey",
+        "table": "verificationToken"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"verificationToken_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "verificationToken_userId_fkey",
+          "public",
+          "\"public\".\"verificationToken\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"verificationToken_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"verificationToken\"\nADD CONSTRAINT \"verificationToken_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"verificationToken_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "verificationToken_userId_fkey",
+          "public",
+          "\"public\".\"verificationToken\""
+        ]
+      }
+    ]
+  }
+]
