@@ -58,4 +58,27 @@ export class AuthController {
       user,
     };
   }
+
+  @Post('logout')
+async logout(
+  @Req() request: Request,
+  @Res({ passthrough: true }) response: Response,
+) {
+  const token = request.cookies?.session;
+
+  if (token) {
+    await this.authService.logout(token);
+  }
+
+  response.clearCookie('session', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+  });
+
+  return {
+    message: 'Logged out successfully',
+  };
+}
 }

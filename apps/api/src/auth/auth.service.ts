@@ -68,4 +68,10 @@ import {
         session,
       };
     }
+
+    async logout(token: string) {
+      const session = await this.sessionService.validateSession(token);
+    
+      await this.sessionService.revokeSession(session.id);
+    }
   }
