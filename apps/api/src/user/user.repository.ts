@@ -13,6 +13,7 @@ export class UserRepository {
     const user = await this.prisma.db.orm.public.User
       .where({ email })
       .include('passwordCredential')
+      .include('profile')
       .first();
   
     if (!user) {
@@ -42,6 +43,7 @@ export class UserRepository {
   async findById(id: string): Promise<UserResult | null> {
     return this.prisma.db.orm.public.User
       .where({ id })
+      .include('profile')
       .first();
   }
 

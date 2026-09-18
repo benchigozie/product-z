@@ -36,10 +36,14 @@ import {
         passwordHash,
       });
   
-      return user;
+      return {
+        success: true,
+        verificationEmailSent: true,
+      };
     }
 
     async login(data: { email: string; password: string }) {
+
       const user = await this.userService.findByEmail(data.email);
     
       if (!user) {
