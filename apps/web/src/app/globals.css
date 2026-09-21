@@ -2,9 +2,11 @@
 
 @theme {
  
-  --color-primary: #14b8a6;
+  --color-primary: #108578;
   --color-primary-dark: #102a2c;
   --color-primary-soft: #f0fdfa;
+  --color-primary-darkish: #08604c;
+  
 
   --color-primary-text: #17201d;
   --color-secondary-text: #64706c;
@@ -13,6 +15,7 @@
   --color-outline-color: #e5eae8;
 
   --font-primary: var(--font-primary);
+
 
 }
 
