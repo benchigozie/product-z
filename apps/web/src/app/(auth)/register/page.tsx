@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import { useAuth } from '@/context/AuthContext';
 import { CustomLoader } from '@/components/general/CustomLoader';
 import { CircleCheck } from 'lucide-react';
+import { GoogleButton } from '@/components/auth/GoogleButton';
 
 const registerSchema = Yup.object({
     email: Yup.string()
@@ -31,6 +32,7 @@ type RegisterFormValues = {
 };
 
 export default function RegisterPage() {
+
     const { register } = useAuth();
     const [registrationComplete, setRegistrationComplete] = useState(false);
 
@@ -73,7 +75,7 @@ export default function RegisterPage() {
 
     return (
         <main className="min-h-screen flex flex-col justify-center bg-background px-4 md:px-0">
-            <div className="mx-auto flex w-full max-w-md flex-col justify-center rounded-xl px-6 py-12 shadow-sm h-max">
+            <div className="mx-auto flex w-full max-w-md flex-col justify-center rounded-xl px-6 py-12 shadow-sm h-max gap-3">
 
                 <div className="mb-8 text-center">
                     <div className="flex justify-center w-full">
@@ -235,6 +237,8 @@ export default function RegisterPage() {
                         )}
                     </Formik>
                 )}
+
+               <GoogleButton />
 
                 {!registrationComplete && (
                     <p className="mt-6 text-center text-sm text-secondary-text">

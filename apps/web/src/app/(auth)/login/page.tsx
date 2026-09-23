@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import { useAuth } from '@/context/AuthContext';
 import { CustomLoader } from '@/components/general/CustomLoader';
 import Image from 'next/image';
+import { GoogleButton } from '@/components/auth/GoogleButton';
 
 const loginSchema = Yup.object({
     email: Yup.string()
@@ -59,7 +60,7 @@ export default function LoginPage() {
 
     return (
         <main className="min-h-screen flex flex-col justify-center bg-background px-4 md:px-0">
-            <div className="mx-auto flex w-full max-w-md flex-col justify-center px-6 py-12 rounded-xl shadow-sm h-max">
+            <div className="mx-auto flex w-full max-w-md flex-col justify-center px-6 py-12 rounded-xl shadow-sm h-max gap-3">
                 <div className="mb-8 text-center">
                     <div className='flex justify-center w-full'>
                         <Link
@@ -170,6 +171,8 @@ export default function LoginPage() {
                         </Form>
                     )}
                 </Formik>
+
+                <GoogleButton />
 
                 <p className="mt-6 text-center text-sm text-secondary-text">
                     Don't have an account?{' '}

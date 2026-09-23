@@ -3,27 +3,43 @@
 import { useWorkspace } from '@/context/WorkspaceContext';
 import { PersonalDashboard } from '@/components/dashboard/PersonalDashboard';
 import { useAuth } from '@/context/AuthContext';
-import CustomPageLoader from '@/components/general/CustomPageLoader';
+import CustomScreenLoader from '@/components/general/CustomScreenLoader';
 import { AgentDashboard } from '@/components/dashboard/AgentDashboard';
 import { LandlordDashboard } from '@/components/dashboard/LandlordDashboard';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { ContentTransition } from '@/components/motion/ContenTransition';
+
 
 export default function DashboardPage() {
     const { workspace } = useWorkspace();
-    const { isLoading } = useAuth();
+    const {
+        isLoading,
+        needsProfileCompletion,
+    } = useAuth();
+
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading && needsProfileCompletion) {
+            router.replace('/complete-profile');
+        }
+    }, [isLoading, needsProfileCompletion, router]);
 
     if (isLoading) {
-       return <CustomPageLoader />;
+        return <CustomScreenLoader />;
     }
 
-    switch (workspace) {
-        case 'agent':
-            return <AgentDashboard/>;
 
-        case 'landlord':
-            return <LandlordDashboard />;
+    return (
+    
+                <ContentTransition transitionKey={workspace}>
+                    {workspace === 'agent' && <AgentDashboard />}
 
-        case 'personal':
-        default:
-            return <PersonalDashboard />;
-    }
+                    {workspace === 'landlord' && <LandlordDashboard />}
+
+                    {workspace === 'personal' && <PersonalDashboard />}
+                </ContentTransition>
+    );
+
 }

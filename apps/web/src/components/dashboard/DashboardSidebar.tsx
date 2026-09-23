@@ -29,11 +29,6 @@ const navigation = {
             icon: Home,
         },
         {
-            label: 'Search',
-            href: '/properties',
-            icon: Search,
-        },
-        {
             label: 'Interests',
             href: '/dashboard/interests',
             icon: StarCheck,

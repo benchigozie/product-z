@@ -34,6 +34,10 @@ type AuthContextValue = {
     password: string;
   }) => Promise<void>;
   logout: () => Promise<void>;
+  needsProfileCompletion: boolean;
+  updateProfile: (data: {
+    displayName: string;
+  }) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(
@@ -47,6 +51,8 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const needsProfileCompletion =
+  user !== null && !user.profile?.displayName;
 
   useEffect(() => {
     async function restoreSession() {
@@ -94,15 +100,28 @@ export function AuthProvider({
     setUser(null);
   }
 
+  async function updateProfile(data: {
+    displayName: string;
+  }) {
+    const response = await apiFetch<{ user: User }>('/user/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  
+    setUser(response.user);
+  }
+
   return (
     <AuthContext.Provider
       value={{
         user,
         isLoading,
         isAuthenticated: user !== null,
+        needsProfileCompletion,
         login,
         register,
         logout,
+        updateProfile,
       }}
     >
       {children}

@@ -1,5 +1,11 @@
 import NotificationsView from '@/components/general/NotificationsView';
+import { ContentTransition } from '@/components/motion/ContenTransition';
 
 export default function NotificationsPage() {
-  return <NotificationsView variant="dashboard" />;
+
+  return (
+    <ContentTransition>
+      <NotificationsView variant="dashboard" />;
+    </ContentTransition>
+  )
 }

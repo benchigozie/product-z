@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { ContentTransition } from '@/components/motion/ContenTransition';
+
 
 export default function DashboardLayout({
   children,
@@ -19,10 +21,14 @@ export default function DashboardLayout({
           <DashboardHeader />
         </header>
 
+
         <main className="p-6 lg:p-8">
-          {children}
+          
+            {children}
+        
         </main>
+
       </div>
-    </div>
+    </div >
   );
 }

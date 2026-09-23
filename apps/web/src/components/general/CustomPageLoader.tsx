@@ -2,9 +2,9 @@ import { CustomLoader } from "./CustomLoader"
 
 function CustomPageLoader() {
     return (
-            <div className="z-50 flex w-full items-start justify-center bg-background ">
-                <CustomLoader />
-            </div>
+        <div className="flex min-h-[60vh] w-full items-center justify-center bg-background">
+            <CustomLoader />
+        </div>
     )
 }
 

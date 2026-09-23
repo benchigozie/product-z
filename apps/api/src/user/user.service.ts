@@ -22,4 +22,41 @@ export class UserService {
   }) {
     return this.userRepository.create(data);
   }
+
+  async createOAuthUser(data: {
+    email: string;
+    provider: 'GOOGLE';
+    providerAccountId: string;
+    displayName?: string;
+    avatarUrl?: string;
+  }) {
+    return this.userRepository.createOAuthUser(data);
+  }
+
+  async findByOAuthAccount(
+    provider: 'GOOGLE',
+    providerAccountId: string,
+  ) {
+    return this.userRepository.findByOAuthAccount(
+      provider,
+      providerAccountId,
+    );
+  }
+
+  async linkOAuthAccount(data: {
+    userId: string;
+    provider: 'GOOGLE';
+    providerAccountId: string;
+  }) {
+    return this.userRepository.linkOAuthAccount(data);
+  }
+
+  async updateProfile(
+    userId: string,
+    data: {
+      displayName: string;
+    },
+  ) {
+    return this.userRepository.updateProfile(userId, data);
+  }
 }

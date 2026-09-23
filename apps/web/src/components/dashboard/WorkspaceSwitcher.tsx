@@ -10,6 +10,7 @@ import {
   UserRound,
 } from 'lucide-react';
 import { useWorkspace } from '@/context/WorkspaceContext';
+import { useRouter, usePathname } from 'next/navigation';
 
 type Workspace = {
   id: 'personal' | 'agent' | 'landlord';
@@ -43,14 +44,28 @@ export function WorkspaceSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
   const { workspace, setWorkspace } = useWorkspace();
 
+  const router = useRouter();
+  const pathname = usePathname();
+
   const currentWorkspace =
     workspaces.find((item) => item.id === workspace) ?? workspaces[0];
 
   const CurrentIcon = currentWorkspace.icon;
 
-  function handleWorkspaceChange(workspace: Workspace) {
-    setWorkspace(workspace.id);
+  function handleWorkspaceChange(
+    workspaceOption: Workspace,
+  ) {
+
+    if (pathname !== '/dashboard') {
+      router.push('/dashboard');
+    }
+
+    setTimeout(() => {
+      setWorkspace(workspaceOption.id);
     setIsOpen(false);
+    },300)
+
+    
   }
 
   return (
@@ -76,9 +91,8 @@ export function WorkspaceSwitcher() {
 
         <ChevronDown
           size={16}
-          className={`shrink-0 text-white/50 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className={`shrink-0 text-white/50 transition-transform ${isOpen ? 'rotate-180' : ''
+            }`}
         />
       </button>
 
@@ -93,18 +107,16 @@ export function WorkspaceSwitcher() {
                 key={workspaceOption.id}
                 type="button"
                 onClick={() => handleWorkspaceChange(workspaceOption)}
-                className={`flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition-colors ${
-                  isActive
+                className={`flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition-colors ${isActive
                     ? 'bg-primary/50 text-white'
                     : 'text-white/70 hover:bg-primary/10 hover:text-primary'
-                }`}
+                  }`}
               >
                 <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                    isActive
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${isActive
                       ? 'bg-primary/15'
                       : 'bg-white/10'
-                  }`}
+                    }`}
                 >
                   <Icon size={16} />
                 </div>
