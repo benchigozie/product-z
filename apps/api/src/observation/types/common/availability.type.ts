@@ -1,0 +1,5 @@
+export enum Availability {
+    AVAILABLE = 'AVAILABLE',
+    INTERMITTENT = 'INTERMITTENT',
+    UNAVAILABLE = 'UNAVAILABLE',
+  }

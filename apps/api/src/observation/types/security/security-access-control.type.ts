@@ -1,0 +1,5 @@
+export enum SecurityAccessControl {
+    OPEN_ACCESS = 'OPEN_ACCESS',
+    CONTROLLED_ACCESS = 'CONTROLLED_ACCESS',
+    RESTRICTED_ACCESS = 'RESTRICTED_ACCESS',
+  }

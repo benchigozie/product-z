@@ -5,7 +5,8 @@
   "scripts": {
       "dev:api": "pnpm --filter api start:dev",
     "dev:web": "pnpm --filter web dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "count-lines": "pnpm dlx cloc apps/api/src apps/web/src"
   },
   "keywords": [],
   "author": "",

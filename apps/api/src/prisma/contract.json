@@ -12,6 +12,10 @@
       "model": "OAuthAccount",
       "namespace": "public"
     },
+    "observation": {
+      "model": "Observation",
+      "namespace": "public"
+    },
     "passwordCredential": {
       "model": "PasswordCredential",
       "namespace": "public"
@@ -59,6 +63,75 @@
               {
                 "name": "GOOGLE",
                 "value": "GOOGLE"
+              }
+            ]
+          },
+          "ObservationCategory": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "POWER",
+                "value": "POWER"
+              },
+              {
+                "name": "WATER",
+                "value": "WATER"
+              },
+              {
+                "name": "INTERNET",
+                "value": "INTERNET"
+              },
+              {
+                "name": "FLOODING",
+                "value": "FLOODING"
+              },
+              {
+                "name": "ROAD_ACCESS",
+                "value": "ROAD_ACCESS"
+              },
+              {
+                "name": "DRAINAGE",
+                "value": "DRAINAGE"
+              },
+              {
+                "name": "SECURITY",
+                "value": "SECURITY"
+              },
+              {
+                "name": "WASTE",
+                "value": "WASTE"
+              },
+              {
+                "name": "NOISE",
+                "value": "NOISE"
+              },
+              {
+                "name": "BUILDING_CONDITION",
+                "value": "BUILDING_CONDITION"
+              },
+              {
+                "name": "PARKING",
+                "value": "PARKING"
+              },
+              {
+                "name": "SANITATION",
+                "value": "SANITATION"
+              },
+              {
+                "name": "LIGHTING",
+                "value": "LIGHTING"
+              },
+              {
+                "name": "ENVIRONMENT",
+                "value": "ENVIRONMENT"
+              },
+              {
+                "name": "CONSTRUCTION",
+                "value": "CONSTRUCTION"
+              },
+              {
+                "name": "OTHER",
+                "value": "OTHER"
               }
             ]
           },
@@ -313,6 +386,144 @@
               "table": "oAuthAccount"
             }
           },
+          "Observation": {
+            "fields": {
+              "category": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ObservationCategory",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "data": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "observedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "placeId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "propertyId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "place": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "placeId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Place",
+                  "namespace": "public"
+                }
+              },
+              "property": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "propertyId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Property",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "category": {
+                  "column": "category"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "data": {
+                  "column": "data"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "observedAt": {
+                  "column": "observedAt"
+                },
+                "placeId": {
+                  "column": "placeId"
+                },
+                "propertyId": {
+                  "column": "propertyId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "observation"
+            }
+          },
           "PasswordCredential": {
             "fields": {
               "createdAt": {
@@ -465,6 +676,21 @@
                 },
                 "to": {
                   "model": "Place",
+                  "namespace": "public"
+                }
+              },
+              "observations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "placeId"
+                  ]
+                },
+                "to": {
+                  "model": "Observation",
                   "namespace": "public"
                 }
               },
@@ -690,6 +916,21 @@
                 },
                 "to": {
                   "model": "Country",
+                  "namespace": "public"
+                }
+              },
+              "observations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "propertyId"
+                  ]
+                },
+                "to": {
+                  "model": "Observation",
                   "namespace": "public"
                 }
               },
@@ -1545,6 +1786,130 @@
                   ]
                 }
               ]
+            },
+            "observation": {
+              "checks": [
+                {
+                  "expression": "\"category\" IN ('POWER', 'WATER', 'INTERNET', 'FLOODING', 'ROAD_ACCESS', 'DRAINAGE', 'SECURITY', 'WASTE', 'NOISE', 'BUILDING_CONDITION', 'PARKING', 'SANITATION', 'LIGHTING', 'ENVIRONMENT', 'CONSTRUCTION', 'OTHER')",
+                  "name": "observation_category_check_560a7350",
+                  "prefix": "observation_category_check"
+                }
+              ],
+              "columns": {
+                "category": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ObservationCategory",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "data": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "observedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "placeId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "propertyId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "propertyId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "observation"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "property"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "placeId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "observation"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "place"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "placeId"
+                  ],
+                  "name": "observation_placeId_idx_918e92e1",
+                  "prefix": "observation_placeId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "propertyId"
+                  ],
+                  "name": "observation_propertyId_idx_4bcae41c",
+                  "prefix": "observation_propertyId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "passwordCredential": {
               "columns": {
@@ -2415,6 +2780,27 @@
                 "GOOGLE"
               ]
             },
+            "ObservationCategory": {
+              "kind": "valueSet",
+              "values": [
+                "POWER",
+                "WATER",
+                "INTERNET",
+                "FLOODING",
+                "ROAD_ACCESS",
+                "DRAINAGE",
+                "SECURITY",
+                "WASTE",
+                "NOISE",
+                "BUILDING_CONDITION",
+                "PARKING",
+                "SANITATION",
+                "LIGHTING",
+                "ENVIRONMENT",
+                "CONSTRUCTION",
+                "OTHER"
+              ]
+            },
             "PlaceType": {
               "kind": "valueSet",
               "values": [
@@ -2467,10 +2853,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6a90d81028ab87d13d704e4c3d013ca35a1e7ebfd9ac2f9bc91e21c6fa0a2bf2"
+    "storageHash": "b80fcbb926045993cae80d87e2e605e96dfc22a6dcb0de441324abebe49bf379"
   },
   "execution": {
-    "executionHash": "1f91c23fbf140aab548573833194c38c804fa2da8a25b0103ea22fbee225f2e7",
+    "executionHash": "81a2f559c370000a76f04b78468ee286caa45cacbd5fe35f79ef0cae2c0eddbf",
     "mutations": {
       "defaults": [
         {
@@ -2493,6 +2879,32 @@
             "column": "id",
             "namespace": "public",
             "table": "oAuthAccount"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "observation"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "observation"
           }
         },
         {

@@ -83,17 +83,14 @@ import {
         throw new UnauthorizedException('Google account email not available');
       }
     
-      // 1. Check whether this Google account is already linked
       let user = await this.userService.findByOAuthAccount(
         'GOOGLE',
         data.providerId,
       );
     
-      // 2. If not linked, check whether the email already belongs to a user
       if (!user) {
         user = await this.userService.findByEmail(data.email);
     
-        // 3. Existing user → link their Google account
         if (user) {
           await this.userService.linkOAuthAccount({
             userId: user.id,
@@ -101,8 +98,6 @@ import {
             providerAccountId: data.providerId,
           });
         }
-    
-        // 4. Completely new user → create the user + Google account
         if (!user) {
           user = await this.userService.createOAuthUser({
             email: data.email,

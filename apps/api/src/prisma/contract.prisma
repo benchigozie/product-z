@@ -71,6 +71,7 @@ model Place {
   childPlaces Place[] @relation("PlaceHierarchy")
 
   properties Property[]
+  observations Observation[]
 }
 
 model Property {
@@ -98,6 +99,7 @@ model Property {
   state   State   @relation(fields: [stateId], references: [id])
   place   Place?  @relation(fields: [placeId], references: [id])
 
+  observations Observation[]
   parentRelationships PropertyRelationship[] @relation("PropertyAsParent")
   childRelationships  PropertyRelationship[] @relation("PropertyAsChild")
 }
@@ -272,3 +274,45 @@ model VerificationToken {
   createdAt temporal.createdAt()
 
 }
+
+enum ObservationCategory {
+  @@type("pg/text@1")
+
+  POWER
+  WATER
+  INTERNET
+  FLOODING
+  ROAD_ACCESS
+  DRAINAGE
+  SECURITY
+  WASTE
+  NOISE
+  BUILDING_CONDITION
+  PARKING
+  SANITATION
+  LIGHTING
+  ENVIRONMENT
+  CONSTRUCTION
+  OTHER
+}
+
+model Observation {
+  id String @id @default(cuid(2))
+
+  category ObservationCategory
+
+  propertyId String?
+  placeId    String?
+
+  data        Json?
+  description String?
+
+  observedAt DateTime
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  property Property? @relation(fields: [propertyId], references: [id])
+  place    Place?    @relation(fields: [placeId], references: [id])
+}
+

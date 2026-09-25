@@ -44,12 +44,4 @@ export class PropertyRelationshipController {
     return this.propertyRelationshipService.findChildrenWithProperties(propertyId);
   }
 
-  @Get('children/:propertyId')
-async findChildrenWithProperties(
-  @Param('propertyId') propertyId: string,
-) {
-  return this.propertyRelationshipService.findChildrenWithProperties(
-    propertyId,
-  );
-}
 }

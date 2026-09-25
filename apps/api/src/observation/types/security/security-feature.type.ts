@@ -1,0 +1,10 @@
+export enum SecurityFeature {
+    GATE = 'GATE',
+    FENCE = 'FENCE',
+    WALL = 'WALL',
+    SECURITY_LIGHTING = 'SECURITY_LIGHTING',
+    CCTV = 'CCTV',
+    GUARD_POST = 'GUARD_POST',
+    ACCESS_CONTROL_SYSTEM = 'ACCESS_CONTROL_SYSTEM',
+    OTHER = 'OTHER',
+  }

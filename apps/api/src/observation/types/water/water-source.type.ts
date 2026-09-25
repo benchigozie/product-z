@@ -1,0 +1,9 @@
+export enum WaterSource {
+    PUBLIC_SUPPLY = 'PUBLIC_SUPPLY',
+    BOREHOLE = 'BOREHOLE',
+    WELL = 'WELL',
+    RIVER_STREAM = 'RIVER_STREAM',
+    WATER_VENDOR = 'WATER_VENDOR',
+    RAINWATER = 'RAINWATER',
+    OTHER = 'OTHER',
+  }

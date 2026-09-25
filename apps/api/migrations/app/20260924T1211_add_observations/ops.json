@@ -1,0 +1,203 @@
+[
+  {
+    "id": "table.observation",
+    "label": "Create table \"observation\"",
+    "summary": "Creates table \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"observation\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"observation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"observation\"",
+        "sql": "CREATE TABLE \"public\".\"observation\" (\n  \"category\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"data\" json,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"observedAt\" timestamptz NOT NULL,\n  \"placeId\" text,\n  \"propertyId\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"observation_category_check_560a7350\" CHECK (\"category\" IN ('POWER', 'WATER', 'INTERNET', 'FLOODING', 'ROAD_ACCESS', 'DRAINAGE', 'SECURITY', 'WASTE', 'NOISE', 'BUILDING_CONDITION', 'PARKING', 'SANITATION', 'LIGHTING', 'ENVIRONMENT', 'CONSTRUCTION', 'OTHER'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"observation\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"observation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.observation.observation_placeId_idx_918e92e1",
+    "label": "Create index \"observation_placeId_idx_918e92e1\" on \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "observation_placeId_idx_918e92e1",
+        "table": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"observation_placeId_idx_918e92e1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"observation_placeId_idx_918e92e1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"observation_placeId_idx_918e92e1\"",
+        "sql": "CREATE INDEX \"observation_placeId_idx_918e92e1\" ON \"public\".\"observation\" (\"placeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"observation_placeId_idx_918e92e1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"observation_placeId_idx_918e92e1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.observation.observation_propertyId_idx_4bcae41c",
+    "label": "Create index \"observation_propertyId_idx_4bcae41c\" on \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "observation_propertyId_idx_4bcae41c",
+        "table": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"observation_propertyId_idx_4bcae41c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"observation_propertyId_idx_4bcae41c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"observation_propertyId_idx_4bcae41c\"",
+        "sql": "CREATE INDEX \"observation_propertyId_idx_4bcae41c\" ON \"public\".\"observation\" (\"propertyId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"observation_propertyId_idx_4bcae41c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"observation_propertyId_idx_4bcae41c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.observation.observation_propertyId_fkey",
+    "label": "Add foreign key \"observation_propertyId_fkey\" on \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "observation_propertyId_fkey",
+        "table": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"observation_propertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "observation_propertyId_fkey",
+          "public",
+          "\"public\".\"observation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"observation_propertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"observation\"\nADD CONSTRAINT \"observation_propertyId_fkey\"\nFOREIGN KEY (\"propertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"observation_propertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "observation_propertyId_fkey",
+          "public",
+          "\"public\".\"observation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.observation.observation_placeId_fkey",
+    "label": "Add foreign key \"observation_placeId_fkey\" on \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "observation_placeId_fkey",
+        "table": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"observation_placeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "observation_placeId_fkey",
+          "public",
+          "\"public\".\"observation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"observation_placeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"observation\"\nADD CONSTRAINT \"observation_placeId_fkey\"\nFOREIGN KEY (\"placeId\")\nREFERENCES \"public\".\"place\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"observation_placeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "observation_placeId_fkey",
+          "public",
+          "\"public\".\"observation\""
+        ]
+      }
+    ]
+  }
+]

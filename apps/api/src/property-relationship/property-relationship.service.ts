@@ -7,16 +7,14 @@ import {
 import { CreatePropertyRelationshipDto } from './dto/create-property-relationship.dto.js';
 import { PropertyRelationshipRepository } from './property-relationship.repository.js';
 import { PropertyRepository } from '../property/property.repository.js';
-import type {
-  PropertyRelationshipListResult,
-  PropertyRelationshipResult,
-} from './types/property-relationship-result.type.js';
+import { PropertyService } from '../property/property.service.js';
 
 @Injectable()
 export class PropertyRelationshipService {
   constructor(
     private readonly propertyRelationshipRepository: PropertyRelationshipRepository,
     private readonly propertyRepository: PropertyRepository,
+    private readonly propertyService: PropertyService,
   ) { }
 
   async findAll() {
@@ -65,13 +63,16 @@ export class PropertyRelationshipService {
   }
 
   async findParentWithProperty(propertyId: string) {
+    await this.propertyService.findById(propertyId);
+
     return this.propertyRelationshipRepository.findParentWithProperty(
       propertyId,
     );
   }
-  
 
   async findChildrenWithProperties(propertyId: string) {
+    await this.propertyService.findById(propertyId);
+
     return this.propertyRelationshipRepository.findChildrenWithProperties(
       propertyId,
     );
