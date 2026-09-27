@@ -4,11 +4,16 @@ import {
     Get,
     Param,
     Post,
+    UseGuards,
+    Req,
 } from '@nestjs/common';
+
+import type { Request } from 'express';
 
 import { CreateObservationDto } from './dto/create-observation.dto.js';
 import { ObservationService } from './observation.service.js';
 import type { ObservationResult, ObservationListResult } from './types/observation-result.type.js';
+import { SessionAuthGuard } from '../auth/guards/session-auth.guard.js';
 
 @Controller('observations')
 export class ObservationController {
@@ -17,8 +22,15 @@ export class ObservationController {
     ) { }
 
     @Post()
-    async create(@Body() dto: CreateObservationDto) {
-        return this.observationService.create(dto);
+    @UseGuards(SessionAuthGuard)
+    async create(
+      @Req() request: Request,
+      @Body() dto: CreateObservationDto,
+    ) {
+      return this.observationService.create(
+        dto,
+        request.user!.id,
+      );
     }
 
     @Get('property/:propertyId')

@@ -14,7 +14,10 @@ export class ObservationService {
         private readonly observationRepository: ObservationRepository,
     ) { }
 
-    async create(dto: CreateObservationDto) {
+    async create(
+        dto: CreateObservationDto,
+        userId: string,
+      )  {
         const { propertyId, placeId } = dto;
 
         if (!propertyId && !placeId) {
@@ -51,7 +54,7 @@ export class ObservationService {
             }
         }
 
-        return this.observationRepository.create(dto);
+        return this.observationRepository.create(dto, userId);
     }
 
     async findById(id: string): Promise<ObservationResult> {

@@ -460,6 +460,13 @@
                   "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
+              },
+              "userId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
               }
             },
             "relations": {
@@ -492,6 +499,21 @@
                   "model": "Property",
                   "namespace": "public"
                 }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -522,6 +544,9 @@
                 },
                 "updatedAt": {
                   "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
                 }
               },
               "namespaceId": "public",
@@ -1382,6 +1407,21 @@
                   "namespace": "public"
                 }
               },
+              "observations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Observation",
+                  "namespace": "public"
+                }
+              },
               "passwordCredential": {
                 "cardinality": "1:1",
                 "on": {
@@ -1854,6 +1894,11 @@
                   "codecId": "pg/timestamptz-temporal@1",
                   "nativeType": "timestamptz",
                   "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 }
               },
               "foreignKeys": [
@@ -1888,6 +1933,22 @@
                     "namespaceId": "public",
                     "tableName": "place"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "observation"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
                 }
               ],
               "indexes": [
@@ -1905,6 +1966,14 @@
                   ],
                   "name": "observation_propertyId_idx_4bcae41c",
                   "prefix": "observation_propertyId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "observation_userId_idx_a489d58a",
+                  "prefix": "observation_userId_idx",
                   "unique": false
                 }
               ],
@@ -2858,7 +2927,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "61329c0950098f4edab297484fef4bd68f5a813b85b3e30799fa17133d197bac"
+    "storageHash": "91703ed3f920752fa5459e88401b5ff0d515a2fef3aed64dffd52e7e6aa35cf2"
   },
   "execution": {
     "executionHash": "81a2f559c370000a76f04b78468ee286caa45cacbd5fe35f79ef0cae2c0eddbf",

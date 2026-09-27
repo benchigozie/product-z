@@ -35,13 +35,17 @@ export class ObservationRepository {
     });
   }
 
-  async create(data: CreateObservationDto) {
+  async create(
+    data: CreateObservationDto,
+    userId: string,
+  ) {
     const plan = this.prisma.db.sql.public.observation
       .insert([
         {
           category: data.category,
           propertyId: data.propertyId,
           placeId: data.placeId,
+          userId,
           data: data.data as ObservationJsonValue | undefined,
           description: data.description,
           observedAt: Temporal.Instant.from(data.observedAt),
@@ -53,6 +57,7 @@ export class ObservationRepository {
         'propertyId',
         'placeId',
         'data',
+        'userId',
         'description',
         'observedAt',
         'createdAt',

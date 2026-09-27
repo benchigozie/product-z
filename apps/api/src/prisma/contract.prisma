@@ -167,12 +167,14 @@ model User {
   oauthAccounts OAuthAccount[]
 
   sessions Session[]
+  observations Observation[]
 
   verificationTokens VerificationToken[]
 
   createdAt temporal.createdAt()
   updatedAt temporal.updatedAt()
   deletedAt DateTime?
+
 }
 
 
@@ -310,10 +312,13 @@ model Observation {
 
   observedAt DateTime
 
+  userId String?
+
   createdAt temporal.createdAt()
   updatedAt temporal.updatedAt()
 
   property Property? @relation(fields: [propertyId], references: [id])
   place    Place?    @relation(fields: [placeId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 }
 
