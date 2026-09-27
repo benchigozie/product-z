@@ -1,13 +1,15 @@
 import {
   Injectable,
   NotFoundException,
-  ConflictException
+  ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { CreatePropertyRelationshipDto } from './dto/create-property-relationship.dto.js';
 import { PropertyRelationshipRepository } from './property-relationship.repository.js';
 import { PropertyRepository } from '../property/property.repository.js';
 import { PropertyService } from '../property/property.service.js';
+import { canContainPropertyType } from '../property/property-types.js';
 
 @Injectable()
 export class PropertyRelationshipService {
@@ -43,6 +45,23 @@ export class PropertyRelationshipService {
         `Child property not found`,
       );
     }
+
+
+    if (parent.id === child.id) {
+      throw new BadRequestException(
+        'A property cannot contain itself.',
+      );
+    }
+
+    if (!canContainPropertyType(
+      parent.propertyType,
+      child.propertyType,
+    )) {
+      throw new BadRequestException(
+        `A ${parent.propertyType} cannot contain a ${child.propertyType}.`,
+      );
+    }
+
 
     try {
       return await this.propertyRelationshipRepository.create(data);

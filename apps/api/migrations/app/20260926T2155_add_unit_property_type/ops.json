@@ -1,0 +1,86 @@
+[
+  {
+    "id": "dropCheckConstraint.property.property_propertyType_check_f6c633bf",
+    "label": "Drop check constraint \"property_propertyType_check_f6c633bf\" on \"property\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "property_propertyType_check_f6c633bf",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"property_propertyType_check_f6c633bf\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_propertyType_check_f6c633bf",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"property_propertyType_check_f6c633bf\"",
+        "sql": "ALTER TABLE \"public\".\"property\" DROP CONSTRAINT \"property_propertyType_check_f6c633bf\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"property_propertyType_check_f6c633bf\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_propertyType_check_f6c633bf",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.property.property_propertyType_check_3d6185d3",
+    "label": "Add check constraint \"property_propertyType_check_3d6185d3\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "property_propertyType_check_3d6185d3",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"property_propertyType_check_3d6185d3\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_propertyType_check_3d6185d3",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"property_propertyType_check_3d6185d3\"",
+        "sql": "ALTER TABLE \"public\".\"property\" ADD CONSTRAINT \"property_propertyType_check_3d6185d3\" CHECK (\"propertyType\" IN ('ESTATE', 'COMPOUND', 'BUILDING', 'HOUSE', 'APARTMENT', 'HOSTEL', 'UNIT', 'SHOP', 'OFFICE', 'WAREHOUSE', 'LAND'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"property_propertyType_check_3d6185d3\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_propertyType_check_3d6185d3",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  }
+]

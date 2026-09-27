@@ -189,6 +189,10 @@
                 "value": "HOSTEL"
               },
               {
+                "name": "UNIT",
+                "value": "UNIT"
+              },
+              {
                 "name": "SHOP",
                 "value": "SHOP"
               },
@@ -2102,8 +2106,8 @@
             "property": {
               "checks": [
                 {
-                  "expression": "\"propertyType\" IN ('ESTATE', 'COMPOUND', 'BUILDING', 'HOUSE', 'APARTMENT', 'HOSTEL', 'SHOP', 'OFFICE', 'WAREHOUSE', 'LAND')",
-                  "name": "property_propertyType_check_f6c633bf",
+                  "expression": "\"propertyType\" IN ('ESTATE', 'COMPOUND', 'BUILDING', 'HOUSE', 'APARTMENT', 'HOSTEL', 'UNIT', 'SHOP', 'OFFICE', 'WAREHOUSE', 'LAND')",
+                  "name": "property_propertyType_check_3d6185d3",
                   "prefix": "property_propertyType_check"
                 }
               ],
@@ -2824,6 +2828,7 @@
                 "HOUSE",
                 "APARTMENT",
                 "HOSTEL",
+                "UNIT",
                 "SHOP",
                 "OFFICE",
                 "WAREHOUSE",
@@ -2853,7 +2858,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b80fcbb926045993cae80d87e2e605e96dfc22a6dcb0de441324abebe49bf379"
+    "storageHash": "61329c0950098f4edab297484fef4bd68f5a813b85b3e30799fa17133d197bac"
   },
   "execution": {
     "executionHash": "81a2f559c370000a76f04b78468ee286caa45cacbd5fe35f79ef0cae2c0eddbf",
