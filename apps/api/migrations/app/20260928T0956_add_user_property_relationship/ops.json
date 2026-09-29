@@ -1,0 +1,242 @@
+[
+  {
+    "id": "table.userPropertyRelationship",
+    "label": "Create table \"userPropertyRelationship\"",
+    "summary": "Creates table \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"userPropertyRelationship\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"userPropertyRelationship\"",
+        "sql": "CREATE TABLE \"public\".\"userPropertyRelationship\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"endedAt\" timestamptz,\n  \"endedAtPrecision\" text,\n  \"id\" text NOT NULL,\n  \"propertyId\" text NOT NULL,\n  \"relationshipType\" text NOT NULL,\n  \"startedAt\" timestamptz NOT NULL,\n  \"startedAtPrecision\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"userPropertyRelationship_endedAtPrecision_check_50e083ac\" CHECK (\"endedAtPrecision\" IN ('DAY', 'MONTH', 'YEAR', 'INFERRED')),\n  CONSTRAINT \"userPropertyRelationship_relationshipType_check_f0306419\" CHECK (\"relationshipType\" IN ('TENANT', 'RESIDENT', 'AGENT', 'LANDLORD', 'VISITOR', 'NEIGHBOR', 'RANDO')),\n  CONSTRAINT \"userPropertyRelationship_startedAtPrecision_check_5ada6fd0\" CHECK (\"startedAtPrecision\" IN ('DAY', 'MONTH', 'YEAR', 'INFERRED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"userPropertyRelationship\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.userPropertyRelationship.upr_property_type_idx_517f7bc3",
+    "label": "Create index \"upr_property_type_idx_517f7bc3\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "upr_property_type_idx_517f7bc3",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"upr_property_type_idx_517f7bc3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"upr_property_type_idx_517f7bc3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"upr_property_type_idx_517f7bc3\"",
+        "sql": "CREATE INDEX \"upr_property_type_idx_517f7bc3\" ON \"public\".\"userPropertyRelationship\" (\"propertyId\", \"relationshipType\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"upr_property_type_idx_517f7bc3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"upr_property_type_idx_517f7bc3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.userPropertyRelationship.userPropertyRelationship_propertyId_idx_4bcae41c",
+    "label": "Create index \"userPropertyRelationship_propertyId_idx_4bcae41c\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "userPropertyRelationship_propertyId_idx_4bcae41c",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"userPropertyRelationship_propertyId_idx_4bcae41c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship_propertyId_idx_4bcae41c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"userPropertyRelationship_propertyId_idx_4bcae41c\"",
+        "sql": "CREATE INDEX \"userPropertyRelationship_propertyId_idx_4bcae41c\" ON \"public\".\"userPropertyRelationship\" (\"propertyId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"userPropertyRelationship_propertyId_idx_4bcae41c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship_propertyId_idx_4bcae41c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.userPropertyRelationship.userPropertyRelationship_userId_idx_a489d58a",
+    "label": "Create index \"userPropertyRelationship_userId_idx_a489d58a\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "userPropertyRelationship_userId_idx_a489d58a",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"userPropertyRelationship_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"userPropertyRelationship_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"userPropertyRelationship_userId_idx_a489d58a\" ON \"public\".\"userPropertyRelationship\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"userPropertyRelationship_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.userPropertyRelationship.userPropertyRelationship_userId_fkey",
+    "label": "Add foreign key \"userPropertyRelationship_userId_fkey\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "userPropertyRelationship_userId_fkey",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"userPropertyRelationship_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userPropertyRelationship_userId_fkey",
+          "public",
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"userPropertyRelationship_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"userPropertyRelationship\"\nADD CONSTRAINT \"userPropertyRelationship_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"userPropertyRelationship_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userPropertyRelationship_userId_fkey",
+          "public",
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.userPropertyRelationship.userPropertyRelationship_propertyId_fkey",
+    "label": "Add foreign key \"userPropertyRelationship_propertyId_fkey\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "userPropertyRelationship_propertyId_fkey",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"userPropertyRelationship_propertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userPropertyRelationship_propertyId_fkey",
+          "public",
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"userPropertyRelationship_propertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"userPropertyRelationship\"\nADD CONSTRAINT \"userPropertyRelationship_propertyId_fkey\"\nFOREIGN KEY (\"propertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"userPropertyRelationship_propertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userPropertyRelationship_propertyId_fkey",
+          "public",
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ]
+  }
+]

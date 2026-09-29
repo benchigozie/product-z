@@ -37,6 +37,7 @@ export class AuthController {
   async register(
     @Body() body: RegisterDto,
   ) {
+    console.log('Register request body:', body);
     return this.authService.register(body);
   }
 
@@ -45,6 +46,8 @@ export class AuthController {
     @Body() body: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ) {
+
+    console.log('Login request body:', body);
     const result = await this.authService.login(body);
 
     response.cookie('session', result.session.token, {
@@ -90,12 +93,6 @@ export class AuthController {
     return {
       message: 'Logged out successfully',
     };
-  }
-
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  googleAuth() {
-    // Passport redirects the user to Google.
   }
 
   @Get('google/callback')

@@ -103,6 +103,7 @@ model Property {
   observations Observation[]
   parentRelationships PropertyRelationship[] @relation("PropertyAsParent")
   childRelationships  PropertyRelationship[] @relation("PropertyAsChild")
+  userRelationships UserPropertyRelationship[]
 }
 
 model PropertyRelationship {
@@ -168,6 +169,7 @@ model User {
 
   sessions Session[]
   observations Observation[]
+  propertyRelationships UserPropertyRelationship[]
 
   verificationTokens VerificationToken[]
 
@@ -320,5 +322,62 @@ model Observation {
   property Property? @relation(fields: [propertyId], references: [id])
   place    Place?    @relation(fields: [placeId], references: [id])
   user User? @relation(fields: [userId], references: [id])
+}
+
+
+enum VerificationStatus {
+  @@type("pg/text@1")
+
+  PENDING
+  VERIFIED
+  REJECTED
+  REVOKED
+}
+
+
+enum UserPropertyRelationshipType {
+  @@type("pg/text@1")
+
+  TENANT
+  RESIDENT
+  AGENT
+  LANDLORD
+  VISITOR
+  NEIGHBOR
+  RANDO
+}
+
+enum RelationshipDatePrecision {
+  @@type("pg/text@1")
+
+  DAY
+  MONTH
+  YEAR
+  INFERRED
+}
+
+model UserPropertyRelationship {
+  id String @id @default(cuid(2))
+
+  userId     String
+  propertyId String
+
+  relationshipType UserPropertyRelationshipType
+
+  startedAt          DateTime
+  startedAtPrecision RelationshipDatePrecision
+
+  endedAt          DateTime?
+  endedAtPrecision RelationshipDatePrecision?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  user     User     @relation(fields: [userId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+
+  @@index([userId])
+  @@index([propertyId])
+  @@index([propertyId, relationshipType], name: "upr_property_type_idx")
 }
 

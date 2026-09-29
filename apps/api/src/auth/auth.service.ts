@@ -44,7 +44,10 @@ import {
 
     async login(data: { email: string; password: string }) {
 
+      console.log('Login data:', data);
+
       const user = await this.userService.findByEmail(data.email);
+
     
       if (!user) {
         throw new UnauthorizedException('Invalid email or password');

@@ -9,6 +9,7 @@ import { PasswordModule } from '../password/password.module.js';
 import { SessionAuthGuard } from './guards/session-auth.guard.js';
 import { GoogleStrategy } from './google.strategy.js';
 import { PassportModule } from '@nestjs/passport';
+import { UserPropertyRelationshipModule } from '../user-property-relationship/user-property-relationship.module.js';
 
 
 @Module({
@@ -17,7 +18,7 @@ import { PassportModule } from '@nestjs/passport';
     SessionModule,
     PasswordModule,
     PassportModule,
-
+    UserPropertyRelationshipModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, SessionAuthGuard, GoogleStrategy],

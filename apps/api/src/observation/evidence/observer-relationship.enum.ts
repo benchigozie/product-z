@@ -1,0 +1,12 @@
+export enum ObserverRelationship {
+    RESIDENT = 'RESIDENT',
+    TENANT = 'TENANT',  
+    FORMER_RESIDENT = 'FORMER_RESIDENT',
+    VISITOR = 'VISITOR',
+    INSPECTOR = 'INSPECTOR',
+    AGENT = 'AGENT',
+    LANDLORD = 'LANDLORD',
+    PROPERTY_OWNER = 'PROPERTY_OWNER',
+    NEIGHBOR = 'NEIGHBOR',
+    OTHER = 'OTHER',
+  }

@@ -48,6 +48,10 @@
       "model": "UserProfile",
       "namespace": "public"
     },
+    "userPropertyRelationship": {
+      "model": "UserPropertyRelationship",
+      "namespace": "public"
+    },
     "verificationToken": {
       "model": "VerificationToken",
       "namespace": "public"
@@ -210,6 +214,60 @@
               }
             ]
           },
+          "RelationshipDatePrecision": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "DAY",
+                "value": "DAY"
+              },
+              {
+                "name": "MONTH",
+                "value": "MONTH"
+              },
+              {
+                "name": "YEAR",
+                "value": "YEAR"
+              },
+              {
+                "name": "INFERRED",
+                "value": "INFERRED"
+              }
+            ]
+          },
+          "UserPropertyRelationshipType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "TENANT",
+                "value": "TENANT"
+              },
+              {
+                "name": "RESIDENT",
+                "value": "RESIDENT"
+              },
+              {
+                "name": "AGENT",
+                "value": "AGENT"
+              },
+              {
+                "name": "LANDLORD",
+                "value": "LANDLORD"
+              },
+              {
+                "name": "VISITOR",
+                "value": "VISITOR"
+              },
+              {
+                "name": "NEIGHBOR",
+                "value": "NEIGHBOR"
+              },
+              {
+                "name": "RANDO",
+                "value": "RANDO"
+              }
+            ]
+          },
           "UserStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -228,6 +286,27 @@
               {
                 "name": "DELETED",
                 "value": "DELETED"
+              }
+            ]
+          },
+          "VerificationStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "VERIFIED",
+                "value": "VERIFIED"
+              },
+              {
+                "name": "REJECTED",
+                "value": "REJECTED"
+              },
+              {
+                "name": "REVOKED",
+                "value": "REVOKED"
               }
             ]
           },
@@ -1007,6 +1086,21 @@
                   "model": "State",
                   "namespace": "public"
                 }
+              },
+              "userRelationships": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "propertyId"
+                  ]
+                },
+                "to": {
+                  "model": "UserPropertyRelationship",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -1452,6 +1546,21 @@
                   "namespace": "public"
                 }
               },
+              "propertyRelationships": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "UserPropertyRelationship",
+                  "namespace": "public"
+                }
+              },
               "sessions": {
                 "cardinality": "1:N",
                 "on": {
@@ -1606,6 +1715,166 @@
               },
               "namespaceId": "public",
               "table": "userProfile"
+            }
+          },
+          "UserPropertyRelationship": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "endedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "endedAtPrecision": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "RelationshipDatePrecision",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "propertyId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "relationshipType": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "UserPropertyRelationshipType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "startedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "startedAtPrecision": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "RelationshipDatePrecision",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "property": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "propertyId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Property",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "endedAt": {
+                  "column": "endedAt"
+                },
+                "endedAtPrecision": {
+                  "column": "endedAtPrecision"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "propertyId": {
+                  "column": "propertyId"
+                },
+                "relationshipType": {
+                  "column": "relationshipType"
+                },
+                "startedAt": {
+                  "column": "startedAt"
+                },
+                "startedAtPrecision": {
+                  "column": "startedAtPrecision"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "userPropertyRelationship"
             }
           },
           "VerificationToken": {
@@ -2753,6 +3022,166 @@
                 }
               ]
             },
+            "userPropertyRelationship": {
+              "checks": [
+                {
+                  "expression": "\"endedAtPrecision\" IN ('DAY', 'MONTH', 'YEAR', 'INFERRED')",
+                  "name": "userPropertyRelationship_endedAtPrecision_check_50e083ac",
+                  "prefix": "userPropertyRelationship_endedAtPrecision_check"
+                },
+                {
+                  "expression": "\"relationshipType\" IN ('TENANT', 'RESIDENT', 'AGENT', 'LANDLORD', 'VISITOR', 'NEIGHBOR', 'RANDO')",
+                  "name": "userPropertyRelationship_relationshipType_check_f0306419",
+                  "prefix": "userPropertyRelationship_relationshipType_check"
+                },
+                {
+                  "expression": "\"startedAtPrecision\" IN ('DAY', 'MONTH', 'YEAR', 'INFERRED')",
+                  "name": "userPropertyRelationship_startedAtPrecision_check_5ada6fd0",
+                  "prefix": "userPropertyRelationship_startedAtPrecision_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "endedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "endedAtPrecision": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RelationshipDatePrecision",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "propertyId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "relationshipType": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "UserPropertyRelationshipType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "startedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "startedAtPrecision": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RelationshipDatePrecision",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "userPropertyRelationship"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "propertyId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "userPropertyRelationship"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "property"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "propertyId",
+                    "relationshipType"
+                  ],
+                  "name": "upr_property_type_idx_517f7bc3",
+                  "prefix": "upr_property_type_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "propertyId"
+                  ],
+                  "name": "userPropertyRelationship_propertyId_idx_4bcae41c",
+                  "prefix": "userPropertyRelationship_propertyId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "userPropertyRelationship_userId_idx_a489d58a",
+                  "prefix": "userPropertyRelationship_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "verificationToken": {
               "checks": [
                 {
@@ -2904,6 +3333,27 @@
                 "LAND"
               ]
             },
+            "RelationshipDatePrecision": {
+              "kind": "valueSet",
+              "values": [
+                "DAY",
+                "MONTH",
+                "YEAR",
+                "INFERRED"
+              ]
+            },
+            "UserPropertyRelationshipType": {
+              "kind": "valueSet",
+              "values": [
+                "TENANT",
+                "RESIDENT",
+                "AGENT",
+                "LANDLORD",
+                "VISITOR",
+                "NEIGHBOR",
+                "RANDO"
+              ]
+            },
             "UserStatus": {
               "kind": "valueSet",
               "values": [
@@ -2911,6 +3361,15 @@
                 "SUSPENDED",
                 "BANNED",
                 "DELETED"
+              ]
+            },
+            "VerificationStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "VERIFIED",
+                "REJECTED",
+                "REVOKED"
               ]
             },
             "VerificationTokenType": {
@@ -2927,10 +3386,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "91703ed3f920752fa5459e88401b5ff0d515a2fef3aed64dffd52e7e6aa35cf2"
+    "storageHash": "9b464fb2b853158a6c56fd7ad1abee9b6a81b9b55db708147028e618544b895f"
   },
   "execution": {
-    "executionHash": "81a2f559c370000a76f04b78468ee286caa45cacbd5fe35f79ef0cae2c0eddbf",
+    "executionHash": "abb7726c6030ab7e7730378161322e90574200cc96d0c247b4a4190a516170d9",
     "mutations": {
       "defaults": [
         {
@@ -3097,6 +3556,32 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "userProfile"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "userPropertyRelationship"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "userPropertyRelationship"
           }
         },
         {
