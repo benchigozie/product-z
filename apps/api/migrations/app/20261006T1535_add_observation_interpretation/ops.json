@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.observation.interpretation",
+    "label": "Add column \"interpretation\" to \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "interpretation",
+        "table": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"interpretation\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "observation",
+          "interpretation"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"interpretation\"",
+        "sql": "ALTER TABLE \"public\".\"observation\" ADD COLUMN \"interpretation\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"interpretation\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "observation",
+          "interpretation"
+        ]
+      }
+    ]
+  }
+]

@@ -7,6 +7,7 @@ import type {
   UserPropertyRelationshipListResult,
   UserPropertyRelationshipResult,
 } from './types/user-property-relationship-result.type.js';
+import { UserPropertyRelationshipType } from './enums/user-property-relationship-type.enum.js';
 
 @Injectable()
 export class UserPropertyRelationshipRepository {
@@ -69,6 +70,20 @@ export class UserPropertyRelationshipRepository {
   ): Promise<UserPropertyRelationshipListResult> {
     return this.prisma.db.orm.public.UserPropertyRelationship
       .where({ propertyId })
+      .all();
+  }
+
+  async findByUserPropertyAndType(
+    userId: string,
+    propertyId: string,
+    relationshipType: UserPropertyRelationshipType,
+  ): Promise<UserPropertyRelationshipListResult> {
+    return this.prisma.db.orm.public.UserPropertyRelationship
+      .where({
+        userId,
+        propertyId,
+        relationshipType,
+      })
       .all();
   }
 }

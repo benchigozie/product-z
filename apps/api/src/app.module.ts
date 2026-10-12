@@ -10,6 +10,7 @@ import { StateModule } from './state/state.module.js';
 import { PropertyRelationshipModule } from './property-relationship/property-relationship.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ObservationModule } from './observation/observation.module.js';
+import { IntelligenceModule } from './intelligence/intelligence.module.js';
 
 
 @Module({
@@ -25,7 +26,8 @@ import { ObservationModule } from './observation/observation.module.js';
     StateModule,
     PropertyRelationshipModule,
     AuthModule,
-    ObservationModule
+    ObservationModule,
+    IntelligenceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

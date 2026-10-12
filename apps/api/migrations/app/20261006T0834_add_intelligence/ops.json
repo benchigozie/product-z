@@ -1,0 +1,326 @@
+[
+  {
+    "id": "table.intelligence",
+    "label": "Create table \"intelligence\"",
+    "summary": "Creates table \"intelligence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"intelligence\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"intelligence\"",
+        "sql": "CREATE TABLE \"public\".\"intelligence\" (\n  \"categories\" json NOT NULL,\n  \"computedAt\" timestamptz,\n  \"considerations\" json NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"evidenceThrough\" timestamptz,\n  \"failureReason\" text,\n  \"id\" text NOT NULL,\n  \"overall\" json NOT NULL,\n  \"placeId\" text,\n  \"propertyId\" text,\n  \"status\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"intelligence_status_check_38a5fb20\" CHECK (\"status\" IN ('PENDING', 'PROCESSING', 'CURRENT', 'FAILED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"intelligence\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.intelligence.intelligence_propertyId_key",
+    "label": "Add unique constraint on \"intelligence\" (propertyId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "intelligence_propertyId_key",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"intelligence_propertyId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_propertyId_key",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"intelligence_propertyId_key\"",
+        "sql": "ALTER TABLE \"public\".\"intelligence\" ADD CONSTRAINT \"intelligence_propertyId_key\" UNIQUE (\"propertyId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"intelligence_propertyId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_propertyId_key",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.intelligence.intelligence_placeId_key",
+    "label": "Add unique constraint on \"intelligence\" (placeId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "intelligence_placeId_key",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"intelligence_placeId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_placeId_key",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"intelligence_placeId_key\"",
+        "sql": "ALTER TABLE \"public\".\"intelligence\" ADD CONSTRAINT \"intelligence_placeId_key\" UNIQUE (\"placeId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"intelligence_placeId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_placeId_key",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.intelligence.intelligence_placeId_idx_918e92e1",
+    "label": "Create index \"intelligence_placeId_idx_918e92e1\" on \"intelligence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "intelligence_placeId_idx_918e92e1",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"intelligence_placeId_idx_918e92e1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"intelligence_placeId_idx_918e92e1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"intelligence_placeId_idx_918e92e1\"",
+        "sql": "CREATE INDEX \"intelligence_placeId_idx_918e92e1\" ON \"public\".\"intelligence\" (\"placeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"intelligence_placeId_idx_918e92e1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"intelligence_placeId_idx_918e92e1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.intelligence.intelligence_propertyId_idx_4bcae41c",
+    "label": "Create index \"intelligence_propertyId_idx_4bcae41c\" on \"intelligence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "intelligence_propertyId_idx_4bcae41c",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"intelligence_propertyId_idx_4bcae41c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"intelligence_propertyId_idx_4bcae41c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"intelligence_propertyId_idx_4bcae41c\"",
+        "sql": "CREATE INDEX \"intelligence_propertyId_idx_4bcae41c\" ON \"public\".\"intelligence\" (\"propertyId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"intelligence_propertyId_idx_4bcae41c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"intelligence_propertyId_idx_4bcae41c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.intelligence.intelligence_status_idx_e98638ab",
+    "label": "Create index \"intelligence_status_idx_e98638ab\" on \"intelligence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "intelligence_status_idx_e98638ab",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"intelligence_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"intelligence_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"intelligence_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"intelligence_status_idx_e98638ab\" ON \"public\".\"intelligence\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"intelligence_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"intelligence_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.intelligence.intelligence_propertyId_fkey",
+    "label": "Add foreign key \"intelligence_propertyId_fkey\" on \"intelligence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "intelligence_propertyId_fkey",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"intelligence_propertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_propertyId_fkey",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"intelligence_propertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"intelligence\"\nADD CONSTRAINT \"intelligence_propertyId_fkey\"\nFOREIGN KEY (\"propertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"intelligence_propertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_propertyId_fkey",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.intelligence.intelligence_placeId_fkey",
+    "label": "Add foreign key \"intelligence_placeId_fkey\" on \"intelligence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "intelligence_placeId_fkey",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"intelligence_placeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_placeId_fkey",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"intelligence_placeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"intelligence\"\nADD CONSTRAINT \"intelligence_placeId_fkey\"\nFOREIGN KEY (\"placeId\")\nREFERENCES \"public\".\"place\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"intelligence_placeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_placeId_fkey",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ]
+  }
+]

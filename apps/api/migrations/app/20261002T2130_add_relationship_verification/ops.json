@@ -1,0 +1,608 @@
+[
+  {
+    "id": "dropCheckConstraint.property.property_propertyType_check_f6c633bf",
+    "label": "Drop check constraint \"property_propertyType_check_f6c633bf\" on \"property\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "property_propertyType_check_f6c633bf",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"property_propertyType_check_f6c633bf\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_propertyType_check_f6c633bf",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"property_propertyType_check_f6c633bf\"",
+        "sql": "ALTER TABLE \"public\".\"property\" DROP CONSTRAINT \"property_propertyType_check_f6c633bf\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"property_propertyType_check_f6c633bf\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_propertyType_check_f6c633bf",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.relationshipVerification",
+    "label": "Create table \"relationshipVerification\"",
+    "summary": "Creates table \"relationshipVerification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "relationshipVerification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"relationshipVerification\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"relationshipVerification\"",
+        "sql": "CREATE TABLE \"public\".\"relationshipVerification\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"evidence\" json,\n  \"expiresAt\" timestamptz,\n  \"id\" text NOT NULL,\n  \"method\" text NOT NULL,\n  \"relationshipId\" text NOT NULL,\n  \"reviewerId\" text,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"verifiedAt\" timestamptz,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"relationshipVerification_method_check_1b3738cb\" CHECK (\"method\" IN ('PROPERTY_EVIDENCE', 'ADMIN_REVIEW')),\n  CONSTRAINT \"relationshipVerification_status_check_3e7b08b2\" CHECK (\"status\" IN ('PENDING', 'VERIFIED', 'REJECTED', 'REVOKED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"relationshipVerification\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.userPropertyRelationship",
+    "label": "Create table \"userPropertyRelationship\"",
+    "summary": "Creates table \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"userPropertyRelationship\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"userPropertyRelationship\"",
+        "sql": "CREATE TABLE \"public\".\"userPropertyRelationship\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"endedAt\" timestamptz,\n  \"endedAtPrecision\" text,\n  \"id\" text NOT NULL,\n  \"propertyId\" text NOT NULL,\n  \"relationshipType\" text NOT NULL,\n  \"startedAt\" timestamptz NOT NULL,\n  \"startedAtPrecision\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"userPropertyRelationship_endedAtPrecision_check_50e083ac\" CHECK (\"endedAtPrecision\" IN ('DAY', 'MONTH', 'YEAR', 'INFERRED')),\n  CONSTRAINT \"userPropertyRelationship_relationshipType_check_f0306419\" CHECK (\"relationshipType\" IN ('TENANT', 'RESIDENT', 'AGENT', 'LANDLORD', 'VISITOR', 'NEIGHBOR', 'RANDO')),\n  CONSTRAINT \"userPropertyRelationship_startedAtPrecision_check_5ada6fd0\" CHECK (\"startedAtPrecision\" IN ('DAY', 'MONTH', 'YEAR', 'INFERRED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"userPropertyRelationship\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.observation.userId",
+    "label": "Add column \"userId\" to \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "userId",
+        "table": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"userId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "observation",
+          "userId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"userId\"",
+        "sql": "ALTER TABLE \"public\".\"observation\" ADD COLUMN \"userId\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"userId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "observation",
+          "userId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.property.property_propertyType_check_3d6185d3",
+    "label": "Add check constraint \"property_propertyType_check_3d6185d3\" on \"property\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "property_propertyType_check_3d6185d3",
+        "table": "property"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"property_propertyType_check_3d6185d3\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_propertyType_check_3d6185d3",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"property_propertyType_check_3d6185d3\"",
+        "sql": "ALTER TABLE \"public\".\"property\" ADD CONSTRAINT \"property_propertyType_check_3d6185d3\" CHECK (\"propertyType\" IN ('ESTATE', 'COMPOUND', 'BUILDING', 'HOUSE', 'APARTMENT', 'HOSTEL', 'UNIT', 'SHOP', 'OFFICE', 'WAREHOUSE', 'LAND'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"property_propertyType_check_3d6185d3\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "property_propertyType_check_3d6185d3",
+          "public",
+          "\"public\".\"property\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.observation.observation_userId_idx_a489d58a",
+    "label": "Create index \"observation_userId_idx_a489d58a\" on \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "observation_userId_idx_a489d58a",
+        "table": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"observation_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"observation_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"observation_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"observation_userId_idx_a489d58a\" ON \"public\".\"observation\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"observation_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"observation_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.relationshipVerification.relationshipVerification_relationshipId_idx_51f7e2f7",
+    "label": "Create index \"relationshipVerification_relationshipId_idx_51f7e2f7\" on \"relationshipVerification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "relationshipVerification_relationshipId_idx_51f7e2f7",
+        "table": "relationshipVerification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"relationshipVerification_relationshipId_idx_51f7e2f7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification_relationshipId_idx_51f7e2f7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"relationshipVerification_relationshipId_idx_51f7e2f7\"",
+        "sql": "CREATE INDEX \"relationshipVerification_relationshipId_idx_51f7e2f7\" ON \"public\".\"relationshipVerification\" (\"relationshipId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"relationshipVerification_relationshipId_idx_51f7e2f7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification_relationshipId_idx_51f7e2f7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.relationshipVerification.relationshipVerification_status_idx_e98638ab",
+    "label": "Create index \"relationshipVerification_status_idx_e98638ab\" on \"relationshipVerification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "relationshipVerification_status_idx_e98638ab",
+        "table": "relationshipVerification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"relationshipVerification_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"relationshipVerification_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"relationshipVerification_status_idx_e98638ab\" ON \"public\".\"relationshipVerification\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"relationshipVerification_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.userPropertyRelationship.upr_property_type_idx_517f7bc3",
+    "label": "Create index \"upr_property_type_idx_517f7bc3\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "upr_property_type_idx_517f7bc3",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"upr_property_type_idx_517f7bc3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"upr_property_type_idx_517f7bc3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"upr_property_type_idx_517f7bc3\"",
+        "sql": "CREATE INDEX \"upr_property_type_idx_517f7bc3\" ON \"public\".\"userPropertyRelationship\" (\"propertyId\", \"relationshipType\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"upr_property_type_idx_517f7bc3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"upr_property_type_idx_517f7bc3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.userPropertyRelationship.userPropertyRelationship_propertyId_idx_4bcae41c",
+    "label": "Create index \"userPropertyRelationship_propertyId_idx_4bcae41c\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "userPropertyRelationship_propertyId_idx_4bcae41c",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"userPropertyRelationship_propertyId_idx_4bcae41c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship_propertyId_idx_4bcae41c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"userPropertyRelationship_propertyId_idx_4bcae41c\"",
+        "sql": "CREATE INDEX \"userPropertyRelationship_propertyId_idx_4bcae41c\" ON \"public\".\"userPropertyRelationship\" (\"propertyId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"userPropertyRelationship_propertyId_idx_4bcae41c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship_propertyId_idx_4bcae41c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.userPropertyRelationship.userPropertyRelationship_userId_idx_a489d58a",
+    "label": "Create index \"userPropertyRelationship_userId_idx_a489d58a\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "userPropertyRelationship_userId_idx_a489d58a",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"userPropertyRelationship_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"userPropertyRelationship_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"userPropertyRelationship_userId_idx_a489d58a\" ON \"public\".\"userPropertyRelationship\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"userPropertyRelationship_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userPropertyRelationship_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.observation.observation_userId_fkey",
+    "label": "Add foreign key \"observation_userId_fkey\" on \"observation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "observation_userId_fkey",
+        "table": "observation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"observation_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "observation_userId_fkey",
+          "public",
+          "\"public\".\"observation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"observation_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"observation\"\nADD CONSTRAINT \"observation_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"observation_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "observation_userId_fkey",
+          "public",
+          "\"public\".\"observation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.relationshipVerification.relationshipVerification_relationshipId_fkey",
+    "label": "Add foreign key \"relationshipVerification_relationshipId_fkey\" on \"relationshipVerification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "relationshipVerification_relationshipId_fkey",
+        "table": "relationshipVerification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"relationshipVerification_relationshipId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "relationshipVerification_relationshipId_fkey",
+          "public",
+          "\"public\".\"relationshipVerification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"relationshipVerification_relationshipId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"relationshipVerification\"\nADD CONSTRAINT \"relationshipVerification_relationshipId_fkey\"\nFOREIGN KEY (\"relationshipId\")\nREFERENCES \"public\".\"userPropertyRelationship\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"relationshipVerification_relationshipId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "relationshipVerification_relationshipId_fkey",
+          "public",
+          "\"public\".\"relationshipVerification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.userPropertyRelationship.userPropertyRelationship_userId_fkey",
+    "label": "Add foreign key \"userPropertyRelationship_userId_fkey\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "userPropertyRelationship_userId_fkey",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"userPropertyRelationship_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userPropertyRelationship_userId_fkey",
+          "public",
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"userPropertyRelationship_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"userPropertyRelationship\"\nADD CONSTRAINT \"userPropertyRelationship_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"userPropertyRelationship_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userPropertyRelationship_userId_fkey",
+          "public",
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.userPropertyRelationship.userPropertyRelationship_propertyId_fkey",
+    "label": "Add foreign key \"userPropertyRelationship_propertyId_fkey\" on \"userPropertyRelationship\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "userPropertyRelationship_propertyId_fkey",
+        "table": "userPropertyRelationship"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"userPropertyRelationship_propertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userPropertyRelationship_propertyId_fkey",
+          "public",
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"userPropertyRelationship_propertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"userPropertyRelationship\"\nADD CONSTRAINT \"userPropertyRelationship_propertyId_fkey\"\nFOREIGN KEY (\"propertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"userPropertyRelationship_propertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userPropertyRelationship_propertyId_fkey",
+          "public",
+          "\"public\".\"userPropertyRelationship\""
+        ]
+      }
+    ]
+  }
+]

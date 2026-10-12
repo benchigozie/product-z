@@ -73,6 +73,7 @@ model Place {
 
   properties Property[]
   observations Observation[]
+  intelligence Intelligence?
 }
 
 model Property {
@@ -104,6 +105,7 @@ model Property {
   parentRelationships PropertyRelationship[] @relation("PropertyAsParent")
   childRelationships  PropertyRelationship[] @relation("PropertyAsChild")
   userRelationships UserPropertyRelationship[]
+  intelligence Intelligence?
 }
 
 model PropertyRelationship {
@@ -322,17 +324,9 @@ model Observation {
   property Property? @relation(fields: [propertyId], references: [id])
   place    Place?    @relation(fields: [placeId], references: [id])
   user User? @relation(fields: [userId], references: [id])
+  interpretation Json?
 }
 
-
-enum VerificationStatus {
-  @@type("pg/text@1")
-
-  PENDING
-  VERIFIED
-  REJECTED
-  REVOKED
-}
 
 
 enum UserPropertyRelationshipType {
@@ -375,9 +369,81 @@ model UserPropertyRelationship {
 
   user     User     @relation(fields: [userId], references: [id])
   property Property @relation(fields: [propertyId], references: [id])
+  verificationRecords RelationshipVerification[]
 
   @@index([userId])
   @@index([propertyId])
   @@index([propertyId, relationshipType], name: "upr_property_type_idx")
+}
+
+enum RelationshipVerificationStatus {
+  @@type("pg/text@1")
+  PENDING
+  VERIFIED
+  REJECTED
+  REVOKED
+}
+
+enum RelationshipVerificationMethod {
+  @@type("pg/text@1")
+  PROPERTY_EVIDENCE
+  ADMIN_REVIEW
+}
+
+model RelationshipVerification {
+  id             String                           @id @default(cuid(2))
+  relationshipId String
+  status         RelationshipVerificationStatus  @default(PENDING)
+  method         RelationshipVerificationMethod
+  verifiedAt     DateTime?
+  expiresAt      DateTime?
+  reviewerId     String?
+  evidence       Json?
+  createdAt      temporal.createdAt()
+  updatedAt      temporal.updatedAt()
+
+  relationship UserPropertyRelationship @relation(
+    fields: [relationshipId],
+    references: [id]
+  )
+
+  @@index([relationshipId])
+  @@index([status])
+}
+
+
+enum IntelligenceStatus {
+  @@type("pg/text@1")
+  PENDING
+  PROCESSING
+  CURRENT
+  FAILED
+}
+
+model Intelligence {
+  id String @id @default(cuid(2))
+
+  propertyId String? @unique
+  placeId    String? @unique
+
+  status IntelligenceStatus
+
+  categories     Json
+  overall        Json
+  considerations Json
+
+  computedAt      DateTime?
+  evidenceThrough DateTime?
+  failureReason   String?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  property Property? @relation(fields: [propertyId], references: [id])
+  place    Place?    @relation(fields: [placeId], references: [id])
+
+  @@index([propertyId])
+  @@index([placeId])
+  @@index([status])
 }
 

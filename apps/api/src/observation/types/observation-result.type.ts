@@ -5,5 +5,4 @@ export type ObservationResult = Awaited<
     PrismaService['db']['orm']['public']['Observation']['first']
   >
 >;
-
-export type ObservationListResult = ObservationResult[];
+export type ObservationListResult = NonNullable<ObservationResult>[];

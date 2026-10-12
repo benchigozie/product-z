@@ -1,0 +1,161 @@
+[
+  {
+    "id": "table.relationshipVerification",
+    "label": "Create table \"relationshipVerification\"",
+    "summary": "Creates table \"relationshipVerification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "relationshipVerification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"relationshipVerification\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"relationshipVerification\"",
+        "sql": "CREATE TABLE \"public\".\"relationshipVerification\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"evidence\" json,\n  \"expiresAt\" timestamptz,\n  \"id\" text NOT NULL,\n  \"method\" text NOT NULL,\n  \"relationshipId\" text NOT NULL,\n  \"reviewerId\" text,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"verifiedAt\" timestamptz,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"relationshipVerification_method_check_1b3738cb\" CHECK (\"method\" IN ('PROPERTY_EVIDENCE', 'ADMIN_REVIEW')),\n  CONSTRAINT \"relationshipVerification_status_check_3e7b08b2\" CHECK (\"status\" IN ('PENDING', 'VERIFIED', 'REJECTED', 'REVOKED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"relationshipVerification\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.relationshipVerification.relationshipVerification_relationshipId_idx_51f7e2f7",
+    "label": "Create index \"relationshipVerification_relationshipId_idx_51f7e2f7\" on \"relationshipVerification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "relationshipVerification_relationshipId_idx_51f7e2f7",
+        "table": "relationshipVerification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"relationshipVerification_relationshipId_idx_51f7e2f7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification_relationshipId_idx_51f7e2f7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"relationshipVerification_relationshipId_idx_51f7e2f7\"",
+        "sql": "CREATE INDEX \"relationshipVerification_relationshipId_idx_51f7e2f7\" ON \"public\".\"relationshipVerification\" (\"relationshipId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"relationshipVerification_relationshipId_idx_51f7e2f7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification_relationshipId_idx_51f7e2f7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.relationshipVerification.relationshipVerification_status_idx_e98638ab",
+    "label": "Create index \"relationshipVerification_status_idx_e98638ab\" on \"relationshipVerification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "relationshipVerification_status_idx_e98638ab",
+        "table": "relationshipVerification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"relationshipVerification_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"relationshipVerification_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"relationshipVerification_status_idx_e98638ab\" ON \"public\".\"relationshipVerification\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"relationshipVerification_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"relationshipVerification_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.relationshipVerification.relationshipVerification_relationshipId_fkey",
+    "label": "Add foreign key \"relationshipVerification_relationshipId_fkey\" on \"relationshipVerification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "relationshipVerification_relationshipId_fkey",
+        "table": "relationshipVerification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"relationshipVerification_relationshipId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "relationshipVerification_relationshipId_fkey",
+          "public",
+          "\"public\".\"relationshipVerification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"relationshipVerification_relationshipId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"relationshipVerification\"\nADD CONSTRAINT \"relationshipVerification_relationshipId_fkey\"\nFOREIGN KEY (\"relationshipId\")\nREFERENCES \"public\".\"userPropertyRelationship\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"relationshipVerification_relationshipId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "relationshipVerification_relationshipId_fkey",
+          "public",
+          "\"public\".\"relationshipVerification\""
+        ]
+      }
+    ]
+  }
+]

@@ -6,10 +6,11 @@ import { CreateObservationDto } from './dto/create-observation.dto.js';
 import type { PropertyResult } from '../property/types/property-result.type.js';
 import type { PlaceResult } from '../place/types/place-result.type.js';
 import { Temporal } from '@js-temporal/polyfill';
+import type { ObservationInterpretation } from './types/observation-interpretation.type.js';
 import type {
-    ObservationListResult,
-    ObservationResult,
-  } from './types/observation-result.type.js';
+  ObservationListResult,
+  ObservationResult,
+} from './types/observation-result.type.js';
 
 type ObservationJsonValue =
   | string
@@ -19,17 +20,19 @@ type ObservationJsonValue =
   | ObservationJsonValue[]
   | { [key: string]: ObservationJsonValue };
 
+
+
 @Injectable()
 export class ObservationRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  async findPropertyById(propertyId: string) : Promise<PropertyResult | null> {
+  async findPropertyById(propertyId: string): Promise<PropertyResult | null> {
     return this.prisma.db.orm.public.Property.first({
       id: propertyId,
     });
   }
 
-  async findPlaceById(placeId: string) : Promise<PlaceResult | null> {
+  async findPlaceById(placeId: string): Promise<PlaceResult | null> {
     return this.prisma.db.orm.public.Place.first({
       id: placeId,
     });
@@ -65,9 +68,13 @@ export class ObservationRepository {
       )
       .build();
 
-    const result = await this.prisma.db.runtime().query(plan);
+    const [observation] = await this.prisma.db.runtime().query(plan);
 
-    return result;
+    if (!observation) {
+      throw new Error('Failed to create observation');
+    }
+
+    return observation;
   }
 
   async findById(id: string): Promise<ObservationResult> {
@@ -88,5 +95,29 @@ export class ObservationRepository {
     return this.prisma.db.orm.public.Observation
       .where({ placeId })
       .all();
+  }
+
+
+  async findByPropertyIds(
+    propertyIds: string[],
+  ): Promise<ObservationListResult> {
+    if (propertyIds.length === 0) {
+      return [];
+    }
+
+    return this.prisma.db.orm.public.Observation
+      .where((observation) => observation.propertyId.in(propertyIds))
+      .all();
+  }
+
+  async updateInterpretation(
+    observationId: string,
+    interpretation: ObservationInterpretation,
+  ): Promise<ObservationResult> {
+    return this.prisma.db.orm.public.Observation
+      .where({ id: observationId })
+      .update({
+        interpretation: interpretation as unknown as ObservationJsonValue,
+    });
   }
 }

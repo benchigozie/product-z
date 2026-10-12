@@ -8,6 +8,10 @@
       "model": "Country",
       "namespace": "public"
     },
+    "intelligence": {
+      "model": "Intelligence",
+      "namespace": "public"
+    },
     "oAuthAccount": {
       "model": "OAuthAccount",
       "namespace": "public"
@@ -30,6 +34,10 @@
     },
     "propertyRelationship": {
       "model": "PropertyRelationship",
+      "namespace": "public"
+    },
+    "relationshipVerification": {
+      "model": "RelationshipVerification",
       "namespace": "public"
     },
     "session": {
@@ -67,6 +75,27 @@
               {
                 "name": "GOOGLE",
                 "value": "GOOGLE"
+              }
+            ]
+          },
+          "IntelligenceStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "PROCESSING",
+                "value": "PROCESSING"
+              },
+              {
+                "name": "CURRENT",
+                "value": "CURRENT"
+              },
+              {
+                "name": "FAILED",
+                "value": "FAILED"
               }
             ]
           },
@@ -235,6 +264,40 @@
               }
             ]
           },
+          "RelationshipVerificationMethod": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PROPERTY_EVIDENCE",
+                "value": "PROPERTY_EVIDENCE"
+              },
+              {
+                "name": "ADMIN_REVIEW",
+                "value": "ADMIN_REVIEW"
+              }
+            ]
+          },
+          "RelationshipVerificationStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "VERIFIED",
+                "value": "VERIFIED"
+              },
+              {
+                "name": "REJECTED",
+                "value": "REJECTED"
+              },
+              {
+                "name": "REVOKED",
+                "value": "REVOKED"
+              }
+            ]
+          },
           "UserPropertyRelationshipType": {
             "codecId": "pg/text@1",
             "members": [
@@ -286,27 +349,6 @@
               {
                 "name": "DELETED",
                 "value": "DELETED"
-              }
-            ]
-          },
-          "VerificationStatus": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "PENDING",
-                "value": "PENDING"
-              },
-              {
-                "name": "VERIFIED",
-                "value": "VERIFIED"
-              },
-              {
-                "name": "REJECTED",
-                "value": "REJECTED"
-              },
-              {
-                "name": "REVOKED",
-                "value": "REVOKED"
               }
             ]
           },
@@ -384,6 +426,174 @@
               },
               "namespaceId": "public",
               "table": "country"
+            }
+          },
+          "Intelligence": {
+            "fields": {
+              "categories": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "computedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "considerations": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "evidenceThrough": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "failureReason": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "overall": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "placeId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "propertyId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "IntelligenceStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "place": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "placeId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Place",
+                  "namespace": "public"
+                }
+              },
+              "property": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "propertyId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Property",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "categories": {
+                  "column": "categories"
+                },
+                "computedAt": {
+                  "column": "computedAt"
+                },
+                "considerations": {
+                  "column": "considerations"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "evidenceThrough": {
+                  "column": "evidenceThrough"
+                },
+                "failureReason": {
+                  "column": "failureReason"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "overall": {
+                  "column": "overall"
+                },
+                "placeId": {
+                  "column": "placeId"
+                },
+                "propertyId": {
+                  "column": "propertyId"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "intelligence"
             }
           },
           "OAuthAccount": {
@@ -512,6 +722,13 @@
                   "kind": "scalar"
                 }
               },
+              "interpretation": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "observedAt": {
                 "nullable": false,
                 "type": {
@@ -611,6 +828,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "interpretation": {
+                  "column": "interpretation"
                 },
                 "observedAt": {
                   "column": "observedAt"
@@ -784,6 +1004,21 @@
                 },
                 "to": {
                   "model": "Place",
+                  "namespace": "public"
+                }
+              },
+              "intelligence": {
+                "cardinality": "1:1",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "placeId"
+                  ]
+                },
+                "to": {
+                  "model": "Intelligence",
                   "namespace": "public"
                 }
               },
@@ -1027,6 +1262,21 @@
                   "namespace": "public"
                 }
               },
+              "intelligence": {
+                "cardinality": "1:1",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "propertyId"
+                  ]
+                },
+                "to": {
+                  "model": "Intelligence",
+                  "namespace": "public"
+                }
+              },
               "observations": {
                 "cardinality": "1:N",
                 "on": {
@@ -1251,6 +1501,145 @@
               },
               "namespaceId": "public",
               "table": "propertyRelationship"
+            }
+          },
+          "RelationshipVerification": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "evidence": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "method": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "RelationshipVerificationMethod",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "relationshipId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reviewerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "RelationshipVerificationStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "verifiedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "relationship": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "relationshipId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "UserPropertyRelationship",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "evidence": {
+                  "column": "evidence"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "method": {
+                  "column": "method"
+                },
+                "relationshipId": {
+                  "column": "relationshipId"
+                },
+                "reviewerId": {
+                  "column": "reviewerId"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "verifiedAt": {
+                  "column": "verifiedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "relationshipVerification"
             }
           },
           "Session": {
@@ -1838,6 +2227,21 @@
                   "model": "User",
                   "namespace": "public"
                 }
+              },
+              "verificationRecords": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "relationshipId"
+                  ]
+                },
+                "to": {
+                  "model": "RelationshipVerification",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -2012,6 +2416,164 @@
                 }
               ]
             },
+            "intelligence": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'PROCESSING', 'CURRENT', 'FAILED')",
+                  "name": "intelligence_status_check_38a5fb20",
+                  "prefix": "intelligence_status_check"
+                }
+              ],
+              "columns": {
+                "categories": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": false
+                },
+                "computedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "considerations": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "evidenceThrough": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "failureReason": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "overall": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": false
+                },
+                "placeId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "propertyId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "IntelligenceStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "propertyId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "intelligence"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "property"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "placeId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "intelligence"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "place"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "placeId"
+                  ],
+                  "name": "intelligence_placeId_idx_918e92e1",
+                  "prefix": "intelligence_placeId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "propertyId"
+                  ],
+                  "name": "intelligence_propertyId_idx_4bcae41c",
+                  "prefix": "intelligence_propertyId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status"
+                  ],
+                  "name": "intelligence_status_idx_e98638ab",
+                  "prefix": "intelligence_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "propertyId"
+                  ]
+                },
+                {
+                  "columns": [
+                    "placeId"
+                  ]
+                }
+              ]
+            },
             "oAuthAccount": {
               "checks": [
                 {
@@ -2143,6 +2705,11 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "interpretation": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
                 },
                 "observedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
@@ -2725,6 +3292,134 @@
                 }
               ]
             },
+            "relationshipVerification": {
+              "checks": [
+                {
+                  "expression": "\"method\" IN ('PROPERTY_EVIDENCE', 'ADMIN_REVIEW')",
+                  "name": "relationshipVerification_method_check_1b3738cb",
+                  "prefix": "relationshipVerification_method_check"
+                },
+                {
+                  "expression": "\"status\" IN ('PENDING', 'VERIFIED', 'REJECTED', 'REVOKED')",
+                  "name": "relationshipVerification_status_check_3e7b08b2",
+                  "prefix": "relationshipVerification_status_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "evidence": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "method": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RelationshipVerificationMethod",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "relationshipId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "reviewerId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RelationshipVerificationStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "verifiedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "relationshipId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "relationshipVerification"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "userPropertyRelationship"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "relationshipId"
+                  ],
+                  "name": "relationshipVerification_relationshipId_idx_51f7e2f7",
+                  "prefix": "relationshipVerification_relationshipId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status"
+                  ],
+                  "name": "relationshipVerification_status_idx_e98638ab",
+                  "prefix": "relationshipVerification_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "session": {
               "columns": {
                 "createdAt": {
@@ -3282,6 +3977,15 @@
                 "GOOGLE"
               ]
             },
+            "IntelligenceStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "PROCESSING",
+                "CURRENT",
+                "FAILED"
+              ]
+            },
             "ObservationCategory": {
               "kind": "valueSet",
               "values": [
@@ -3342,6 +4046,22 @@
                 "INFERRED"
               ]
             },
+            "RelationshipVerificationMethod": {
+              "kind": "valueSet",
+              "values": [
+                "PROPERTY_EVIDENCE",
+                "ADMIN_REVIEW"
+              ]
+            },
+            "RelationshipVerificationStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "VERIFIED",
+                "REJECTED",
+                "REVOKED"
+              ]
+            },
             "UserPropertyRelationshipType": {
               "kind": "valueSet",
               "values": [
@@ -3363,15 +4083,6 @@
                 "DELETED"
               ]
             },
-            "VerificationStatus": {
-              "kind": "valueSet",
-              "values": [
-                "PENDING",
-                "VERIFIED",
-                "REJECTED",
-                "REVOKED"
-              ]
-            },
             "VerificationTokenType": {
               "kind": "valueSet",
               "values": [
@@ -3386,10 +4097,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9b464fb2b853158a6c56fd7ad1abee9b6a81b9b55db708147028e618544b895f"
+    "storageHash": "d90a9becc1580767e1ee3bdbd76f7e05c3fa885909051e8f6d0a5cf92d1ed97c"
   },
   "execution": {
-    "executionHash": "abb7726c6030ab7e7730378161322e90574200cc96d0c247b4a4190a516170d9",
+    "executionHash": "0f76689658f324db1386b43c8d0d219075b153a7e44e2ce0b6655d2f308dabd5",
     "mutations": {
       "defaults": [
         {
@@ -3401,6 +4112,32 @@
             "column": "id",
             "namespace": "public",
             "table": "country"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "intelligence"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "intelligence"
           }
         },
         {
@@ -3482,6 +4219,32 @@
             "column": "id",
             "namespace": "public",
             "table": "propertyRelationship"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "relationshipVerification"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "relationshipVerification"
           }
         },
         {

@@ -1,17 +1,24 @@
 import {
     BadRequestException,
     Injectable,
+    Inject, 
     NotFoundException,
 } from '@nestjs/common';
 
 import { CreateObservationDto } from './dto/create-observation.dto.js';
 import { ObservationRepository } from './observation.repository.js';
 import type { ObservationResult, ObservationListResult } from './types/observation-result.type.js';
+import {
+    OBSERVATION_JOB_QUEUE,
+    type ObservationJobQueue,
+} from './jobs/observation-job-queue.interface.js';
 
 @Injectable()
 export class ObservationService {
     constructor(
         private readonly observationRepository: ObservationRepository,
+        @Inject(OBSERVATION_JOB_QUEUE)
+        private readonly observationJobQueue: ObservationJobQueue,
     ) { }
 
     async create(
@@ -54,7 +61,13 @@ export class ObservationService {
             }
         }
 
-        return this.observationRepository.create(dto, userId);
+        const observation = await this.observationRepository.create(dto, userId);
+
+        await this.observationJobQueue.addInterpretObservationJob({
+            observationId: observation.id,
+        });
+        
+        return observation;
     }
 
     async findById(id: string): Promise<ObservationResult> {
