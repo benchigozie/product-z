@@ -11,6 +11,7 @@ import { PropertyRelationshipModule } from './property-relationship/property-rel
 import { AuthModule } from './auth/auth.module.js';
 import { ObservationModule } from './observation/observation.module.js';
 import { IntelligenceModule } from './intelligence/intelligence.module.js';
+import { IntelligenceDevelopmentModule } from './intelligence/development/intelligence-development.module.js';
 
 
 @Module({
@@ -28,6 +29,7 @@ import { IntelligenceModule } from './intelligence/intelligence.module.js';
     AuthModule,
     ObservationModule,
     IntelligenceModule,
+    IntelligenceDevelopmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

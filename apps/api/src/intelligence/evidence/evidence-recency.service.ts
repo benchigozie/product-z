@@ -10,10 +10,10 @@ export class EvidenceRecencyService {
         observation: NonNullable<ObservationResult>,
     ): EvidenceRecencyClassification {
         const rule = EVIDENCE_RECENCY_RULES[observation.category];
-
+        
         const ageInDays =
-            (Date.now() - observation.observedAt.epochMilliseconds) /
-            (1000 * 60 * 60 * 24);
+        (Date.now() - observation.observedAt.getTime()) /
+        (1000 * 60 * 60 * 24);
 
         if (ageInDays <= rule.recentDays) {
             return EvidenceRecencyClassification.RECENT;

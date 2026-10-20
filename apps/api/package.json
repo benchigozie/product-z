@@ -24,11 +24,13 @@
     "docker:reset": "docker compose down -v && docker compose up -d",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "dev:up": "docker compose up -d && pnpm start:dev",
+    "dev:up": "NODE_ENV=development docker compose up -d && pnpm start:dev",
     "db:seed:dev": "NODE_ENV=development tsx prisma/seed.ts",
-    "db:seed:prod": "NODE_ENV=production tsx prisma/seed.ts"
+    "db:seed:prod": "NODE_ENV=production tsx prisma/seed.ts",
+    "intelligence:power:dev": "NODE_ENV=development tsx src/intelligence/development/run-power-intelligence.ts"
   },
   "dependencies": {
+    "@google/genai": "^2.30.0",
     "@js-temporal/polyfill": "^0.5.1",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.0",

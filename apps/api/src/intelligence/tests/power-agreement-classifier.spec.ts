@@ -2,64 +2,84 @@ import { describe, expect, it } from 'vitest';
 
 import { EvidenceAgreementClassification } from '../evidence/evidence-agreement.classification.js';
 import { PowerAgreementClassifier } from '../power-agreement-classifier.js';
-
 import type { PowerAgreementResult } from '../evidence/power-agreement.js';
 
 describe('PowerAgreementClassifier', () => {
     const classifier = new PowerAgreementClassifier();
 
-    it('classifies identical availability as strong agreement when reliability is absent', () => {
-        const result: PowerAgreementResult = {
-            availabilityDifference: 0,
-            reliabilityDifference: null,
-        };
+    const classify = (
+        availabilityDifference: number,
+        reliabilityDifference: number | null,
+    ) =>
+        classifier.classify({
+            availabilityDifference,
+            reliabilityDifference,
+        } satisfies PowerAgreementResult);
 
-        expect(classifier.classify(result)).toBe(
-            EvidenceAgreementClassification.STRONG_AGREEMENT,
-        );
+    describe('condition agreement is determined by availability alone', () => {
+        it('classifies identical availability as STRONG_AGREEMENT', () => {
+            expect(classify(0, null)).toBe(
+                EvidenceAgreementClassification.STRONG_AGREEMENT,
+            );
+            expect(classify(0, 0)).toBe(
+                EvidenceAgreementClassification.STRONG_AGREEMENT,
+            );
+        });
+
+        it('classifies adjacent availability as MIXED_AGREEMENT', () => {
+            expect(classify(1, null)).toBe(
+                EvidenceAgreementClassification.MIXED_AGREEMENT,
+            );
+            expect(classify(1, 0)).toBe(
+                EvidenceAgreementClassification.MIXED_AGREEMENT,
+            );
+        });
+
+        it('classifies opposite availability as CONTRADICTORY_EVIDENCE', () => {
+            expect(classify(2, null)).toBe(
+                EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE,
+            );
+            expect(classify(2, 0)).toBe(
+                EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE,
+            );
+        });
     });
 
-    it('classifies a complete availability difference as contradictory evidence', () => {
-        const result: PowerAgreementResult = {
-            availabilityDifference: 2,
-            reliabilityDifference: null,
-        };
+    describe('reliability must not affect condition classification', () => {
+        it('keeps identical availability as STRONG_AGREEMENT even when reliability differs substantially', () => {
+            // EXCELLENT vs VERY_POOR → reliabilityDifference = 4
+            expect(classify(0, 4)).toBe(
+                EvidenceAgreementClassification.STRONG_AGREEMENT,
+            );
 
-        expect(classifier.classify(result)).toBe(
-            EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE,
-        );
-    });
+            // GOOD vs VERY_POOR → reliabilityDifference = 3
+            expect(classify(0, 3)).toBe(
+                EvidenceAgreementClassification.STRONG_AGREEMENT,
+            );
 
-    it('classifies a small reliability difference with identical availability as strong agreement', () => {
-        const result: PowerAgreementResult = {
-            availabilityDifference: 0,
-            reliabilityDifference: 1,
-        };
+            // This was the previous bug: reliability diff >= 3 alone
+            // used to force CONTRADICTORY_EVIDENCE.
+            expect(classify(0, 3)).not.toBe(
+                EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE,
+            );
+        });
 
-        expect(classifier.classify(result)).toBe(
-            EvidenceAgreementClassification.STRONG_AGREEMENT,
-        );
-    });
+        it('keeps adjacent availability as MIXED_AGREEMENT regardless of reliability', () => {
+            expect(classify(1, 3)).toBe(
+                EvidenceAgreementClassification.MIXED_AGREEMENT,
+            );
+            expect(classify(1, 4)).toBe(
+                EvidenceAgreementClassification.MIXED_AGREEMENT,
+            );
+        });
 
-    it('classifies a moderate difference as mixed agreement', () => {
-        const result: PowerAgreementResult = {
-            availabilityDifference: 1,
-            reliabilityDifference: 1,
-        };
-
-        expect(classifier.classify(result)).toBe(
-            EvidenceAgreementClassification.MIXED_AGREEMENT,
-        );
-    });
-
-    it('classifies a large reliability difference as contradictory evidence', () => {
-        const result: PowerAgreementResult = {
-            availabilityDifference: 0,
-            reliabilityDifference: 3,
-        };
-
-        expect(classifier.classify(result)).toBe(
-            EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE,
-        );
+        it('keeps opposite availability as CONTRADICTORY_EVIDENCE regardless of reliability', () => {
+            expect(classify(2, 3)).toBe(
+                EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE,
+            );
+            expect(classify(2, 4)).toBe(
+                EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE,
+            );
+        });
     });
 });

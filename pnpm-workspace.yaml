@@ -3,9 +3,11 @@ packages:
   - "packages/*"
 
 allowBuilds:
+  '@google/genai': false
   bcrypt: false
   esbuild: true
   msgpackr-extract: true
+  protobufjs: false
   sharp: false
   unrs-resolver: false
   workerd: true

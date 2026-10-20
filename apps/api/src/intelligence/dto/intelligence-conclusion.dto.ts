@@ -8,10 +8,11 @@ import {
 } from 'class-validator';
 
 import { IntelligenceConfidence } from '../enums/intelligence-confidence.enum.js';
+import { PowerCondition } from '../enums/power-condition.enum.js';
 
 export class IntelligenceConclusionDto {
-    @IsString()
-    conclusion!: string;
+    @IsEnum(PowerCondition)
+    conclusion!: PowerCondition;
 
     @IsEnum(IntelligenceConfidence)
     confidence!: IntelligenceConfidence;
@@ -24,8 +25,8 @@ export class IntelligenceConclusionDto {
     reasonSignals!: string[];
 
     @IsArray()
-    @IsUUID(undefined, { each: true })
-    evidenceReferences!: string[];
+    @IsString({ each: true })
+    evidenceReferences: string[];
 
     @IsArray()
     @IsString({ each: true })

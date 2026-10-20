@@ -8,30 +8,20 @@ export class PowerAgreementClassifier {
     classify(
         result: PowerAgreementResult,
     ): EvidenceAgreementClassification {
-        const availabilityDifference =
-            result.availabilityDifference;
+        switch (result.availabilityDifference) {
+            case 0:
+                return EvidenceAgreementClassification.STRONG_AGREEMENT;
 
-        const reliabilityDifference =
-            result.reliabilityDifference;
+            case 1:
+                return EvidenceAgreementClassification.MIXED_AGREEMENT;
 
-        if (
-            availabilityDifference === 2 ||
-            reliabilityDifference !== null &&
-            reliabilityDifference >= 3
-        ) {
-            return EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE;
+            case 2:
+                return EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE;
+
+            default:
+                throw new Error(
+                    `Unreachable: availabilityDifference must be 0, 1, or 2; got ${result.availabilityDifference}`,
+                );
         }
-
-        if (
-            availabilityDifference === 0 &&
-            (
-                reliabilityDifference === null ||
-                reliabilityDifference <= 1
-            )
-        ) {
-            return EvidenceAgreementClassification.STRONG_AGREEMENT;
-        }
-
-        return EvidenceAgreementClassification.MIXED_AGREEMENT;
     }
 }

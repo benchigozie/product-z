@@ -72,12 +72,7 @@ async analyze(
             const firstObservation = powerObservations[i];
             const secondObservation = powerObservations[j];
 
-            const timeDifferenceInDays =
-                Math.abs(
-                    firstObservation.observedAt.epochMilliseconds -
-                    secondObservation.observedAt.epochMilliseconds,
-                ) / (1000 * 60 * 60 * 24);
-
+           
             if (
                 !isPowerData(firstObservation.data) ||
                 !isPowerData(secondObservation.data)
@@ -89,6 +84,13 @@ async analyze(
                 );
                 continue;
             }
+
+            const timeDifferenceInDays =
+            Math.abs(
+                firstObservation.observedAt.getTime() -
+                secondObservation.observedAt.getTime(),
+            ) / (1000 * 60 * 60 * 24);
+
 
             const agreementResult = this.powerAgreementService.compare(
                 firstObservation.data,

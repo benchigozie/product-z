@@ -1,0 +1,7 @@
+
+export enum PowerCondition {
+    AVAILABLE = 'AVAILABLE',
+    INTERMITTENT = 'INTERMITTENT',
+    UNAVAILABLE = 'UNAVAILABLE',
+    UNRESOLVED = 'UNRESOLVED',
+}
