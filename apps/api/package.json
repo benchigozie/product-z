@@ -24,7 +24,7 @@
     "docker:reset": "docker compose down -v && docker compose up -d",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "dev:up": "NODE_ENV=development docker compose up -d && pnpm start:dev",
+    "dev:up": "docker compose up -d && pnpm start:dev",
     "db:seed:dev": "NODE_ENV=development tsx prisma/seed.ts",
     "db:seed:prod": "NODE_ENV=production tsx prisma/seed.ts",
     "intelligence:power:dev": "NODE_ENV=development tsx src/intelligence/development/run-power-intelligence.ts"

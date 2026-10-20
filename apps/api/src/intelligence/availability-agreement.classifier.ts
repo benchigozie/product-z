@@ -1,12 +1,13 @@
+// src/intelligence/evidence/availability-agreement.classifier.ts
 import { Injectable } from '@nestjs/common';
 
 import { EvidenceAgreementClassification } from './evidence/evidence-agreement.classification.js';
-import type { PowerAgreementResult } from './evidence/power-agreement.js';
+import type { AgreementResult } from './evidence/agreement-result.type';
 
 @Injectable()
-export class PowerAgreementClassifier {
+export class AvailabilityAgreementClassifier {
     classify(
-        result: PowerAgreementResult,
+        result: AgreementResult,
     ): EvidenceAgreementClassification {
         switch (result.availabilityDifference) {
             case 0:

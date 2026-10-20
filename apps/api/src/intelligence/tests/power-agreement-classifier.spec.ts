@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { EvidenceAgreementClassification } from '../evidence/evidence-agreement.classification.js';
-import { PowerAgreementClassifier } from '../power-agreement-classifier.js';
-import type { PowerAgreementResult } from '../evidence/power-agreement.js';
+import { AvailabilityAgreementClassifier } from '../availbility-agreement.classifier.js';
+import type { AgreementResult } from '../evidence/agreement-result.type.js';
+
 
 describe('PowerAgreementClassifier', () => {
-    const classifier = new PowerAgreementClassifier();
+    const classifier = new AvailabilityAgreementClassifier();
 
     const classify = (
         availabilityDifference: number,
@@ -14,7 +15,7 @@ describe('PowerAgreementClassifier', () => {
         classifier.classify({
             availabilityDifference,
             reliabilityDifference,
-        } satisfies PowerAgreementResult);
+        } satisfies AgreementResult);
 
     describe('condition agreement is determined by availability alone', () => {
         it('classifies identical availability as STRONG_AGREEMENT', () => {

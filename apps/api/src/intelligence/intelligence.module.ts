@@ -6,7 +6,7 @@ import { EvidenceAnalysisService } from './evidence/evidence-analysis.service.js
 import { EvidenceRecencyService } from './evidence/evidence-recency.service.js';
 import { PowerAgreementService } from './power-agreement.service.js';
 import { ObservationDataModule } from '../observation/data/observation-data.module.js';
-import { PowerAgreementClassifier } from './power-agreement-classifier.js';
+import { AvailabilityAgreementClassifier } from './availability-agreement.classifier.js';
 import {
     PowerIntelligenceService,
     POWER_INTELLIGENCE_INTERPRETER,
@@ -26,6 +26,7 @@ import { PowerEvidenceConsolidator } from './consolidation/strategies/power-evid
 import { PowerClaimAgreementService } from './consolidation/strategies/power-claim-agreement.service.js';
 import { PowerClaimAgreementClassifier } from './consolidation/strategies/power-claim-agreement.classifier.js';
 import { PowerClaimAgreementAnalysisService } from './consolidation/strategies/power-claim-agreement-analysis.service.js';
+import { AvailabilityAgreementService } from './evidence/availability-agreement.service.js';
 
 @Module({
     imports: [
@@ -37,7 +38,7 @@ import { PowerClaimAgreementAnalysisService } from './consolidation/strategies/p
         EvidenceAnalysisService,
         EvidenceRecencyService,
         PowerAgreementService,
-        PowerAgreementClassifier,
+        AvailabilityAgreementClassifier,
         EvidenceWeightingService,
         EvidenceTemporalAnalysisService,
         IntelligenceConclusionValidationService,
@@ -48,6 +49,7 @@ import { PowerClaimAgreementAnalysisService } from './consolidation/strategies/p
         PowerEvidenceConsolidator,
         PowerClaimAgreementService,
         PowerClaimAgreementClassifier,
+        AvailabilityAgreementService,
         {
             provide: EVIDENCE_CONSOLIDATION_STRATEGIES,
             useFactory: (

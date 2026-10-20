@@ -4,7 +4,7 @@ import type { ObservationListResult } from '../../observation/types/observation-
 import { EvidenceRecencyService } from './evidence-recency.service.js';
 
 import { PowerAgreementService } from '../power-agreement.service.js';
-import { PowerAgreementClassifier } from '../power-agreement-classifier.js';
+import { AvailabilityAgreementClassifier } from '../availability-agreement.classifier.js';
 import { ObservationCategory } from '../../observation/enums/observation-category.enum.js';
 import type { PowerData } from '../../observation/types/power/power-data.type.js';
 import { Availability } from '../../observation/types/common/availability.type.js';
@@ -51,7 +51,7 @@ export class EvidenceAnalysisService {
     constructor(
         private readonly evidenceRecencyService: EvidenceRecencyService,
         private readonly powerAgreementService: PowerAgreementService,
-        private readonly powerAgreementClassifier: PowerAgreementClassifier,
+        private readonly AvailabilityAgreementClassifier: AvailabilityAgreementClassifier,
         private readonly evidenceTemporalAnalysisService: EvidenceTemporalAnalysisService,
     ) { }
 
@@ -98,7 +98,7 @@ async analyze(
             );
 
             const classification =
-                this.powerAgreementClassifier.classify(agreementResult);
+                this.AvailabilityAgreementClassifier.classify(agreementResult);
 
             powerAgreementAnalyses.push({
                 firstObservationId: firstObservation.id,
