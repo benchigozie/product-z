@@ -28,6 +28,22 @@ import { PowerClaimAgreementClassifier } from './consolidation/strategies/power-
 import { PowerClaimAgreementAnalysisService } from './consolidation/strategies/power-claim-agreement-analysis.service.js';
 import { AvailabilityAgreementService } from './evidence/availability-agreement.service.js';
 
+// NEW — water imports
+import { WaterAgreementService } from './evidence/water-agreement.service.js';
+import { WaterEvidenceAnalysisService } from './evidence/water-evidence-analysis.service.js';
+import { WaterEvidenceConsolidator } from './consolidation/strategies/water-evidence-consolidator.service.js';
+import { WaterClaimAgreementService } from './consolidation/strategies/water-claim-agreement.service.js';
+import {
+    WaterIntelligenceService,
+    WATER_INTELLIGENCE_INTERPRETER,
+} from './water-intelligence.service.js';
+import { WaterIntelligencePrompt } from './prompts/water-intelligence.prompt.js';
+import { GeminiWaterIntelligenceInterpreter } from './interpreters/gemini-water-intelligence.interpreter.js';
+import { WaterIntelligenceRunner } from './development/water-intelligence.runner.js';
+
+import { WaterClaimAgreementClassifier } from './consolidation/strategies/water-claim-agreement.classifier.js';
+import { WaterClaimAgreementAnalysisService } from './consolidation/strategies/water-claim-agreement-analysis.service.js';
+
 @Module({
     imports: [
         ObservationDataModule,
@@ -50,12 +66,30 @@ import { AvailabilityAgreementService } from './evidence/availability-agreement.
         PowerClaimAgreementService,
         PowerClaimAgreementClassifier,
         AvailabilityAgreementService,
+        WaterAgreementService,
+        WaterEvidenceAnalysisService,
+        WaterEvidenceConsolidator,
+        WaterClaimAgreementService,
+        WaterIntelligenceService,
+        WaterIntelligencePrompt,
+        GeminiWaterIntelligenceInterpreter,
+        WaterIntelligenceRunner,
+        WaterClaimAgreementClassifier,       
+        WaterClaimAgreementAnalysisService,
+
         {
             provide: EVIDENCE_CONSOLIDATION_STRATEGIES,
             useFactory: (
                 powerEvidenceConsolidator: PowerEvidenceConsolidator,
-            ) => [powerEvidenceConsolidator],
-            inject: [PowerEvidenceConsolidator],
+                waterEvidenceConsolidator: WaterEvidenceConsolidator, 
+            ) => [
+                powerEvidenceConsolidator,
+                waterEvidenceConsolidator, 
+            ],
+            inject: [
+                PowerEvidenceConsolidator,
+                WaterEvidenceConsolidator, 
+            ],
         },
         GeminiClient,
         GeminiPowerIntelligenceInterpreter,
@@ -63,6 +97,12 @@ import { AvailabilityAgreementService } from './evidence/availability-agreement.
             provide: POWER_INTELLIGENCE_INTERPRETER,
             useExisting: GeminiPowerIntelligenceInterpreter,
         },
+
+        {
+            provide: WATER_INTELLIGENCE_INTERPRETER,
+            useExisting: GeminiWaterIntelligenceInterpreter,
+        },
+
     ],
     exports: [
         IntelligenceService,
@@ -71,6 +111,9 @@ import { AvailabilityAgreementService } from './evidence/availability-agreement.
         PowerIntelligenceService,
         EvidenceConsolidationService,
         PowerClaimAgreementAnalysisService,
+        WaterEvidenceAnalysisService,
+        WaterIntelligenceService,
+        WaterClaimAgreementAnalysisService, 
     ],
 })
 export class IntelligenceModule {}

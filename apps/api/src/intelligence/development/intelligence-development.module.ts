@@ -4,6 +4,8 @@ import { IntelligenceModule } from '../intelligence.module.js';
 import { EvidenceWeightingService } from '../evidence/evidence-weighting.service.js';
 import { PowerIntelligenceRunner } from './power-intelligence.runner.js';
 import { PowerIntelligenceDevelopmentController } from './power-intelligence-development.controller.js';
+import { WaterIntelligenceRunner } from './water-intelligence.runner.js';
+import { WaterIntelligenceDevelopmentController } from './water-intelligence-development.controller.js';
 import { PrismaModule } from '../../prisma.module.js';
 
 @Module({
@@ -13,13 +15,16 @@ import { PrismaModule } from '../../prisma.module.js';
     ],
     controllers: [
         PowerIntelligenceDevelopmentController,
+        WaterIntelligenceDevelopmentController,
     ],
     providers: [
         PowerIntelligenceRunner,
+        WaterIntelligenceRunner,
         EvidenceWeightingService,
     ],
     exports: [
         PowerIntelligenceRunner,
+        WaterIntelligenceRunner,
     ],
 })
 export class IntelligenceDevelopmentModule {}
