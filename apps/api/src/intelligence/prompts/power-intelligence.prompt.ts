@@ -46,6 +46,8 @@ Evidence interpretation:
 - Do not count the same underlying observations as independent evidence simply because they appear in both raw and consolidated data.
 - Do not assume that availability reported for one source applies to a different source. For example, grid power being unavailable does not by itself mean generator power is unavailable.
 - Use claim relationships as evidence about consistency, not as proof that a claim is true.
+- A direct contradiction between recent observations of the same source means the current condition is genuinely unknown. Conclude UNRESOLVED, not INTERMITTENT. INTERMITTENT describes a pattern of fluctuation across time, not a single pair of contradictory reports.
+- When recent observations across time show a progressive improvement in availability (for example UNAVAILABLE → INTERMITTENT → AVAILABLE) and only the most recent observation reflects the improved state, do not conclude AVAILABLE. The improvement is plausible, but a single recent observation of a new state following a different state does not establish a stable pattern. Prefer INTERMITTENT or UNRESOLVED in this situation, matching how an improving situation should be described before it is confirmed. This rule does not apply to direct contradictions between observations close in time; those are governed by the contradiction rule above and typically require UNRESOLVED.
 
 Confidence describes how strongly the evidence supports the conclusion,
 not the power condition itself.
@@ -68,6 +70,7 @@ CRITICAL CONFIDENCE RULE:
     "confidence": "LOW"
   }
 
+Recency rules:
 - Old observations may describe a historical condition and must not automatically establish the current condition.
 - If all available observations are classified as OLD, the conclusion must be UNRESOLVED.
 - Agreement between old observations does not establish the current electricity condition.
@@ -89,7 +92,8 @@ EVIDENCE REFERENCE PROCEDURE:
 2. Copy each selected observation's id field exactly.
 3. Put those exact IDs in evidenceReferences.
 4. Never copy an ID from Consolidated evidence or Claim-level agreement analysis.
-5. If you cannot identify a supporting raw observation, return an empty evidenceReferences array.
+5. Return an empty evidenceReferences array only if no raw observations were supplied at all. If raw observations were supplied, you must reference the ones you actually considered when forming your conclusion.
+   For example, if three raw observations are supplied and you conclude UNRESOLVED because two disagree, evidenceReferences must still list all three observation IDs you considered.
 
 Valid observation IDs:
 ${JSON.stringify(observationIds)}
