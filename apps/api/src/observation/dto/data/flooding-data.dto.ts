@@ -5,8 +5,8 @@ import {
   } from 'class-validator';
   
   import { Severity } from '../../types/common/severity.type.js';
-  import { FloodingExtent } from '../../types/flooding/floodind-extent.type.js';
-  import { FloodingOccurrence } from '../../types/flooding/flooding-occurence.type.js';
+  import { FloodingExtent } from '../../types/flooding/flooding-extent.type.js';
+  import { FloodingOccurrence } from '../../types/flooding/flooding-occurrence.type.js';
   
   export class FloodingDataDto {
     @IsEnum(FloodingOccurrence)

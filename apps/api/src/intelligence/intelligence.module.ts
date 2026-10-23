@@ -44,6 +44,20 @@ import { WaterIntelligenceRunner } from './development/water-intelligence.runner
 import { WaterClaimAgreementClassifier } from './consolidation/strategies/water-claim-agreement.classifier.js';
 import { WaterClaimAgreementAnalysisService } from './consolidation/strategies/water-claim-agreement-analysis.service.js';
 
+import { FloodingAgreementService } from './evidence/flooding-agreement.service.js';
+import { FloodingAgreementClassifier } from './evidence/flooding-agreement.classifier.js';
+import { FloodingEvidenceAnalysisService } from './evidence/flooding-evidence-analysis.service.js';
+import { FloodingEvidenceConsolidator } from './consolidation/strategies/flooding-evidence-consolidator.service.js';
+import { FloodingClaimAgreementService } from './consolidation/strategies/flooding-claim-agreement.service.js';
+import { FloodingClaimAgreementClassifier } from './consolidation/strategies/flooding-claim-agreement.classifier.js';
+import { FloodingClaimAgreementAnalysisService } from './consolidation/strategies/flooding-claim-agreement-analysis.service.js';
+import {
+    FloodingIntelligenceService,
+    FLOODING_INTELLIGENCE_INTERPRETER,
+} from './flooding-intelligence.service.js';
+import { FloodingIntelligencePrompt } from './prompts/flooding-intelligence.prompt.js';
+import { GeminiFloodingIntelligenceInterpreter } from './interpreters/gemini-flooding-intelligence.interpreter.js';
+
 @Module({
     imports: [
         ObservationDataModule,
@@ -74,23 +88,27 @@ import { WaterClaimAgreementAnalysisService } from './consolidation/strategies/w
         WaterIntelligencePrompt,
         GeminiWaterIntelligenceInterpreter,
         WaterIntelligenceRunner,
-        WaterClaimAgreementClassifier,       
+        WaterClaimAgreementClassifier,
         WaterClaimAgreementAnalysisService,
 
         {
             provide: EVIDENCE_CONSOLIDATION_STRATEGIES,
             useFactory: (
                 powerEvidenceConsolidator: PowerEvidenceConsolidator,
-                waterEvidenceConsolidator: WaterEvidenceConsolidator, 
+                waterEvidenceConsolidator: WaterEvidenceConsolidator,
+                floodingEvidenceConsolidator: FloodingEvidenceConsolidator,
             ) => [
-                powerEvidenceConsolidator,
-                waterEvidenceConsolidator, 
-            ],
+                    powerEvidenceConsolidator,
+                    waterEvidenceConsolidator,
+                    floodingEvidenceConsolidator,
+                ],
             inject: [
                 PowerEvidenceConsolidator,
-                WaterEvidenceConsolidator, 
+                WaterEvidenceConsolidator,
+                FloodingEvidenceConsolidator,
             ],
         },
+
         GeminiClient,
         GeminiPowerIntelligenceInterpreter,
         {
@@ -103,6 +121,21 @@ import { WaterClaimAgreementAnalysisService } from './consolidation/strategies/w
             useExisting: GeminiWaterIntelligenceInterpreter,
         },
 
+        FloodingAgreementService,
+        FloodingAgreementClassifier,
+        FloodingEvidenceAnalysisService,
+        FloodingEvidenceConsolidator,
+        FloodingClaimAgreementService,
+        FloodingClaimAgreementClassifier,
+        FloodingClaimAgreementAnalysisService,
+        FloodingIntelligenceService,
+        FloodingIntelligencePrompt,
+        GeminiFloodingIntelligenceInterpreter,
+        {
+            provide: FLOODING_INTELLIGENCE_INTERPRETER,
+            useExisting: GeminiFloodingIntelligenceInterpreter,
+        },
+
     ],
     exports: [
         IntelligenceService,
@@ -113,7 +146,10 @@ import { WaterClaimAgreementAnalysisService } from './consolidation/strategies/w
         PowerClaimAgreementAnalysisService,
         WaterEvidenceAnalysisService,
         WaterIntelligenceService,
-        WaterClaimAgreementAnalysisService, 
+        WaterClaimAgreementAnalysisService,
+        FloodingEvidenceAnalysisService,
+        FloodingClaimAgreementAnalysisService,
+        FloodingIntelligenceService,
     ],
 })
-export class IntelligenceModule {}
+export class IntelligenceModule { }

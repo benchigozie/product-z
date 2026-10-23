@@ -1,0 +1,6 @@
+export enum FloodingCondition {
+    DOES_NOT_FLOOD = 'DOES_NOT_FLOOD',
+    SIGNS_OF_FLOODING = 'SIGNS_OF_FLOODING',
+    FLOODS = 'FLOODS',
+    UNRESOLVED = 'UNRESOLVED',
+}

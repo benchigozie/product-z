@@ -1,0 +1,6 @@
+export enum FloodingExtent {
+  WIDER_AREA = 'WIDER_AREA',
+  STREET = 'STREET',
+  IMMEDIATE_ACCESS = 'IMMEDIATE_ACCESS',
+  PROPERTY = 'PROPERTY',
+}

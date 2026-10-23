@@ -1,18 +1,22 @@
-
 import {
-    ArrayNotEmpty,
     IsArray,
     IsEnum,
+    IsIn,
     IsString,
-    IsUUID,
 } from 'class-validator';
 
 import { IntelligenceConfidence } from '../enums/intelligence-confidence.enum.js';
 import { PowerCondition } from '../enums/power-condition.enum.js';
+import { FloodingCondition } from '../enums/flooding-condition.enum.js';
+
+const VALID_CONCLUSIONS: readonly string[] = [
+    ...Object.values(PowerCondition),
+    ...Object.values(FloodingCondition),
+];
 
 export class IntelligenceConclusionDto {
-    @IsEnum(PowerCondition)
-    conclusion!: PowerCondition;
+    @IsIn(VALID_CONCLUSIONS)
+    conclusion!: string;
 
     @IsEnum(IntelligenceConfidence)
     confidence!: IntelligenceConfidence;
@@ -26,7 +30,7 @@ export class IntelligenceConclusionDto {
 
     @IsArray()
     @IsString({ each: true })
-    evidenceReferences: string[];
+    evidenceReferences!: string[];
 
     @IsArray()
     @IsString({ each: true })

@@ -68,6 +68,6 @@ export class IntelligenceConclusionValidationService {
             );
         }
 
-        return dto;
+        return dto as unknown as IntelligenceConclusion;
     }
 }
