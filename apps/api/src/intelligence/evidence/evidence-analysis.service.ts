@@ -10,7 +10,7 @@ import type { PowerData } from '../../observation/types/power/power-data.type.js
 import { Availability } from '../../observation/types/common/availability.type.js';
 import { Reliability } from '../../observation/types/common/reliability.type.js';
 import { PowerSource } from '../../observation/types/power/power-data.type.js';
-import type { PowerAgreementAnalysis } from './types/power-agreement-analysis.type.js';
+import type { PowerCategoryAgreementAnalysis } from './types/category-agreement-analysis.type.js';
 import type { EvidenceAnalysisResult } from './types/evidence-analysis-result.type.js';
 import type { ObservationRecencyAnalysis } from './types/observation-recency-analysis.type.js';
 import { EvidenceTemporalAnalysisService } from './evidence-temporal-analysis.service.js';
@@ -64,7 +64,7 @@ async analyze(
             observation.category === ObservationCategory.POWER,
     );
 
-    const powerAgreementAnalyses: PowerAgreementAnalysis[] = [];
+    const powerAgreementAnalyses: PowerCategoryAgreementAnalysis[] = [];
     const temporalAgreementAnalyses: TemporalAgreementAnalysis[] = [];
 
     for (let i = 0; i < powerObservations.length; i++) {
@@ -100,13 +100,14 @@ async analyze(
             const classification =
                 this.AvailabilityAgreementClassifier.classify(agreementResult);
 
-            powerAgreementAnalyses.push({
-                firstObservationId: firstObservation.id,
-                secondObservationId: secondObservation.id,
-                classification,
-                timeDifferenceInDays,
-                agreement: agreementResult,
-            });
+                powerAgreementAnalyses.push({
+                    category: ObservationCategory.POWER,
+                    firstObservationId: firstObservation.id,
+                    secondObservationId: secondObservation.id,
+                    classification,
+                    timeDifferenceInDays,
+                    agreement: agreementResult,
+                });
 
             temporalAgreementAnalyses.push(
                 this.evidenceTemporalAnalysisService.analyze(
@@ -134,7 +135,7 @@ async analyze(
 
     return {
         recency: recencyAnalyses,
-        powerAgreement: powerAgreementAnalyses,
+        agreement: powerAgreementAnalyses,
         temporalAgreement: temporalAgreementAnalyses,
     };
 }

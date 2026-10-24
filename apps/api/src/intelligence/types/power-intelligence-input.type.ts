@@ -9,5 +9,5 @@ export interface PowerIntelligenceInput {
     evidenceAnalysis: EvidenceAnalysisResult;
     evidenceAssessments: EvidenceWeightAssessment[];
     consolidatedEvidence: ConsolidatedEvidence[];
-    powerClaimAgreementAnalysis: PowerClaimAgreementAnalysis[];
+    claimAgreementAnalysis: PowerClaimAgreementAnalysis[];
 }

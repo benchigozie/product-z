@@ -2,9 +2,9 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { GeminiClient } from '../llm/gemini.client.js';
 import { PowerIntelligencePrompt } from '../prompts/power-intelligence.prompt.js';
-import type { IntelligenceConclusion } from '../types/intelligence-conclusion.type.js';
 import type { PowerIntelligenceInput } from '../types/power-intelligence-input.type.js';
 import type { IntelligenceInterpreter } from '../types/intelligence-interpreter.type.js';
+import type { ValidatedConclusion } from '../types/validated-conclusion.type.js';
 
 @Injectable()
 export class GeminiPowerIntelligenceInterpreter
@@ -17,7 +17,7 @@ export class GeminiPowerIntelligenceInterpreter
 
     async interpret(
         input: PowerIntelligenceInput,
-    ): Promise<IntelligenceConclusion> {
+    ): Promise<ValidatedConclusion> {
         const prompt = this.promptBuilder.build(input);
 
         let text: string;
@@ -41,7 +41,7 @@ export class GeminiPowerIntelligenceInterpreter
                 throw new Error('Expected a JSON object.');
             }
 
-            return parsed as IntelligenceConclusion;
+            return parsed as ValidatedConclusion;
         } catch {
             throw new InternalServerErrorException(
                 'Gemini returned invalid JSON for power intelligence.',

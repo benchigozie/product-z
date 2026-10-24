@@ -49,7 +49,7 @@ export class FloodingIntelligenceRunner {
         const consolidatedEvidence =
             this.evidenceConsolidationService.consolidate(observations);
 
-        const powerClaimAgreementAnalysis =
+            const claimAgreementAnalysis =
             this.floodingClaimAgreementAnalysisService.analyze(
                 consolidatedEvidence,
             );
@@ -59,7 +59,7 @@ export class FloodingIntelligenceRunner {
             evidenceAnalysis,
             evidenceAssessments,
             consolidatedEvidence,
-            powerClaimAgreementAnalysis,
+            claimAgreementAnalysis,
         };
 
         return this.floodingIntelligenceService.interpret(input);

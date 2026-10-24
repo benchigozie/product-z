@@ -13,7 +13,7 @@ import { FloodingOccurrence } from '../../observation/types/flooding/flooding-oc
 import { FloodingExtent } from '../../observation/types/flooding/flooding-extent.type.js';
 import { Severity } from '../../observation/types/common/severity.type.js';
 import type { FloodingData } from '../../observation/types/flooding/flooding-data.type.js';
-import type { FloodingAgreementAnalysis } from './types/flooding-agreement-analysis.type.js';
+import type { FloodingCategoryAgreementAnalysis } from './types/category-agreement-analysis.type.js';
 import type { EvidenceAnalysisResult } from './types/evidence-analysis-result.type.js';
 import type { ObservationRecencyAnalysis } from './types/observation-recency-analysis.type.js';
 import { EvidenceTemporalAnalysisService } from './evidence-temporal-analysis.service.js';
@@ -63,7 +63,7 @@ export class FloodingEvidenceAnalysisService {
                 observation.category === ObservationCategory.FLOODING,
         );
 
-        const floodingAgreementAnalyses: FloodingAgreementAnalysis[] = [];
+        const floodingAgreementAnalyses: FloodingCategoryAgreementAnalysis[] = [];
         const temporalAgreementAnalyses: TemporalAgreementAnalysis[] = [];
 
         for (let i = 0; i < floodingObservations.length; i++) {
@@ -100,6 +100,7 @@ export class FloodingEvidenceAnalysisService {
                     );
 
                 floodingAgreementAnalyses.push({
+                    category: ObservationCategory.FLOODING,
                     firstObservationId: firstObservation.id,
                     secondObservationId: secondObservation.id,
                     classification,
@@ -133,7 +134,7 @@ export class FloodingEvidenceAnalysisService {
 
         return {
             recency: recencyAnalyses,
-            powerAgreement: floodingAgreementAnalyses as unknown as EvidenceAnalysisResult['powerAgreement'],
+            agreement: floodingAgreementAnalyses,
             temporalAgreement: temporalAgreementAnalyses,
         };
     }

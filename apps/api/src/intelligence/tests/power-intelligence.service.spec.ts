@@ -3,12 +3,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { IntelligenceConfidence } from '../enums/intelligence-confidence.enum.js';
 import { PowerCondition } from '../enums/power-condition.enum.js';
+import { ConclusionState } from '../enums/conclusion-state.enum.js';
 import { EvidenceRecencyClassification } from '../evidence/evidence-recency.classification.js';
 import { IntelligenceConclusionValidationService } from '../intelligence-conclusion-validation.service.js';
 import { PowerIntelligenceService } from '../power-intelligence.service.js';
+import { ObservationCategory } from '../../observation/enums/observation-category.enum.js';
 
 import type { PowerIntelligenceInput } from '../types/power-intelligence-input.type.js';
-import type { IntelligenceConclusion } from '../types/intelligence-conclusion.type.js';
+import type { ValidatedConclusion } from '../types/validated-conclusion.type.js';
 import type { IntelligenceInterpreter } from '../types/intelligence-interpreter.type.js';
 
 describe('PowerIntelligenceService', () => {
@@ -18,19 +20,24 @@ describe('PowerIntelligenceService', () => {
         observations: [{ id: observationId }],
         evidenceAnalysis: {
             recency: [],
-            powerAgreement: [],
+            agreement: [],
             temporalAgreement: [],
         },
         evidenceAssessments: [],
     } as unknown as PowerIntelligenceInput;
 
-    const conclusion: IntelligenceConclusion = {
+    const validated: ValidatedConclusion = {
         conclusion: PowerCondition.INTERMITTENT,
         confidence: IntelligenceConfidence.MODERATE,
         reason: 'Recent observations report inconsistent availability.',
         reasonSignals: ['RECENT_EVIDENCE'],
         evidenceReferences: [observationId],
         considerations: ['Verify current supply conditions.'],
+    };
+
+    const expectedOutput = {
+        ...validated,
+        conclusion: ConclusionState.MIXED,
     };
 
     const interpreter = {
@@ -52,21 +59,22 @@ describe('PowerIntelligenceService', () => {
         );
     });
 
-    it('returns the validated interpreter result', async () => {
-        vi.mocked(interpreter.interpret).mockResolvedValue(conclusion);
-        vi.mocked(conclusionValidation.validate).mockResolvedValue(conclusion);
+    it('returns the validated interpreter result mapped to ConclusionState', async () => {
+        vi.mocked(interpreter.interpret).mockResolvedValue(validated);
+        vi.mocked(conclusionValidation.validate).mockResolvedValue(validated);
 
-        await expect(service.interpret(input)).resolves.toEqual(conclusion);
+        await expect(service.interpret(input)).resolves.toEqual(expectedOutput);
 
         expect(interpreter.interpret).toHaveBeenCalledWith(input);
         expect(conclusionValidation.validate).toHaveBeenCalledWith(
-            conclusion,
+            validated,
             new Set([observationId]),
+            ObservationCategory.POWER,
         );
     });
 
     it('rejects the result when validation fails', async () => {
-        vi.mocked(interpreter.interpret).mockResolvedValue(conclusion);
+        vi.mocked(interpreter.interpret).mockResolvedValue(validated);
         vi.mocked(conclusionValidation.validate).mockRejectedValue(
             new BadRequestException('Invalid conclusion'),
         );
@@ -103,11 +111,11 @@ describe('PowerIntelligenceService', () => {
             },
         } as unknown as PowerIntelligenceInput;
 
-        vi.mocked(interpreter.interpret).mockResolvedValue(conclusion);
-        vi.mocked(conclusionValidation.validate).mockResolvedValue(conclusion);
+        vi.mocked(interpreter.interpret).mockResolvedValue(validated);
+        vi.mocked(conclusionValidation.validate).mockResolvedValue(validated);
 
         await expect(service.interpret(staleInput)).resolves.toMatchObject({
-            conclusion: PowerCondition.UNRESOLVED,
+            conclusion: ConclusionState.UNRESOLVED,
             confidence: IntelligenceConfidence.LOW,
             reason:
                 'Insufficient recent evidence to determine the current electricity condition.',
@@ -133,18 +141,18 @@ describe('PowerIntelligenceService', () => {
             },
         } as unknown as PowerIntelligenceInput;
 
-        vi.mocked(interpreter.interpret).mockResolvedValue(conclusion);
-        vi.mocked(conclusionValidation.validate).mockResolvedValue(conclusion);
+        vi.mocked(interpreter.interpret).mockResolvedValue(validated);
+        vi.mocked(conclusionValidation.validate).mockResolvedValue(validated);
 
         await expect(service.interpret(recentInput)).resolves.toEqual(
-            conclusion,
+            expectedOutput,
         );
     });
 
     it('does not treat an empty recency list as entirely old evidence', async () => {
-        vi.mocked(interpreter.interpret).mockResolvedValue(conclusion);
-        vi.mocked(conclusionValidation.validate).mockResolvedValue(conclusion);
+        vi.mocked(interpreter.interpret).mockResolvedValue(validated);
+        vi.mocked(conclusionValidation.validate).mockResolvedValue(validated);
 
-        await expect(service.interpret(input)).resolves.toEqual(conclusion);
+        await expect(service.interpret(input)).resolves.toEqual(expectedOutput);
     });
 });

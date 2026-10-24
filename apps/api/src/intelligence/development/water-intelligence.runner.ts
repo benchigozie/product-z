@@ -57,7 +57,7 @@ export class WaterIntelligenceRunner {
         const consolidatedEvidence =
             this.evidenceConsolidationService.consolidate(observations);
 
-            const powerClaimAgreementAnalysis =
+            const claimAgreementAnalysis =
             this.waterClaimAgreementAnalysisService.analyze(
                 consolidatedEvidence,
             );
@@ -67,7 +67,7 @@ export class WaterIntelligenceRunner {
             evidenceAnalysis,
             evidenceAssessments,
             consolidatedEvidence,
-            powerClaimAgreementAnalysis,
+            claimAgreementAnalysis,
         };
 
         return this.waterIntelligenceService.interpret(input);

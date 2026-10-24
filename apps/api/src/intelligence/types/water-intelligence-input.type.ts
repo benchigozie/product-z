@@ -9,5 +9,5 @@ export interface WaterIntelligenceInput {
     evidenceAnalysis: EvidenceAnalysisResult;
     evidenceAssessments: EvidenceWeightAssessment[];
     consolidatedEvidence: ConsolidatedEvidence[];
-    powerClaimAgreementAnalysis: WaterClaimAgreementAnalysis[];
+    claimAgreementAnalysis: WaterClaimAgreementAnalysis[];
 }

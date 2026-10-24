@@ -111,7 +111,7 @@ Consolidated evidence:
 ${JSON.stringify(input.consolidatedEvidence)}
 
 Claim-level agreement analysis:
-${JSON.stringify(input.powerClaimAgreementAnalysis)}
+${JSON.stringify(input.claimAgreementAnalysis)}
 `;
     }
 }

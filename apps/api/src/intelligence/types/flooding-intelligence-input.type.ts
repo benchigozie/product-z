@@ -9,5 +9,5 @@ export interface FloodingIntelligenceInput {
     evidenceAnalysis: EvidenceAnalysisResult;
     evidenceAssessments: EvidenceWeightAssessment[];
     consolidatedEvidence: ConsolidatedEvidence[];
-    powerClaimAgreementAnalysis: FloodingClaimAgreementAnalysis[];
+    claimAgreementAnalysis: FloodingClaimAgreementAnalysis[];
 }

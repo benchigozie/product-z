@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { EvidenceAgreementClassification } from '../evidence/evidence-agreement.classification.js';
-import { AvailabilityAgreementClassifier } from '../availbility-agreement.classifier.js';
+import { AvailabilityAgreementClassifier } from '../availability-agreement.classifier.js';
 import type { AgreementResult } from '../evidence/agreement-result.type.js';
 
 

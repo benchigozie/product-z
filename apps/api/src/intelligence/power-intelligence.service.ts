@@ -5,9 +5,12 @@ import type { PowerIntelligenceInput } from './types/power-intelligence-input.ty
 import type { IntelligenceInterpreter } from './types/intelligence-interpreter.type.js';
 
 import { IntelligenceConclusionValidationService } from './intelligence-conclusion-validation.service.js';
-import { PowerCondition } from './enums/power-condition.enum.js';
 import { IntelligenceConfidence } from './enums/intelligence-confidence.enum.js';
+import { ConclusionState } from './enums/conclusion-state.enum.js';
 import { EvidenceRecencyClassification } from './evidence/evidence-recency.classification.js';
+import { ObservationCategory } from '../observation/enums/observation-category.enum.js';
+import { powerToConclusionState } from './utils/condition-mapper.js';
+import { PowerCondition } from './enums/power-condition.enum.js';
 
 export const POWER_INTELLIGENCE_INTERPRETER = Symbol(
     'POWER_INTELLIGENCE_INTERPRETER',
@@ -30,9 +33,10 @@ export class PowerIntelligenceService {
             input.observations.map((observation) => observation.id),
         );
 
-        const conclusion = await this.conclusionValidation.validate(
+        const validated = await this.conclusionValidation.validate(
             result,
             validObservationIds,
+            ObservationCategory.POWER,
         );
 
         const recency = input.evidenceAnalysis.recency;
@@ -46,18 +50,21 @@ export class PowerIntelligenceService {
 
         if (allEvidenceIsOld) {
             return {
-                ...conclusion,
-                conclusion: PowerCondition.UNRESOLVED,
+                conclusion: ConclusionState.UNRESOLVED,
                 confidence: IntelligenceConfidence.LOW,
                 reason:
                     'Insufficient recent evidence to determine the current electricity condition.',
                 reasonSignals: ['All available observations are old'],
+                evidenceReferences: validated.evidenceReferences,
                 considerations: [
                     'Agreement between old observations cannot establish the current condition.',
                 ],
             };
         }
 
-        return conclusion;
+        return {
+            ...validated,
+            conclusion: powerToConclusionState(validated.conclusion as PowerCondition),
+        };
     }
 }

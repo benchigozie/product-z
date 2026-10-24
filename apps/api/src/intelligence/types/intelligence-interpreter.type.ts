@@ -1,5 +1,5 @@
-import type { IntelligenceConclusion } from './intelligence-conclusion.type.js';
+import type { ValidatedConclusion } from './validated-conclusion.type.js';
 
-export interface IntelligenceInterpreter<TInput> {
-    interpret(input: TInput): Promise<IntelligenceConclusion>;
+export interface IntelligenceInterpreter<T> {
+    interpret(input: T): Promise<ValidatedConclusion>;
 }

@@ -1,9 +1,8 @@
 import type { IntelligenceConfidence } from '../enums/intelligence-confidence.enum.js';
-import type { PowerCondition } from '../enums/power-condition.enum.js';
-import type { FloodingCondition } from '../enums/flooding-condition.enum.js';
+import type { ConclusionState } from '../enums/conclusion-state.enum.js';
 
 export interface IntelligenceConclusion {
-    conclusion: PowerCondition | FloodingCondition;
+    conclusion: ConclusionState;
     confidence: IntelligenceConfidence;
     reason: string;
     reasonSignals: string[];

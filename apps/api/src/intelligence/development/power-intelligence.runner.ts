@@ -51,7 +51,7 @@ export class PowerIntelligenceRunner {
         const consolidatedEvidence =
             this.evidenceConsolidationService.consolidate(observations);
 
-        const powerClaimAgreementAnalysis =
+            const claimAgreementAnalysis =
             this.powerClaimAgreementAnalysisService.analyze(
                 consolidatedEvidence,
             );
@@ -62,7 +62,7 @@ export class PowerIntelligenceRunner {
             evidenceAnalysis,
             evidenceAssessments,
             consolidatedEvidence,
-            powerClaimAgreementAnalysis,
+            claimAgreementAnalysis,
         };
 
         return this.powerIntelligenceService.interpret(input);

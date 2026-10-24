@@ -12,7 +12,8 @@ import { EvidenceAgreementClassification } from '../evidence-agreement.classific
 import { EvidenceAnalysisService } from '../evidence-analysis.service.js';
 import { EvidenceRecencyService } from '../evidence-recency.service.js';
 import { PowerAgreementService } from '../../power-agreement.service.js';
-import { PowerAgreementClassifier } from '../../power-agreement-classifier.js';
+import { AvailabilityAgreementClassifier } from '../../availability-agreement.classifier.js';
+
 import { EvidenceTemporalAnalysisService } from '../evidence-temporal-analysis.service.js';
 import {
     TemporalAgreementInterpretation,
@@ -34,7 +35,7 @@ describe('EvidenceAnalysisService', () => {
 
     const agreementClassifier = {
         classify: vi.fn(),
-    } as unknown as PowerAgreementClassifier;
+    } as unknown as AvailabilityAgreementClassifier;
 
     const temporalAnalysisService = {
         analyze: vi.fn(),
@@ -71,7 +72,7 @@ describe('EvidenceAnalysisService', () => {
 
         expect(result).toEqual({
             recency: [],
-            powerAgreement: [],
+            agreement: [],
             temporalAgreement: [],
         });
 
@@ -156,8 +157,8 @@ describe('EvidenceAnalysisService', () => {
             },
         ]);
 
-        expect(result.powerAgreement).toHaveLength(1);
-        expect(result.powerAgreement[0]).toMatchObject({
+        expect(result.agreement).toHaveLength(1);
+        expect(result.agreement[0]).toMatchObject({
             firstObservationId: 'power-1',
             secondObservationId: 'power-2',
             classification: EvidenceAgreementClassification.STRONG_AGREEMENT,
@@ -166,7 +167,7 @@ describe('EvidenceAnalysisService', () => {
                 reliabilityDifference: 0,
             },
         });
-        expect(result.powerAgreement[0].timeDifferenceInDays).toBeCloseTo(1);
+        expect(result.agreement[0].timeDifferenceInDays).toBeCloseTo(1);
         expect(temporalAnalysisService.analyze).toHaveBeenCalledTimes(1);
     });
 
@@ -190,7 +191,7 @@ describe('EvidenceAnalysisService', () => {
         const result = await service.analyze(observations);
 
         expect(agreementService.compare).not.toHaveBeenCalled();
-        expect(result.powerAgreement).toEqual([]);
+        expect(result.agreement).toEqual([]);
         expect(result.recency).toHaveLength(2);
         expect(console.warn).toHaveBeenCalledOnce();
     });

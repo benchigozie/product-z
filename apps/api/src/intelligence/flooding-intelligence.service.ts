@@ -5,9 +5,12 @@ import type { FloodingIntelligenceInput } from './types/flooding-intelligence-in
 import type { IntelligenceInterpreter } from './types/intelligence-interpreter.type.js';
 
 import { IntelligenceConclusionValidationService } from './intelligence-conclusion-validation.service.js';
-import { FloodingCondition } from './enums/flooding-condition.enum.js';
 import { IntelligenceConfidence } from './enums/intelligence-confidence.enum.js';
+import { ConclusionState } from './enums/conclusion-state.enum.js';
 import { EvidenceRecencyClassification } from './evidence/evidence-recency.classification.js';
+import { ObservationCategory } from '../observation/enums/observation-category.enum.js';
+import { floodingToConclusionState } from './utils/condition-mapper.js';
+import { FloodingCondition } from './enums/flooding-condition.enum.js';
 
 export const FLOODING_INTELLIGENCE_INTERPRETER = Symbol(
     'FLOODING_INTELLIGENCE_INTERPRETER',
@@ -30,9 +33,10 @@ export class FloodingIntelligenceService {
             input.observations.map((observation) => observation.id),
         );
 
-        const conclusion = await this.conclusionValidation.validate(
+        const validated = await this.conclusionValidation.validate(
             result,
             validObservationIds,
+            ObservationCategory.FLOODING,
         );
 
         const recency = input.evidenceAnalysis.recency;
@@ -46,18 +50,21 @@ export class FloodingIntelligenceService {
 
         if (allEvidenceIsOld) {
             return {
-                ...conclusion,
-                conclusion: FloodingCondition.UNRESOLVED,
+                conclusion: ConclusionState.UNRESOLVED,
                 confidence: IntelligenceConfidence.LOW,
                 reason:
                     'Insufficient recent evidence to determine the current flooding condition.',
                 reasonSignals: ['All available observations are old'],
+                evidenceReferences: validated.evidenceReferences,
                 considerations: [
                     'Agreement between old observations cannot establish the current condition.',
                 ],
             };
         }
 
-        return conclusion;
+        return {
+            ...validated,
+            conclusion: floodingToConclusionState(validated.conclusion as FloodingCondition),
+        };
     }
 }

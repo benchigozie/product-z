@@ -1,0 +1,6 @@
+export enum WaterCondition {
+    AVAILABLE = 'AVAILABLE',
+    INTERMITTENT = 'INTERMITTENT',
+    UNAVAILABLE = 'UNAVAILABLE',
+    UNRESOLVED = 'UNRESOLVED',
+}

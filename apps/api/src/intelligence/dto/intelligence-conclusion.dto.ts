@@ -9,8 +9,11 @@ import { IntelligenceConfidence } from '../enums/intelligence-confidence.enum.js
 import { PowerCondition } from '../enums/power-condition.enum.js';
 import { FloodingCondition } from '../enums/flooding-condition.enum.js';
 
+import { WaterCondition } from '../enums/water-condition.enum.js';
+
 const VALID_CONCLUSIONS: readonly string[] = [
     ...Object.values(PowerCondition),
+    ...Object.values(WaterCondition),
     ...Object.values(FloodingCondition),
 ];
 

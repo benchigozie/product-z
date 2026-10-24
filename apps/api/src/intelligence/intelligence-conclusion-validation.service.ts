@@ -1,17 +1,23 @@
-
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 
 import { IntelligenceConclusionDto } from './dto/intelligence-conclusion.dto.js';
-import type { IntelligenceConclusion } from './types/intelligence-conclusion.type.js';
+import { ObservationCategory } from '../observation/enums/observation-category.enum.js';
+import { PowerCondition } from './enums/power-condition.enum.js';
+import { FloodingCondition } from './enums/flooding-condition.enum.js';
+import type { ValidatedConclusion } from './types/validated-conclusion.type.js';
+import { WaterCondition } from './enums/water-condition.enum.js';
+
+
 
 @Injectable()
 export class IntelligenceConclusionValidationService {
     async validate(
         value: unknown,
         validObservationIds: ReadonlySet<string>,
-    ): Promise<IntelligenceConclusion> {
+        category: ObservationCategory,
+    ): Promise<ValidatedConclusion> {
         const dto = plainToInstance(IntelligenceConclusionDto, value);
 
         const errors = await validate(dto, {
@@ -19,7 +25,6 @@ export class IntelligenceConclusionValidationService {
             forbidNonWhitelisted: true,
         });
 
-        // Validate the DTO's structure before processing its references.
         if (errors.length > 0) {
             console.error(
                 'Intelligence conclusion validation errors:',
@@ -36,8 +41,25 @@ export class IntelligenceConclusionValidationService {
             );
         }
 
-        // Accept only exact observation IDs, or the known legacy "power:" prefix.
-        // The prefix is removed only when the remainder is a valid observation ID.
+        // Category-specific conclusion value check.
+        const expectedValues: readonly string[] =
+    category === ObservationCategory.POWER
+        ? Object.values(PowerCondition)
+        : category === ObservationCategory.WATER
+          ? Object.values(WaterCondition)
+          : category === ObservationCategory.FLOODING
+            ? Object.values(FloodingCondition)
+            : [];
+
+        if (
+            expectedValues.length > 0 &&
+            !expectedValues.includes(dto.conclusion)
+        ) {
+            throw new BadRequestException(
+                `The conclusion '${dto.conclusion}' is not valid for category ${category}.`,
+            );
+        }
+
         dto.evidenceReferences = dto.evidenceReferences.map((reference) => {
             if (validObservationIds.has(reference)) {
                 return reference;
@@ -68,6 +90,6 @@ export class IntelligenceConclusionValidationService {
             );
         }
 
-        return dto as unknown as IntelligenceConclusion;
+        return dto as unknown as ValidatedConclusion;
     }
 }

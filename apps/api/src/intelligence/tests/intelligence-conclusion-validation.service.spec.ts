@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { IntelligenceConfidence } from '../enums/intelligence-confidence.enum.js';
 import { PowerCondition } from '../enums/power-condition.enum.js';
 import { IntelligenceConclusionValidationService } from '../intelligence-conclusion-validation.service.js';
+import { ObservationCategory } from '../../observation/enums/observation-category.enum.js';
 
 describe('IntelligenceConclusionValidationService', () => {
     const service = new IntelligenceConclusionValidationService();
@@ -22,7 +23,11 @@ describe('IntelligenceConclusionValidationService', () => {
 
     it('accepts a valid conclusion with known observation references', async () => {
         await expect(
-            service.validate(validConclusion, validObservationIds),
+            service.validate(
+                validConclusion,
+                validObservationIds,
+                ObservationCategory.POWER,
+            ),
         ).resolves.toEqual(validConclusion);
     });
 
@@ -35,6 +40,7 @@ describe('IntelligenceConclusionValidationService', () => {
                     confidence: IntelligenceConfidence.LOW,
                 },
                 validObservationIds,
+                ObservationCategory.POWER,
             ),
         ).resolves.toMatchObject({
             conclusion: PowerCondition.UNRESOLVED,
@@ -47,6 +53,7 @@ describe('IntelligenceConclusionValidationService', () => {
             service.validate(
                 { ...validConclusion, confidence: 'CERTAIN' },
                 validObservationIds,
+                ObservationCategory.POWER,
             ),
         ).rejects.toThrow(BadRequestException);
     });
@@ -56,6 +63,7 @@ describe('IntelligenceConclusionValidationService', () => {
             service.validate(
                 { ...validConclusion, confidence: 'UNRESOLVED' },
                 validObservationIds,
+                ObservationCategory.POWER,
             ),
         ).rejects.toThrow(BadRequestException);
     });
@@ -65,6 +73,17 @@ describe('IntelligenceConclusionValidationService', () => {
             service.validate(
                 { ...validConclusion, conclusion: 'Electricity is intermittent' },
                 validObservationIds,
+                ObservationCategory.POWER,
+            ),
+        ).rejects.toThrow(BadRequestException);
+    });
+
+    it('rejects a conclusion that is valid for a different category', async () => {
+        await expect(
+            service.validate(
+                { ...validConclusion, conclusion: 'FLOODS' },
+                validObservationIds,
+                ObservationCategory.POWER,
             ),
         ).rejects.toThrow(BadRequestException);
     });
@@ -79,6 +98,7 @@ describe('IntelligenceConclusionValidationService', () => {
                     ],
                 },
                 validObservationIds,
+                ObservationCategory.POWER,
             ),
         ).rejects.toThrow(BadRequestException);
     });
@@ -88,54 +108,57 @@ describe('IntelligenceConclusionValidationService', () => {
             service.validate(
                 { ...validConclusion, unsupportedField: true },
                 validObservationIds,
+                ObservationCategory.POWER,
             ),
         ).rejects.toThrow(BadRequestException);
     });
 
-
-it('normalizes a power-prefixed reference when the raw ID is known', async () => {
-    const result = await service.validate(
-        {
-            ...validConclusion,
-            evidenceReferences: [`power:${observationId}`],
-        },
-        validObservationIds,
-    );
-
-    expect(result.evidenceReferences).toEqual([observationId]);
-});
-
-it('preserves exact raw observation references', async () => {
-    const result = await service.validate(
-        validConclusion,
-        validObservationIds,
-    );
-
-    expect(result.evidenceReferences).toEqual([observationId]);
-});
-
-it('rejects a power-prefixed reference when its raw ID is unknown', async () => {
-    await expect(
-        service.validate(
+    it('normalizes a power-prefixed reference when the raw ID is known', async () => {
+        const result = await service.validate(
             {
                 ...validConclusion,
-                evidenceReferences: ['power:unknown-observation'],
+                evidenceReferences: [`power:${observationId}`],
             },
             validObservationIds,
-        ),
-    ).rejects.toThrow(BadRequestException);
-});
+            ObservationCategory.POWER,
+        );
 
-it('rejects an unknown reference with an arbitrary prefix', async () => {
-    await expect(
-        service.validate(
-            {
-                ...validConclusion,
-                evidenceReferences: [`other:${observationId}`],
-            },
+        expect(result.evidenceReferences).toEqual([observationId]);
+    });
+
+    it('preserves exact raw observation references', async () => {
+        const result = await service.validate(
+            validConclusion,
             validObservationIds,
-        ),
-    ).rejects.toThrow(BadRequestException);
-});
+            ObservationCategory.POWER,
+        );
 
+        expect(result.evidenceReferences).toEqual([observationId]);
+    });
+
+    it('rejects a power-prefixed reference when its raw ID is unknown', async () => {
+        await expect(
+            service.validate(
+                {
+                    ...validConclusion,
+                    evidenceReferences: ['power:unknown-observation'],
+                },
+                validObservationIds,
+                ObservationCategory.POWER,
+            ),
+        ).rejects.toThrow(BadRequestException);
+    });
+
+    it('rejects an unknown reference with an arbitrary prefix', async () => {
+        await expect(
+            service.validate(
+                {
+                    ...validConclusion,
+                    evidenceReferences: [`other:${observationId}`],
+                },
+                validObservationIds,
+                ObservationCategory.POWER,
+            ),
+        ).rejects.toThrow(BadRequestException);
+    });
 });

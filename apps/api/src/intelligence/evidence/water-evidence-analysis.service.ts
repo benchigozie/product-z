@@ -1,5 +1,3 @@
-
-
 import { Injectable } from '@nestjs/common';
 
 import type { ObservationListResult } from '../../observation/types/observation-result.type.js';
@@ -11,7 +9,7 @@ import type { WaterData } from '../../observation/types/water/water-data.type.js
 import { Availability } from '../../observation/types/common/availability.type.js';
 import { Reliability } from '../../observation/types/common/reliability.type.js';
 import { WaterSource } from '../../observation/types/water/water-source.type.js';
-import type { WaterAgreementAnalysis } from './types/water-agreement-analysis.type.js';
+import type { WaterCategoryAgreementAnalysis } from './types/category-agreement-analysis.type.js';
 import type { EvidenceAnalysisResult } from './types/evidence-analysis-result.type.js';
 import type { ObservationRecencyAnalysis } from './types/observation-recency-analysis.type.js';
 import { EvidenceTemporalAnalysisService } from './evidence-temporal-analysis.service.js';
@@ -63,7 +61,7 @@ export class WaterEvidenceAnalysisService {
                 observation.category === ObservationCategory.WATER,
         );
 
-        const waterAgreementAnalyses: WaterAgreementAnalysis[] = [];
+        const waterAgreementAnalyses: WaterCategoryAgreementAnalysis[] = [];
         const temporalAgreementAnalyses: TemporalAgreementAnalysis[] = [];
 
         for (let i = 0; i < waterObservations.length; i++) {
@@ -100,6 +98,7 @@ export class WaterEvidenceAnalysisService {
                     );
 
                 waterAgreementAnalyses.push({
+                    category: ObservationCategory.WATER,
                     firstObservationId: firstObservation.id,
                     secondObservationId: secondObservation.id,
                     classification,
@@ -133,7 +132,7 @@ export class WaterEvidenceAnalysisService {
 
         return {
             recency: recencyAnalyses,
-            powerAgreement: waterAgreementAnalyses,
+            agreement: waterAgreementAnalyses,
             temporalAgreement: temporalAgreementAnalyses,
         };
     }

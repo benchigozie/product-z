@@ -42,7 +42,7 @@ export class EvidenceWeightingService {
                     temporalInterpretation: result.interpretation,
                 }));
 
-                for (const agreement of analysis.powerAgreement) {
+                for (const agreement of analysis.agreement) {
                     const isFirst =
                         agreement.firstObservationId === observation.id;
                     const isSecond =

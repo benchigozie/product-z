@@ -2,9 +2,9 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { GeminiClient } from '../llm/gemini.client.js';
 import { WaterIntelligencePrompt } from '../prompts/water-intelligence.prompt.js';
-import type { IntelligenceConclusion } from '../types/intelligence-conclusion.type.js';
 import type { WaterIntelligenceInput } from '../types/water-intelligence-input.type.js';
 import type { IntelligenceInterpreter } from '../types/intelligence-interpreter.type.js';
+import type { ValidatedConclusion } from '../types/validated-conclusion.type.js';
 
 @Injectable()
 export class GeminiWaterIntelligenceInterpreter
@@ -17,7 +17,7 @@ export class GeminiWaterIntelligenceInterpreter
 
     async interpret(
         input: WaterIntelligenceInput,
-    ): Promise<IntelligenceConclusion> {
+    ): Promise<ValidatedConclusion> {
         const prompt = this.promptBuilder.build(input);
 
         let text: string;
@@ -41,7 +41,7 @@ export class GeminiWaterIntelligenceInterpreter
                 throw new Error('Expected a JSON object.');
             }
 
-            return parsed as IntelligenceConclusion;
+            return parsed as ValidatedConclusion;
         } catch {
             throw new InternalServerErrorException(
                 'Gemini returned invalid JSON for water intelligence.',

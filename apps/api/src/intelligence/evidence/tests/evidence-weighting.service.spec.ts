@@ -1,4 +1,3 @@
-
 import { describe, expect, it } from 'vitest';
 
 import { ObservationCategory } from '../../../observation/enums/observation-category.enum.js';
@@ -33,8 +32,9 @@ describe('EvidenceWeightingService', () => {
                 category: observation.category,
                 classification: EvidenceRecencyClassification.RECENT,
             })),
-            powerAgreement: [
+            agreement: [
                 {
+                    category: ObservationCategory.POWER,
                     firstObservationId: 'power-1',
                     secondObservationId: 'power-2',
                     classification,
