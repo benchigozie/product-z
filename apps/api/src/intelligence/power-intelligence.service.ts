@@ -5,6 +5,7 @@ import type { PowerIntelligenceInput } from './types/power-intelligence-input.ty
 import type { IntelligenceInterpreter } from './types/intelligence-interpreter.type.js';
 
 import { IntelligenceConclusionValidationService } from './intelligence-conclusion-validation.service.js';
+import { ConfidenceCalibrationService } from './confidence/confidence-calibration.service.js';
 import { IntelligenceConfidence } from './enums/intelligence-confidence.enum.js';
 import { ConclusionState } from './enums/conclusion-state.enum.js';
 import { EvidenceRecencyClassification } from './evidence/evidence-recency.classification.js';
@@ -22,6 +23,7 @@ export class PowerIntelligenceService {
         @Inject(POWER_INTELLIGENCE_INTERPRETER)
         private readonly interpreter: IntelligenceInterpreter<PowerIntelligenceInput>,
         private readonly conclusionValidation: IntelligenceConclusionValidationService,
+        private readonly confidenceCalibration: ConfidenceCalibrationService,
     ) {}
 
     async interpret(
@@ -49,9 +51,17 @@ export class PowerIntelligenceService {
             );
 
         if (allEvidenceIsOld) {
+            const overrideConclusion = ConclusionState.UNRESOLVED;
+            const overrideConfidence =
+                this.confidenceCalibration.calibrate(
+                    overrideConclusion,
+                    IntelligenceConfidence.LOW,
+                    input.evidenceAnalysis,
+                );
+
             return {
-                conclusion: ConclusionState.UNRESOLVED,
-                confidence: IntelligenceConfidence.LOW,
+                conclusion: overrideConclusion,
+                confidence: overrideConfidence,
                 reason:
                     'Insufficient recent evidence to determine the current electricity condition.',
                 reasonSignals: ['All available observations are old'],
@@ -62,9 +72,21 @@ export class PowerIntelligenceService {
             };
         }
 
+        const mappedConclusion = powerToConclusionState(
+            validated.conclusion as PowerCondition,
+        );
+
+        const calibratedConfidence =
+            this.confidenceCalibration.calibrate(
+                mappedConclusion,
+                validated.confidence,
+                input.evidenceAnalysis,
+            );
+
         return {
             ...validated,
-            conclusion: powerToConclusionState(validated.conclusion as PowerCondition),
+            conclusion: mappedConclusion,
+            confidence: calibratedConfidence,
         };
     }
 }

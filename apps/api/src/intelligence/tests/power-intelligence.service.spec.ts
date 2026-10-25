@@ -6,6 +6,7 @@ import { PowerCondition } from '../enums/power-condition.enum.js';
 import { ConclusionState } from '../enums/conclusion-state.enum.js';
 import { EvidenceRecencyClassification } from '../evidence/evidence-recency.classification.js';
 import { IntelligenceConclusionValidationService } from '../intelligence-conclusion-validation.service.js';
+import { ConfidenceCalibrationService } from '../confidence/confidence-calibration.service.js';
 import { PowerIntelligenceService } from '../power-intelligence.service.js';
 import { ObservationCategory } from '../../observation/enums/observation-category.enum.js';
 
@@ -48,14 +49,23 @@ describe('PowerIntelligenceService', () => {
         validate: vi.fn(),
     } as unknown as IntelligenceConclusionValidationService;
 
+    const confidenceCalibration = {
+        calibrate: vi.fn(),
+    } as unknown as ConfidenceCalibrationService;
+
     let service: PowerIntelligenceService;
 
     beforeEach(() => {
         vi.clearAllMocks();
 
+        vi.mocked(confidenceCalibration.calibrate).mockImplementation(
+            (_conclusion, proposedConfidence) => proposedConfidence,
+        );
+
         service = new PowerIntelligenceService(
             interpreter,
             conclusionValidation,
+            confidenceCalibration,
         );
     });
 
@@ -70,6 +80,11 @@ describe('PowerIntelligenceService', () => {
             validated,
             new Set([observationId]),
             ObservationCategory.POWER,
+        );
+        expect(confidenceCalibration.calibrate).toHaveBeenCalledWith(
+            ConclusionState.MIXED,
+            IntelligenceConfidence.MODERATE,
+            input.evidenceAnalysis,
         );
     });
 

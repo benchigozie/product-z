@@ -5,6 +5,7 @@ import type { FloodingIntelligenceInput } from './types/flooding-intelligence-in
 import type { IntelligenceInterpreter } from './types/intelligence-interpreter.type.js';
 
 import { IntelligenceConclusionValidationService } from './intelligence-conclusion-validation.service.js';
+import { ConfidenceCalibrationService } from './confidence/confidence-calibration.service.js';
 import { IntelligenceConfidence } from './enums/intelligence-confidence.enum.js';
 import { ConclusionState } from './enums/conclusion-state.enum.js';
 import { EvidenceRecencyClassification } from './evidence/evidence-recency.classification.js';
@@ -22,6 +23,7 @@ export class FloodingIntelligenceService {
         @Inject(FLOODING_INTELLIGENCE_INTERPRETER)
         private readonly interpreter: IntelligenceInterpreter<FloodingIntelligenceInput>,
         private readonly conclusionValidation: IntelligenceConclusionValidationService,
+        private readonly confidenceCalibration: ConfidenceCalibrationService,
     ) {}
 
     async interpret(
@@ -49,9 +51,16 @@ export class FloodingIntelligenceService {
             );
 
         if (allEvidenceIsOld) {
+            const overrideConfidence =
+                this.confidenceCalibration.calibrate(
+                    ConclusionState.UNRESOLVED,
+                    IntelligenceConfidence.LOW,
+                    input.evidenceAnalysis,
+                );
+
             return {
                 conclusion: ConclusionState.UNRESOLVED,
-                confidence: IntelligenceConfidence.LOW,
+                confidence: overrideConfidence,
                 reason:
                     'Insufficient recent evidence to determine the current flooding condition.',
                 reasonSignals: ['All available observations are old'],
@@ -62,9 +71,22 @@ export class FloodingIntelligenceService {
             };
         }
 
+        // Safe: validator confirmed the conclusion is a valid FloodingCondition
+        // (via category check in IntelligenceConclusionValidationService).
+        const mappedConclusion = floodingToConclusionState(
+            validated.conclusion as FloodingCondition,
+        );
+
+        const calibratedConfidence = this.confidenceCalibration.calibrate(
+            mappedConclusion,
+            validated.confidence,
+            input.evidenceAnalysis,
+        );
+
         return {
             ...validated,
-            conclusion: floodingToConclusionState(validated.conclusion as FloodingCondition),
+            conclusion: mappedConclusion,
+            confidence: calibratedConfidence,
         };
     }
 }

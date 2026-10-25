@@ -57,6 +57,8 @@ import {
 } from './flooding-intelligence.service.js';
 import { FloodingIntelligencePrompt } from './prompts/flooding-intelligence.prompt.js';
 import { GeminiFloodingIntelligenceInterpreter } from './interpreters/gemini-flooding-intelligence.interpreter.js';
+import { ConfidenceCalibrationService } from './confidence/confidence-calibration.service.js';
+
 
 @Module({
     imports: [
@@ -135,7 +137,7 @@ import { GeminiFloodingIntelligenceInterpreter } from './interpreters/gemini-flo
             provide: FLOODING_INTELLIGENCE_INTERPRETER,
             useExisting: GeminiFloodingIntelligenceInterpreter,
         },
-
+        ConfidenceCalibrationService,
     ],
     exports: [
         IntelligenceService,
