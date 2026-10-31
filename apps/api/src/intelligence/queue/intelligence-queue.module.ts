@@ -12,6 +12,8 @@ import { IntelligenceQueueDebugController } from './intelligence-queue-debug.con
 import { IntelligenceAdminController } from './intelligence-admin.controller.js';
 import { IntelligenceAdminService } from './intelligence-admin.service.js';
 import { INTELLIGENCE_RECOMPUTE_QUEUE } from './intelligence-recompute.constants.js';
+import { SessionModule } from '../../session/session.module.js';
+
 
 @Module({
     imports: [
@@ -19,10 +21,12 @@ import { INTELLIGENCE_RECOMPUTE_QUEUE } from './intelligence-recompute.constants
         BullModule.registerQueue({
             name: INTELLIGENCE_RECOMPUTE_QUEUE,
         }),
+        SessionModule,
     ],
     controllers: [
         IntelligenceQueueDebugController,
         IntelligenceAdminController,
+        
     ],
     providers: [
         {

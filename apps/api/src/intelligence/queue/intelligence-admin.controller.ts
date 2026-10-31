@@ -1,12 +1,21 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    UseGuards,
+} from '@nestjs/common';
 
+import { SessionAuthGuard } from '../../auth/guards/session-auth.guard.js';
 import { IntelligenceAdminService } from './intelligence-admin.service.js';
 
 @Controller('development/admin/intelligence')
+@UseGuards(SessionAuthGuard)
 export class IntelligenceAdminController {
     constructor(
         private readonly adminService: IntelligenceAdminService,
-    ) {}
+    ) { }
 
     @Get('status')
     async status() {
@@ -36,5 +45,9 @@ export class IntelligenceAdminController {
             body.category.toUpperCase(),
             body.fromVersion,
         );
+    }
+    @Post('trigger-failed-retry')
+    async triggerFailedRetry() {
+        return this.adminService.triggerFailedRetry();
     }
 }

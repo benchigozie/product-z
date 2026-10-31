@@ -19,14 +19,14 @@ export class InterpretObservationWorker {
     async process(job: InterpretObservationJob): Promise<void> {
         const observation =
             await this.observationRepository.findById(job.observationId);
-
+    
         if (!observation) {
             this.logger.warn(
                 `Observation ${job.observationId} not found; skipping.`,
             );
             return;
         }
-
+    
         // Interpretation is enrichment. If it fails, the pipeline can still
         // run on the raw observation. Log and continue.
         try {
@@ -34,7 +34,7 @@ export class InterpretObservationWorker {
                 await this.observationInterpretationService.interpret(
                     observation,
                 );
-
+    
             await this.observationRepository.updateInterpretation(
                 observation.id,
                 interpretation,
@@ -47,23 +47,22 @@ export class InterpretObservationWorker {
             );
             // Do not rethrow — continue to intelligence recompute.
         }
-
+    
         // Only recompute the category the observation belongs to.
-        // Other categories' underlying evidence hasn't changed.
         const category = observation.category as ObservationCategory;
         const supportedCategories = [
             ObservationCategory.POWER,
             ObservationCategory.WATER,
             ObservationCategory.FLOODING,
         ];
-
+    
         if (!supportedCategories.includes(category)) {
             this.logger.debug(
                 `Category ${category} has no intelligence pipeline yet; skipping recompute.`,
             );
             return;
         }
-
+    
         if (observation.propertyId) {
             await this.intelligenceRecomputeService.recompute({
                 propertyId: observation.propertyId,
@@ -71,10 +70,11 @@ export class InterpretObservationWorker {
                 reason: 'NEW_OBSERVATION',
             });
         } else if (observation.placeId) {
-            // Place-level recompute not implemented yet.
-            this.logger.debug(
-                `Place ${observation.placeId} intelligence recompute skipped (not implemented).`,
-            );
+            await this.intelligenceRecomputeService.recompute({
+                placeId: observation.placeId,
+                category,
+                reason: 'NEW_OBSERVATION',
+            });
         }
     }
 }

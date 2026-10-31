@@ -99,4 +99,37 @@ export class IntelligenceAdminService {
             enqueued,
         };
     }
+
+    async triggerFailedRetry(): Promise<{ matched: number; enqueued: number }> {
+        const failed = await this.prisma.db.orm.public.Intelligence
+            .where({ status: 'FAILED' })
+            .all();
+    
+        let enqueued = 0;
+        for (const row of failed) {
+            const categories = Object.keys(
+                (row.categories as Record<string, any> | null) ?? {},
+            );
+            const targetCategories = categories.length > 0 ? categories : ['power'];
+    
+            for (const category of targetCategories) {
+                await this.queue.add(
+                    INTELLIGENCE_RECOMPUTE_JOB,
+                    {
+                        propertyId: row.propertyId ?? undefined,
+                        placeId: row.placeId ?? undefined,
+                        category: category.toUpperCase(),
+                        reason: 'RETRY',
+                    },
+                    {
+                        ...RECOMPUTE_JOB_OPTIONS,
+                        jobId: `retry-${row.propertyId ?? row.placeId}-${category}-${Date.now()}`,
+                    },
+                );
+                enqueued++;
+            }
+        }
+    
+        return { matched: failed.length, enqueued };
+    }
 }
