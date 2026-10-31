@@ -38,7 +38,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d90a9becc1580767e1ee3bdbd76f7e05c3fa885909051e8f6d0a5cf92d1ed97c'>;
+  StorageHashBase<'a76c41fc876d9b1b3291785843dc394fbdef02bc96fb00d582a1be3277442101'>;
 export type ExecutionHash =
   ExecutionHashBase<'0f76689658f324db1386b43c8d0d219075b153a7e44e2ce0b6655d2f308dabd5'>;
 export type ProfileHash =
@@ -265,6 +265,7 @@ export type FieldOutputTypes = {
       readonly failureReason: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly lastRecomputeReason: 'NEW_OBSERVATION' | 'PROMPT_CHANGE' | 'MANUAL' | 'RETRY' | null;
     };
     readonly OAuthAccount: {
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -440,6 +441,7 @@ export type FieldInputTypes = {
       readonly failureReason: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly lastRecomputeReason: 'NEW_OBSERVATION' | 'PROMPT_CHANGE' | 'MANUAL' | 'RETRY' | null;
     };
     readonly OAuthAccount: {
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -610,6 +612,7 @@ export type StorageColumnTypes = {
       readonly evidenceThrough: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
       readonly failureReason: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
+      readonly lastRecomputeReason: 'NEW_OBSERVATION' | 'PROMPT_CHANGE' | 'MANUAL' | 'RETRY' | null;
       readonly overall: CodecTypes['pg/json@1']['output'];
       readonly placeId: CodecTypes['pg/text@1']['output'] | null;
       readonly propertyId: CodecTypes['pg/text@1']['output'] | null;
@@ -785,6 +788,7 @@ export type StorageColumnInputTypes = {
       readonly evidenceThrough: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
       readonly failureReason: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
+      readonly lastRecomputeReason: 'NEW_OBSERVATION' | 'PROMPT_CHANGE' | 'MANUAL' | 'RETRY' | null;
       readonly overall: CodecTypes['pg/json@1']['input'];
       readonly placeId: CodecTypes['pg/text@1']['input'] | null;
       readonly propertyId: CodecTypes['pg/text@1']['input'] | null;
@@ -1048,6 +1052,11 @@ type ContractBase = Omit<
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-temporal@1';
                   readonly nullable: false;
+                };
+                readonly lastRecomputeReason: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
@@ -2089,6 +2098,10 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['GOOGLE'];
             };
+            readonly IntelligenceRecomputeReason: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['NEW_OBSERVATION', 'PROMPT_CHANGE', 'MANUAL', 'RETRY'];
+            };
             readonly IntelligenceStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['PENDING', 'PROCESSING', 'CURRENT', 'FAILED'];
@@ -2328,6 +2341,10 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-temporal@1';
                 };
               };
+              readonly lastRecomputeReason: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
             };
             readonly relations: {
               readonly place: {
@@ -2369,6 +2386,7 @@ type ContractBase = Omit<
                 readonly failureReason: { readonly column: 'failureReason' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly lastRecomputeReason: { readonly column: 'lastRecomputeReason' };
               };
             };
           };
@@ -3612,6 +3630,15 @@ type ContractBase = Omit<
               { readonly name: 'PROCESSING'; readonly value: 'PROCESSING' },
               { readonly name: 'CURRENT'; readonly value: 'CURRENT' },
               { readonly name: 'FAILED'; readonly value: 'FAILED' },
+            ];
+          };
+          readonly IntelligenceRecomputeReason: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'NEW_OBSERVATION'; readonly value: 'NEW_OBSERVATION' },
+              { readonly name: 'PROMPT_CHANGE'; readonly value: 'PROMPT_CHANGE' },
+              { readonly name: 'MANUAL'; readonly value: 'MANUAL' },
+              { readonly name: 'RETRY'; readonly value: 'RETRY' },
             ];
           };
         };

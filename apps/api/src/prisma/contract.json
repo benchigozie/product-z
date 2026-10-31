@@ -78,6 +78,27 @@
               }
             ]
           },
+          "IntelligenceRecomputeReason": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "NEW_OBSERVATION",
+                "value": "NEW_OBSERVATION"
+              },
+              {
+                "name": "PROMPT_CHANGE",
+                "value": "PROMPT_CHANGE"
+              },
+              {
+                "name": "MANUAL",
+                "value": "MANUAL"
+              },
+              {
+                "name": "RETRY",
+                "value": "RETRY"
+              }
+            ]
+          },
           "IntelligenceStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -479,6 +500,19 @@
                   "kind": "scalar"
                 }
               },
+              "lastRecomputeReason": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "IntelligenceRecomputeReason",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "overall": {
                 "nullable": false,
                 "type": {
@@ -575,6 +609,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "lastRecomputeReason": {
+                  "column": "lastRecomputeReason"
                 },
                 "overall": {
                   "column": "overall"
@@ -2419,6 +2456,11 @@
             "intelligence": {
               "checks": [
                 {
+                  "expression": "\"lastRecomputeReason\" IN ('NEW_OBSERVATION', 'PROMPT_CHANGE', 'MANUAL', 'RETRY')",
+                  "name": "intelligence_lastRecomputeReason_check_5357c67f",
+                  "prefix": "intelligence_lastRecomputeReason_check"
+                },
+                {
                   "expression": "\"status\" IN ('PENDING', 'PROCESSING', 'CURRENT', 'FAILED')",
                   "name": "intelligence_status_check_38a5fb20",
                   "prefix": "intelligence_status_check"
@@ -2463,6 +2505,17 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "lastRecomputeReason": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "IntelligenceRecomputeReason",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "overall": {
                   "codecId": "pg/json@1",
@@ -3977,6 +4030,15 @@
                 "GOOGLE"
               ]
             },
+            "IntelligenceRecomputeReason": {
+              "kind": "valueSet",
+              "values": [
+                "NEW_OBSERVATION",
+                "PROMPT_CHANGE",
+                "MANUAL",
+                "RETRY"
+              ]
+            },
             "IntelligenceStatus": {
               "kind": "valueSet",
               "values": [
@@ -4097,7 +4159,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d90a9becc1580767e1ee3bdbd76f7e05c3fa885909051e8f6d0a5cf92d1ed97c"
+    "storageHash": "a76c41fc876d9b1b3291785843dc394fbdef02bc96fb00d582a1be3277442101"
   },
   "execution": {
     "executionHash": "0f76689658f324db1386b43c8d0d219075b153a7e44e2ce0b6655d2f308dabd5",

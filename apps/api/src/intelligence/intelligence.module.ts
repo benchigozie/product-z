@@ -152,6 +152,7 @@ import { ConfidenceCalibrationService } from './confidence/confidence-calibratio
         FloodingEvidenceAnalysisService,
         FloodingClaimAgreementAnalysisService,
         FloodingIntelligenceService,
+        EvidenceWeightingService
     ],
 })
 export class IntelligenceModule { }

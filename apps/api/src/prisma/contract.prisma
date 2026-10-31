@@ -442,8 +442,17 @@ model Intelligence {
   property Property? @relation(fields: [propertyId], references: [id])
   place    Place?    @relation(fields: [placeId], references: [id])
 
+  lastRecomputeReason IntelligenceRecomputeReason?
+
   @@index([propertyId])
   @@index([placeId])
   @@index([status])
 }
 
+enum IntelligenceRecomputeReason {
+  @@type("pg/text@1")
+  NEW_OBSERVATION
+  PROMPT_CHANGE
+  MANUAL
+  RETRY
+}

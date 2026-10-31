@@ -10,5 +10,16 @@ services:
     volumes:
       - product-z-postgres-data:/var/lib/postgresql
 
+  redis:
+    image: redis:8-alpine
+    container_name: product-z-redis
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - product-z-redis-data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
 volumes:
   product-z-postgres-data:
+  product-z-redis-data:

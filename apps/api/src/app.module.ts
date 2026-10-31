@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './prisma.module.js';
 import { PropertyModule } from './property/property.module.js';
 import { PlaceModule } from './place/place.module.js';
@@ -11,8 +12,8 @@ import { PropertyRelationshipModule } from './property-relationship/property-rel
 import { AuthModule } from './auth/auth.module.js';
 import { ObservationModule } from './observation/observation.module.js';
 import { IntelligenceModule } from './intelligence/intelligence.module.js';
+import { IntelligenceQueueModule } from './intelligence/queue/intelligence-queue.module.js';
 import { IntelligenceDevelopmentModule } from './intelligence/development/intelligence-development.module.js';
-
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { IntelligenceDevelopmentModule } from './intelligence/development/intell
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     PropertyModule,
     PlaceModule,
@@ -29,6 +31,7 @@ import { IntelligenceDevelopmentModule } from './intelligence/development/intell
     AuthModule,
     ObservationModule,
     IntelligenceModule,
+    IntelligenceQueueModule,
     IntelligenceDevelopmentModule,
   ],
   controllers: [AppController],

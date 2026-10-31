@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.intelligence.lastRecomputeReason",
+    "label": "Add column \"lastRecomputeReason\" to \"intelligence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lastRecomputeReason",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lastRecomputeReason\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "intelligence",
+          "lastRecomputeReason"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"lastRecomputeReason\"",
+        "sql": "ALTER TABLE \"public\".\"intelligence\" ADD COLUMN \"lastRecomputeReason\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lastRecomputeReason\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "intelligence",
+          "lastRecomputeReason"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.intelligence.intelligence_lastRecomputeReason_check_5357c67f",
+    "label": "Add check constraint \"intelligence_lastRecomputeReason_check_5357c67f\" on \"intelligence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "intelligence_lastRecomputeReason_check_5357c67f",
+        "table": "intelligence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"intelligence_lastRecomputeReason_check_5357c67f\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_lastRecomputeReason_check_5357c67f",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"intelligence_lastRecomputeReason_check_5357c67f\"",
+        "sql": "ALTER TABLE \"public\".\"intelligence\" ADD CONSTRAINT \"intelligence_lastRecomputeReason_check_5357c67f\" CHECK (\"lastRecomputeReason\" IN ('NEW_OBSERVATION', 'PROMPT_CHANGE', 'MANUAL', 'RETRY'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"intelligence_lastRecomputeReason_check_5357c67f\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "intelligence_lastRecomputeReason_check_5357c67f",
+          "public",
+          "\"public\".\"intelligence\""
+        ]
+      }
+    ]
+  }
+]
