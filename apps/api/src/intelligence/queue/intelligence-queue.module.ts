@@ -8,37 +8,22 @@ import { IntelligenceLockService, INTELLIGENCE_REDIS } from './intelligence-lock
 import { IntelligenceRecomputeService } from './intelligence-recompute.service.js';
 import { IntelligenceRecomputeProcessor } from './intelligence-recompute.processor.js';
 import { IntelligenceRecomputeScheduler } from './intelligence-recompute.scheduler.js';
-import { INTELLIGENCE_RECOMPUTE_QUEUE } from './intelligence-recompute.constants.js';
 import { IntelligenceQueueDebugController } from './intelligence-queue-debug.controller.js';
+import { IntelligenceAdminController } from './intelligence-admin.controller.js';
+import { IntelligenceAdminService } from './intelligence-admin.service.js';
+import { INTELLIGENCE_RECOMPUTE_QUEUE } from './intelligence-recompute.constants.js';
 
 @Module({
     imports: [
         forwardRef(() => IntelligenceModule),
-        BullModule.forRootAsync({
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => {
-                const url = config.get<string>('REDIS_URL');
-                if (!url) {
-                    throw new Error(
-                        'REDIS_URL is required to run the intelligence queue.',
-                    );
-                }
-
-                const parsed = new URL(url);
-
-                return {
-                    connection: {
-                        host: parsed.hostname,
-                        port: Number(parsed.port || 6379),
-                    },
-                };
-            },
-        }),
         BullModule.registerQueue({
             name: INTELLIGENCE_RECOMPUTE_QUEUE,
         }),
     ],
-    controllers: [IntelligenceQueueDebugController],
+    controllers: [
+        IntelligenceQueueDebugController,
+        IntelligenceAdminController,
+    ],
     providers: [
         {
             provide: INTELLIGENCE_REDIS,
@@ -57,10 +42,10 @@ import { IntelligenceQueueDebugController } from './intelligence-queue-debug.con
         IntelligenceRecomputeService,
         IntelligenceRecomputeProcessor,
         IntelligenceRecomputeScheduler,
+        IntelligenceAdminService,
     ],
     exports: [
-        
-        BullModule,
+        IntelligenceRecomputeService,
     ],
 })
 export class IntelligenceQueueModule {}

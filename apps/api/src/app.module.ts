@@ -14,6 +14,8 @@ import { ObservationModule } from './observation/observation.module.js';
 import { IntelligenceModule } from './intelligence/intelligence.module.js';
 import { IntelligenceQueueModule } from './intelligence/queue/intelligence-queue.module.js';
 import { IntelligenceDevelopmentModule } from './intelligence/development/intelligence-development.module.js';
+import { QueueRootModule } from './intelligence/queue/queue-root.module.js';
+
 
 @Module({
   imports: [
@@ -33,6 +35,7 @@ import { IntelligenceDevelopmentModule } from './intelligence/development/intell
     IntelligenceModule,
     IntelligenceQueueModule,
     IntelligenceDevelopmentModule,
+    QueueRootModule,
   ],
   controllers: [AppController],
   providers: [AppService],

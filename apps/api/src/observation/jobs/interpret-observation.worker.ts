@@ -1,50 +1,80 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import type { InterpretObservationJob } from './interpret-observation.job.js';
 import { ObservationRepository } from '../observation.repository.js';
 import { ObservationInterpretationService } from '../../intelligence/interpretation/observation-interpretation.service.js';
-import { IntelligenceService } from '../../intelligence/intelligence.service.js';
+import { IntelligenceRecomputeService } from '../../intelligence/queue/intelligence-recompute.service.js';
+import { ObservationCategory } from '../enums/observation-category.enum.js';
 
 @Injectable()
 export class InterpretObservationWorker {
+    private readonly logger = new Logger(InterpretObservationWorker.name);
+
     constructor(
         private readonly observationRepository: ObservationRepository,
         private readonly observationInterpretationService: ObservationInterpretationService,
-        private readonly intelligenceService: IntelligenceService,
+        private readonly intelligenceRecomputeService: IntelligenceRecomputeService,
     ) {}
 
-    async process(
-        job: InterpretObservationJob,
-    ): Promise<void> {
+    async process(job: InterpretObservationJob): Promise<void> {
         const observation =
-            await this.observationRepository.findById(
-                job.observationId,
-            );
-    
+            await this.observationRepository.findById(job.observationId);
+
         if (!observation) {
+            this.logger.warn(
+                `Observation ${job.observationId} not found; skipping.`,
+            );
             return;
         }
-    
-        const interpretation =
-            await this.observationInterpretationService.interpret(
-                observation,
+
+        // Interpretation is enrichment. If it fails, the pipeline can still
+        // run on the raw observation. Log and continue.
+        try {
+            const interpretation =
+                await this.observationInterpretationService.interpret(
+                    observation,
+                );
+
+            await this.observationRepository.updateInterpretation(
+                observation.id,
+                interpretation,
             );
-    
-        await this.observationRepository.updateInterpretation(
-            observation.id,
-            interpretation,
-        );
-    
+        } catch (error) {
+            this.logger.error(
+                `Interpretation failed for observation ${job.observationId}: ${
+                    error instanceof Error ? error.message : String(error)
+                }`,
+            );
+            // Do not rethrow — continue to intelligence recompute.
+        }
+
+        // Only recompute the category the observation belongs to.
+        // Other categories' underlying evidence hasn't changed.
+        const category = observation.category as ObservationCategory;
+        const supportedCategories = [
+            ObservationCategory.POWER,
+            ObservationCategory.WATER,
+            ObservationCategory.FLOODING,
+        ];
+
+        if (!supportedCategories.includes(category)) {
+            this.logger.debug(
+                `Category ${category} has no intelligence pipeline yet; skipping recompute.`,
+            );
+            return;
+        }
+
         if (observation.propertyId) {
-            await this.intelligenceService.recompute({
-                type: 'PROPERTY',
+            await this.intelligenceRecomputeService.recompute({
                 propertyId: observation.propertyId,
+                category,
+                reason: 'NEW_OBSERVATION',
             });
         } else if (observation.placeId) {
-            await this.intelligenceService.recompute({
-                type: 'PLACE',
-                placeId: observation.placeId,
-            });
+            // Place-level recompute not implemented yet.
+            this.logger.debug(
+                `Place ${observation.placeId} intelligence recompute skipped (not implemented).`,
+            );
         }
     }
 }
