@@ -12,10 +12,10 @@ import { PropertyRelationshipModule } from './property-relationship/property-rel
 import { AuthModule } from './auth/auth.module.js';
 import { ObservationModule } from './observation/observation.module.js';
 import { IntelligenceModule } from './intelligence/intelligence.module.js';
+import { IntelligenceAdminModule } from './intelligence/admin/intelligence-admin.module.js';
 import { IntelligenceQueueModule } from './intelligence/queue/intelligence-queue.module.js';
 import { IntelligenceDevelopmentModule } from './intelligence/development/intelligence-development.module.js';
 import { QueueRootModule } from './intelligence/queue/queue-root.module.js';
-
 
 @Module({
   imports: [
@@ -33,6 +33,7 @@ import { QueueRootModule } from './intelligence/queue/queue-root.module.js';
     AuthModule,
     ObservationModule,
     IntelligenceModule,
+    IntelligenceAdminModule,
     IntelligenceQueueModule,
     IntelligenceDevelopmentModule,
     QueueRootModule,

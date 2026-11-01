@@ -8,7 +8,7 @@ import {
     INTELLIGENCE_RECOMPUTE_QUEUE,
     RECOMPUTE_DEBOUNCE_MS,
     RECOMPUTE_JOB_OPTIONS,
-} from './intelligence-recompute.constants.js';
+} from '../queue/intelligence-recompute.constants.js';
 
 @Injectable()
 export class IntelligenceAdminService {

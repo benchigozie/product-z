@@ -8,12 +8,7 @@ import { IntelligenceLockService, INTELLIGENCE_REDIS } from './intelligence-lock
 import { IntelligenceRecomputeService } from './intelligence-recompute.service.js';
 import { IntelligenceRecomputeProcessor } from './intelligence-recompute.processor.js';
 import { IntelligenceRecomputeScheduler } from './intelligence-recompute.scheduler.js';
-import { IntelligenceQueueDebugController } from './intelligence-queue-debug.controller.js';
-import { IntelligenceAdminController } from './intelligence-admin.controller.js';
-import { IntelligenceAdminService } from './intelligence-admin.service.js';
 import { INTELLIGENCE_RECOMPUTE_QUEUE } from './intelligence-recompute.constants.js';
-import { SessionModule } from '../../session/session.module.js';
-
 
 @Module({
     imports: [
@@ -21,12 +16,6 @@ import { SessionModule } from '../../session/session.module.js';
         BullModule.registerQueue({
             name: INTELLIGENCE_RECOMPUTE_QUEUE,
         }),
-        SessionModule,
-    ],
-    controllers: [
-        IntelligenceQueueDebugController,
-        IntelligenceAdminController,
-        
     ],
     providers: [
         {
@@ -46,10 +35,10 @@ import { SessionModule } from '../../session/session.module.js';
         IntelligenceRecomputeService,
         IntelligenceRecomputeProcessor,
         IntelligenceRecomputeScheduler,
-        IntelligenceAdminService,
     ],
     exports: [
         IntelligenceRecomputeService,
+        BullModule,
     ],
 })
 export class IntelligenceQueueModule {}
