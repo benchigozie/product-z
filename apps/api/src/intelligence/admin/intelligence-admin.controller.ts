@@ -50,4 +50,9 @@ export class IntelligenceAdminController {
     async triggerFailedRetry() {
         return this.adminService.triggerFailedRetry();
     }
+
+    @Get(':propertyId')
+    async getByPropertyId(@Param('propertyId') propertyId: string) {
+        return this.adminService.getByPropertyId(propertyId);
+    }
 }

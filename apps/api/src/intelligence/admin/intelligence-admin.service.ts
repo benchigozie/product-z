@@ -1,4 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+    Injectable,
+    Logger,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import type { Queue } from 'bullmq';
 
@@ -34,6 +38,22 @@ export class IntelligenceAdminService {
                 }, {}),
             },
         };
+    }
+
+    async getByPropertyId(
+        propertyId: string,
+    ): Promise<Record<string, unknown>> {
+        const intelligence = await this.prisma.db.orm.public.Intelligence
+            .where({ propertyId })
+            .first();
+
+        if (!intelligence) {
+            throw new NotFoundException(
+                `No intelligence found for property "${propertyId}".`,
+            );
+        }
+
+        return intelligence as unknown as Record<string, unknown>;
     }
 
     async recomputeOne(propertyId: string, category: string) {
@@ -81,7 +101,7 @@ export class IntelligenceAdminService {
                 {
                     ...RECOMPUTE_JOB_OPTIONS,
                     delay: RECOMPUTE_DEBOUNCE_MS,
-                    jobId: `prompt-change:${category}:${row.propertyId}`,
+                    jobId: `prompt-change-${category}-${row.propertyId}`,
                 },
             );
 
@@ -100,18 +120,22 @@ export class IntelligenceAdminService {
         };
     }
 
-    async triggerFailedRetry(): Promise<{ matched: number; enqueued: number }> {
+    async triggerFailedRetry(): Promise<{
+        matched: number;
+        enqueued: number;
+    }> {
         const failed = await this.prisma.db.orm.public.Intelligence
             .where({ status: 'FAILED' })
             .all();
-    
+
         let enqueued = 0;
         for (const row of failed) {
             const categories = Object.keys(
                 (row.categories as Record<string, any> | null) ?? {},
             );
-            const targetCategories = categories.length > 0 ? categories : ['power'];
-    
+            const targetCategories =
+                categories.length > 0 ? categories : ['power'];
+
             for (const category of targetCategories) {
                 await this.queue.add(
                     INTELLIGENCE_RECOMPUTE_JOB,
@@ -129,7 +153,7 @@ export class IntelligenceAdminService {
                 enqueued++;
             }
         }
-    
+
         return { matched: failed.length, enqueued };
     }
 }
