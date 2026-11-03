@@ -9,3 +9,4 @@ export interface IntelligenceConclusion {
     evidenceReferences: string[];
     considerations: string[];
 }
+

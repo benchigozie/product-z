@@ -59,6 +59,20 @@ import { FloodingIntelligencePrompt } from './prompts/flooding-intelligence.prom
 import { GeminiFloodingIntelligenceInterpreter } from './interpreters/gemini-flooding-intelligence.interpreter.js';
 import { ConfidenceCalibrationService } from './confidence/confidence-calibration.service.js';
 
+import { SecurityAgreementService } from './evidence/security-agreement.service.js';
+import { SecurityAgreementClassifier } from './evidence/security-agreement.classifier.js';
+import { SecurityEvidenceAnalysisService } from './evidence/security-evidence-analysis.service.js';
+import { SecurityEvidenceConsolidator } from './consolidation/strategies/security-evidence-consolidator.service.js';
+import { SecurityClaimAgreementService } from './consolidation/strategies/security-claim-agreement.service.js';
+import { SecurityClaimAgreementClassifier } from './consolidation/strategies/security-claim-agreement.classifier.js';
+import { SecurityClaimAgreementAnalysisService } from './consolidation/strategies/security-claim-agreement-analysis.service.js';
+import {
+    SecurityIntelligenceService,
+    SECURITY_INTELLIGENCE_INTERPRETER,
+} from './security-intelligence.service.js';
+import { SecurityIntelligencePrompt } from './prompts/security-intelligence.prompt.js';
+import { GeminiSecurityIntelligenceInterpreter } from './interpreters/gemini-security-intelligence.interpreter.js';
+
 
 @Module({
     imports: [
@@ -99,15 +113,18 @@ import { ConfidenceCalibrationService } from './confidence/confidence-calibratio
                 powerEvidenceConsolidator: PowerEvidenceConsolidator,
                 waterEvidenceConsolidator: WaterEvidenceConsolidator,
                 floodingEvidenceConsolidator: FloodingEvidenceConsolidator,
+                securityEvidenceConsolidator: SecurityEvidenceConsolidator,
             ) => [
                     powerEvidenceConsolidator,
                     waterEvidenceConsolidator,
                     floodingEvidenceConsolidator,
+                    securityEvidenceConsolidator,
                 ],
             inject: [
                 PowerEvidenceConsolidator,
                 WaterEvidenceConsolidator,
                 FloodingEvidenceConsolidator,
+                SecurityEvidenceConsolidator,
             ],
         },
 
@@ -138,6 +155,21 @@ import { ConfidenceCalibrationService } from './confidence/confidence-calibratio
             useExisting: GeminiFloodingIntelligenceInterpreter,
         },
         ConfidenceCalibrationService,
+
+        SecurityAgreementService,
+        SecurityAgreementClassifier,
+        SecurityEvidenceAnalysisService,
+        SecurityEvidenceConsolidator,
+        SecurityClaimAgreementService,
+        SecurityClaimAgreementClassifier,
+        SecurityClaimAgreementAnalysisService,
+        SecurityIntelligenceService,
+        SecurityIntelligencePrompt,
+        GeminiSecurityIntelligenceInterpreter,
+        {
+            provide: SECURITY_INTELLIGENCE_INTERPRETER,
+            useExisting: GeminiSecurityIntelligenceInterpreter,
+        },
     ],
     exports: [
         IntelligenceService,
@@ -152,7 +184,10 @@ import { ConfidenceCalibrationService } from './confidence/confidence-calibratio
         FloodingEvidenceAnalysisService,
         FloodingClaimAgreementAnalysisService,
         FloodingIntelligenceService,
-        EvidenceWeightingService
+        EvidenceWeightingService,
+        SecurityEvidenceAnalysisService,
+        SecurityClaimAgreementAnalysisService,
+        SecurityIntelligenceService,
     ],
 })
 export class IntelligenceModule { }

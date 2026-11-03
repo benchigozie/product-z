@@ -2,6 +2,7 @@ import { ConclusionState } from '../enums/conclusion-state.enum.js';
 import { PowerCondition } from '../enums/power-condition.enum.js';
 import { WaterCondition } from '../enums/water-condition.enum.js';
 import { FloodingCondition } from '../enums/flooding-condition.enum.js';
+import { SecurityCondition } from '../enums/security-condition.enum.js';
 
 export function powerToConclusionState(
     condition: PowerCondition,
@@ -33,5 +34,21 @@ export function floodingToConclusionState(
         case FloodingCondition.SIGNS_OF_FLOODING: return ConclusionState.MIXED;
         case FloodingCondition.DOES_NOT_FLOOD: return ConclusionState.ABSENT;
         case FloodingCondition.UNRESOLVED: return ConclusionState.UNRESOLVED;
+    }
+}
+
+
+export function securityToConclusionState(
+    condition: SecurityCondition,
+): ConclusionState {
+    switch (condition) {
+        case SecurityCondition.SECURE:
+            return ConclusionState.ABSENT;
+        case SecurityCondition.CAUTIOUS:
+            return ConclusionState.MIXED;
+        case SecurityCondition.INSECURE:
+            return ConclusionState.PRESENT;
+        case SecurityCondition.UNRESOLVED:
+            return ConclusionState.UNRESOLVED;
     }
 }

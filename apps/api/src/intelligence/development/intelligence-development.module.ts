@@ -9,6 +9,8 @@ import { WaterIntelligenceDevelopmentController } from './water-intelligence-dev
 import { FloodingIntelligenceRunner } from './flooding-intelligence.runner.js';
 import { FloodingIntelligenceDevelopmentController } from './flooding-intelligence-development.controller.js';
 import { PrismaModule } from '../../prisma.module.js';
+import { SecurityIntelligenceRunner } from './security-intelligence.runner.js';
+import { SecurityIntelligenceDevelopmentController } from './security-intelligence-development.controller.js';
 
 @Module({
     imports: [
@@ -19,17 +21,20 @@ import { PrismaModule } from '../../prisma.module.js';
         PowerIntelligenceDevelopmentController,
         WaterIntelligenceDevelopmentController,
         FloodingIntelligenceDevelopmentController,
+        SecurityIntelligenceDevelopmentController,
     ],
     providers: [
         PowerIntelligenceRunner,
         WaterIntelligenceRunner,
         FloodingIntelligenceRunner,
         EvidenceWeightingService,
+        SecurityIntelligenceRunner,
     ],
     exports: [
         PowerIntelligenceRunner,
         WaterIntelligenceRunner,
         FloodingIntelligenceRunner,
+        SecurityIntelligenceRunner,
     ],
 })
 export class IntelligenceDevelopmentModule {}

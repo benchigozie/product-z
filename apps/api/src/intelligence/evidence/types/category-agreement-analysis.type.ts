@@ -2,6 +2,7 @@ import type { EvidenceAgreementClassification } from '../evidence-agreement.clas
 import type { AgreementResult } from '../agreement-result.type.js';
 import type { FloodingAgreementResult } from './flooding-agreement.type.js';
 import { ObservationCategory } from '../../../observation/enums/observation-category.enum.js';
+import type { SecurityAgreementResult } from './security-agreement.type.js';
 
 export interface PowerCategoryAgreementAnalysis {
     category: ObservationCategory.POWER;
@@ -30,7 +31,17 @@ export interface FloodingCategoryAgreementAnalysis {
     agreement: FloodingAgreementResult;
 }
 
+export interface SecurityCategoryAgreementAnalysis {
+    category: ObservationCategory.SECURITY;
+    firstObservationId: string;
+    secondObservationId: string;
+    classification: EvidenceAgreementClassification;
+    timeDifferenceInDays: number;
+    agreement: SecurityAgreementResult;
+}
+
 export type CategoryAgreementAnalysis =
     | PowerCategoryAgreementAnalysis
     | WaterCategoryAgreementAnalysis
-    | FloodingCategoryAgreementAnalysis;
+    | FloodingCategoryAgreementAnalysis
+    | SecurityCategoryAgreementAnalysis;

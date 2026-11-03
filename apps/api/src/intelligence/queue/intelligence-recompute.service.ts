@@ -20,10 +20,15 @@ import type { ObservationListResult } from '../../observation/types/observation-
 import { IntelligenceLockService } from './intelligence-lock.service.js';
 import type { IntelligenceRecomputeJobData } from './intelligence-recompute.constants.js';
 
+import { SecurityEvidenceAnalysisService } from '../evidence/security-evidence-analysis.service.js';
+import { SecurityClaimAgreementAnalysisService } from '../consolidation/strategies/security-claim-agreement-analysis.service.js';
+import { SecurityIntelligenceService } from '../security-intelligence.service.js';
+
 const CATEGORY_PROMPT_VERSION: Record<string, string> = {
     POWER: '1',
     WATER: '1',
     FLOODING: '1',
+    SECURITY: '1',
 };
 
 @Injectable()
@@ -47,7 +52,11 @@ export class IntelligenceRecomputeService {
         private readonly floodingAnalysis: FloodingEvidenceAnalysisService,
         private readonly floodingClaimAgreement: FloodingClaimAgreementAnalysisService,
         private readonly floodingIntelligence: FloodingIntelligenceService,
-    ) {}
+
+        private readonly securityAnalysis: SecurityEvidenceAnalysisService,
+        private readonly securityClaimAgreement: SecurityClaimAgreementAnalysisService,
+        private readonly securityIntelligence: SecurityIntelligenceService,
+    ) { }
 
     async recompute(job: IntelligenceRecomputeJobData): Promise<void> {
         if (job.propertyId) {
@@ -192,37 +201,37 @@ export class IntelligenceRecomputeService {
                 await this.prisma.db.orm.public.Observation
                     .where({ placeId })
                     .all();
-    
+
             const observations = rawObservations.map((o) => ({
                 ...o,
                 observedAt: o.observedAt instanceof Date
                     ? o.observedAt
                     : new Date(String(o.observedAt)),
             })) as ObservationListResult;
-    
+
             if (observations.length === 0) {
                 this.logger.warn(
                     `No observations for place ${placeId}; skipping.`,
                 );
                 return;
             }
-    
+
             const categoryObservations = observations.filter(
                 (o) => o.category === job.category,
             );
-    
+
             if (categoryObservations.length === 0) {
                 this.logger.warn(
                     `No ${job.category} observations for place ${placeId}; skipping.`,
                 );
                 return;
             }
-    
+
             const result = await this.runPipeline(
                 job.category as ObservationCategory,
                 observations,
             );
-    
+
             const evidenceThroughMs = Math.max(
                 ...categoryObservations.map((o) =>
                     new Date(o.observedAt as unknown as string).getTime(),
@@ -230,16 +239,16 @@ export class IntelligenceRecomputeService {
             );
             const evidenceThrough =
                 Temporal.Instant.fromEpochMilliseconds(evidenceThroughMs);
-    
+
             const existing = await this.prisma.db.orm.public.Intelligence
                 .where({ placeId })
                 .first();
-    
+
             const existingCategories: Record<string, any> =
                 (existing?.categories as Record<string, any> | null) ?? {};
-    
+
             const now = Temporal.Now.instant();
-    
+
             const updatedCategories: Record<string, any> = {
                 ...existingCategories,
                 [job.category.toLowerCase()]: {
@@ -254,7 +263,7 @@ export class IntelligenceRecomputeService {
                     computedAt: now.toString(),
                 },
             };
-    
+
             if (existing) {
                 await this.prisma.db.orm.public.Intelligence
                     .where({ placeId })
@@ -292,10 +301,10 @@ export class IntelligenceRecomputeService {
                         'lastRecomputeReason',
                     )
                     .build();
-    
+
                 await this.prisma.db.runtime().query(plan);
             }
-    
+
             this.logger.log(
                 `Recomputed ${job.category} intelligence for place ${placeId} (reason: ${job.reason})`,
             );
@@ -383,6 +392,35 @@ export class IntelligenceRecomputeService {
                 const claimAgreementAnalysis =
                     this.floodingClaimAgreement.analyze(consolidatedEvidence);
                 const result = await this.floodingIntelligence.interpret({
+                    observations,
+                    evidenceAnalysis,
+                    evidenceAssessments,
+                    consolidatedEvidence,
+                    claimAgreementAnalysis,
+                });
+                return {
+                    conclusion: result.conclusion,
+                    confidence: result.confidence,
+                    reason: result.reason,
+                    reasonSignals: result.reasonSignals,
+                    evidenceReferences: result.evidenceReferences,
+                    considerations: result.considerations,
+                };
+            }
+
+            case ObservationCategory.SECURITY: {
+                const evidenceAnalysis = await this.securityAnalysis.analyze(
+                    observations,
+                );
+                const evidenceAssessments = this.evidenceWeighting.analyze(
+                    observations,
+                    evidenceAnalysis,
+                );
+                const consolidatedEvidence =
+                    this.evidenceConsolidation.consolidate(observations);
+                const claimAgreementAnalysis =
+                    this.securityClaimAgreement.analyze(consolidatedEvidence);
+                const result = await this.securityIntelligence.interpret({
                     observations,
                     evidenceAnalysis,
                     evidenceAssessments,
