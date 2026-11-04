@@ -11,6 +11,9 @@ import { FloodingIntelligenceDevelopmentController } from './flooding-intelligen
 import { PrismaModule } from '../../prisma.module.js';
 import { SecurityIntelligenceRunner } from './security-intelligence.runner.js';
 import { SecurityIntelligenceDevelopmentController } from './security-intelligence-development.controller.js';
+import { InternetIntelligenceRunner } from './internet-intelligence.runner.js';
+import { InternetIntelligenceDevelopmentController } from './internet-intelligence-development.controller.js';
+
 
 @Module({
     imports: [
@@ -22,6 +25,7 @@ import { SecurityIntelligenceDevelopmentController } from './security-intelligen
         WaterIntelligenceDevelopmentController,
         FloodingIntelligenceDevelopmentController,
         SecurityIntelligenceDevelopmentController,
+        InternetIntelligenceDevelopmentController,
     ],
     providers: [
         PowerIntelligenceRunner,
@@ -29,12 +33,15 @@ import { SecurityIntelligenceDevelopmentController } from './security-intelligen
         FloodingIntelligenceRunner,
         EvidenceWeightingService,
         SecurityIntelligenceRunner,
+        InternetIntelligenceRunner,
+
     ],
     exports: [
         PowerIntelligenceRunner,
         WaterIntelligenceRunner,
         FloodingIntelligenceRunner,
         SecurityIntelligenceRunner,
+        InternetIntelligenceRunner,
     ],
 })
 export class IntelligenceDevelopmentModule {}

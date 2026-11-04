@@ -24,11 +24,16 @@ import { SecurityEvidenceAnalysisService } from '../evidence/security-evidence-a
 import { SecurityClaimAgreementAnalysisService } from '../consolidation/strategies/security-claim-agreement-analysis.service.js';
 import { SecurityIntelligenceService } from '../security-intelligence.service.js';
 
+import { InternetEvidenceAnalysisService } from '../evidence/internet-evidence-analysis.service.js';
+import { InternetClaimAgreementAnalysisService } from '../consolidation/strategies/internet-claim-agreement-analysis.service.js';
+import { InternetIntelligenceService } from '../internet-intelligence.service.js';
+
 const CATEGORY_PROMPT_VERSION: Record<string, string> = {
     POWER: '1',
     WATER: '1',
     FLOODING: '1',
     SECURITY: '1',
+    INTERNET: '1',
 };
 
 @Injectable()
@@ -56,6 +61,10 @@ export class IntelligenceRecomputeService {
         private readonly securityAnalysis: SecurityEvidenceAnalysisService,
         private readonly securityClaimAgreement: SecurityClaimAgreementAnalysisService,
         private readonly securityIntelligence: SecurityIntelligenceService,
+
+        private readonly internetAnalysis: InternetEvidenceAnalysisService,
+        private readonly internetClaimAgreement: InternetClaimAgreementAnalysisService,
+        private readonly internetIntelligence: InternetIntelligenceService,
     ) { }
 
     async recompute(job: IntelligenceRecomputeJobData): Promise<void> {
@@ -421,6 +430,35 @@ export class IntelligenceRecomputeService {
                 const claimAgreementAnalysis =
                     this.securityClaimAgreement.analyze(consolidatedEvidence);
                 const result = await this.securityIntelligence.interpret({
+                    observations,
+                    evidenceAnalysis,
+                    evidenceAssessments,
+                    consolidatedEvidence,
+                    claimAgreementAnalysis,
+                });
+                return {
+                    conclusion: result.conclusion,
+                    confidence: result.confidence,
+                    reason: result.reason,
+                    reasonSignals: result.reasonSignals,
+                    evidenceReferences: result.evidenceReferences,
+                    considerations: result.considerations,
+                };
+            }
+
+            case ObservationCategory.INTERNET: {
+                const evidenceAnalysis = await this.internetAnalysis.analyze(
+                    observations,
+                );
+                const evidenceAssessments = this.evidenceWeighting.analyze(
+                    observations,
+                    evidenceAnalysis,
+                );
+                const consolidatedEvidence =
+                    this.evidenceConsolidation.consolidate(observations);
+                const claimAgreementAnalysis =
+                    this.internetClaimAgreement.analyze(consolidatedEvidence);
+                const result = await this.internetIntelligence.interpret({
                     observations,
                     evidenceAnalysis,
                     evidenceAssessments,

@@ -12,11 +12,14 @@ import { SecurityCondition } from '../enums/security-condition.enum.js';
 
 import { WaterCondition } from '../enums/water-condition.enum.js';
 
+import { InternetCondition } from '../enums/internet-condition.enum.js';
+
 const VALID_CONCLUSIONS: readonly string[] = [
     ...Object.values(PowerCondition),
     ...Object.values(WaterCondition),
     ...Object.values(FloodingCondition),
     ...Object.values(SecurityCondition),
+    ...Object.values(InternetCondition),
 ];
 
 export class IntelligenceConclusionDto {

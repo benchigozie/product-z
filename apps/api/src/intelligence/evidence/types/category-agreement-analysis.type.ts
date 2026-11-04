@@ -40,8 +40,20 @@ export interface SecurityCategoryAgreementAnalysis {
     agreement: SecurityAgreementResult;
 }
 
+
+export interface InternetCategoryAgreementAnalysis {
+    category: ObservationCategory.INTERNET;
+    firstObservationId: string;
+    secondObservationId: string;
+    classification: EvidenceAgreementClassification;
+    timeDifferenceInDays: number;
+    agreement: AgreementResult;
+}
+
 export type CategoryAgreementAnalysis =
     | PowerCategoryAgreementAnalysis
     | WaterCategoryAgreementAnalysis
     | FloodingCategoryAgreementAnalysis
-    | SecurityCategoryAgreementAnalysis;
+    | SecurityCategoryAgreementAnalysis
+    | InternetCategoryAgreementAnalysis;
+

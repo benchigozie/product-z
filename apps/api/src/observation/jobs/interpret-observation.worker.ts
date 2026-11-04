@@ -54,6 +54,8 @@ export class InterpretObservationWorker {
             ObservationCategory.POWER,
             ObservationCategory.WATER,
             ObservationCategory.FLOODING,
+            ObservationCategory.SECURITY,
+            ObservationCategory.INTERNET,
         ];
     
         if (!supportedCategories.includes(category)) {
