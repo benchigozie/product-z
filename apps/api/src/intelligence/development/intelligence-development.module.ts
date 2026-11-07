@@ -13,6 +13,9 @@ import { SecurityIntelligenceRunner } from './security-intelligence.runner.js';
 import { SecurityIntelligenceDevelopmentController } from './security-intelligence-development.controller.js';
 import { InternetIntelligenceRunner } from './internet-intelligence.runner.js';
 import { InternetIntelligenceDevelopmentController } from './internet-intelligence-development.controller.js';
+import { SanitationIntelligenceRunner } from './sanitation-intelligence.runner.js';
+import { SanitationIntelligenceDevelopmentController } from './sanitation-intelligence-development.controller.js';
+
 
 
 @Module({
@@ -26,6 +29,7 @@ import { InternetIntelligenceDevelopmentController } from './internet-intelligen
         FloodingIntelligenceDevelopmentController,
         SecurityIntelligenceDevelopmentController,
         InternetIntelligenceDevelopmentController,
+        SanitationIntelligenceDevelopmentController,
     ],
     providers: [
         PowerIntelligenceRunner,
@@ -34,7 +38,7 @@ import { InternetIntelligenceDevelopmentController } from './internet-intelligen
         EvidenceWeightingService,
         SecurityIntelligenceRunner,
         InternetIntelligenceRunner,
-
+        SanitationIntelligenceRunner,
     ],
     exports: [
         PowerIntelligenceRunner,
@@ -42,6 +46,7 @@ import { InternetIntelligenceDevelopmentController } from './internet-intelligen
         FloodingIntelligenceRunner,
         SecurityIntelligenceRunner,
         InternetIntelligenceRunner,
+        SanitationIntelligenceRunner,
     ],
 })
 export class IntelligenceDevelopmentModule {}

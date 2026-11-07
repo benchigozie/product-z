@@ -56,6 +56,7 @@ export class InterpretObservationWorker {
             ObservationCategory.FLOODING,
             ObservationCategory.SECURITY,
             ObservationCategory.INTERNET,
+            ObservationCategory.SANITATION,
         ];
     
         if (!supportedCategories.includes(category)) {

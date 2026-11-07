@@ -28,12 +28,17 @@ import { InternetEvidenceAnalysisService } from '../evidence/internet-evidence-a
 import { InternetClaimAgreementAnalysisService } from '../consolidation/strategies/internet-claim-agreement-analysis.service.js';
 import { InternetIntelligenceService } from '../internet-intelligence.service.js';
 
+import { SanitationEvidenceAnalysisService } from '../evidence/sanitation-evidence-analysis.service.js';
+import { SanitationClaimAgreementAnalysisService } from '../consolidation/strategies/sanitation-claim-agreement-analysis.service.js';
+import { SanitationIntelligenceService } from '../sanitation-intelligence.service.js';
+
 const CATEGORY_PROMPT_VERSION: Record<string, string> = {
     POWER: '1',
     WATER: '1',
     FLOODING: '1',
     SECURITY: '1',
     INTERNET: '1',
+    SANITATION: '1',
 };
 
 @Injectable()
@@ -65,6 +70,10 @@ export class IntelligenceRecomputeService {
         private readonly internetAnalysis: InternetEvidenceAnalysisService,
         private readonly internetClaimAgreement: InternetClaimAgreementAnalysisService,
         private readonly internetIntelligence: InternetIntelligenceService,
+
+        private readonly sanitationAnalysis: SanitationEvidenceAnalysisService,
+        private readonly sanitationClaimAgreement: SanitationClaimAgreementAnalysisService,
+        private readonly sanitationIntelligence: SanitationIntelligenceService,
     ) { }
 
     async recompute(job: IntelligenceRecomputeJobData): Promise<void> {
@@ -474,6 +483,36 @@ export class IntelligenceRecomputeService {
                     considerations: result.considerations,
                 };
             }
+
+            case ObservationCategory.SANITATION: {
+                const evidenceAnalysis = await this.sanitationAnalysis.analyze(
+                    observations,
+                );
+                const evidenceAssessments = this.evidenceWeighting.analyze(
+                    observations,
+                    evidenceAnalysis,
+                );
+                const consolidatedEvidence =
+                    this.evidenceConsolidation.consolidate(observations);
+                const claimAgreementAnalysis =
+                    this.sanitationClaimAgreement.analyze(consolidatedEvidence);
+                const result = await this.sanitationIntelligence.interpret({
+                    observations,
+                    evidenceAnalysis,
+                    evidenceAssessments,
+                    consolidatedEvidence,
+                    claimAgreementAnalysis,
+                });
+                return {
+                    conclusion: result.conclusion,
+                    confidence: result.confidence,
+                    reason: result.reason,
+                    reasonSignals: result.reasonSignals,
+                    evidenceReferences: result.evidenceReferences,
+                    considerations: result.considerations,
+                };
+            }
+            
             default:
                 throw new Error(
                     `Unsupported category for recompute: ${category}`,

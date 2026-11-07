@@ -4,6 +4,7 @@ import { WaterCondition } from '../enums/water-condition.enum.js';
 import { FloodingCondition } from '../enums/flooding-condition.enum.js';
 import { SecurityCondition } from '../enums/security-condition.enum.js';
 import { InternetCondition } from '../enums/internet-condition.enum.js';
+import { SanitationConclusion } from '../enums/sanitation-conclusion.enum.js';
 
 export function powerToConclusionState(
     condition: PowerCondition,
@@ -66,6 +67,22 @@ export function internetToConclusionState(
         case InternetCondition.UNAVAILABLE:
             return ConclusionState.ABSENT;
         case InternetCondition.UNRESOLVED:
+            return ConclusionState.UNRESOLVED;
+    }
+}
+
+
+export function sanitationToConclusionState(
+    conclusion: SanitationConclusion,
+): ConclusionState {
+    switch (conclusion) {
+        case SanitationConclusion.SANITARY:
+            return ConclusionState.ABSENT;
+        case SanitationConclusion.CONCERNING:
+            return ConclusionState.MIXED;
+        case SanitationConclusion.UNSANITARY:
+            return ConclusionState.PRESENT;
+        case SanitationConclusion.UNRESOLVED:
             return ConclusionState.UNRESOLVED;
     }
 }

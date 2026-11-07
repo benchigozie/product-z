@@ -86,6 +86,20 @@ import {
 import { InternetIntelligencePrompt } from './prompts/internet-intelligence.prompt.js';
 import { GeminiInternetIntelligenceInterpreter } from './interpreters/gemini-internet-intelligence.interpreter.js';
 
+import { SanitationAgreementService } from './evidence/sanitation-agreement.service.js';
+import { SanitationAgreementClassifier } from './evidence/sanitation-agreement.classifier.js';
+import { SanitationEvidenceAnalysisService } from './evidence/sanitation-evidence-analysis.service.js';
+import { SanitationEvidenceConsolidator } from './consolidation/strategies/sanitation-evidence-consolidator.service.js';
+import { SanitationClaimAgreementService } from './consolidation/strategies/sanitation-claim-agreement.service.js';
+import { SanitationClaimAgreementClassifier } from './consolidation/strategies/sanitation-claim-agreement.classifier.js';
+import { SanitationClaimAgreementAnalysisService } from './consolidation/strategies/sanitation-claim-agreement-analysis.service.js';
+import {
+    SanitationIntelligenceService,
+    SANITATION_INTELLIGENCE_INTERPRETER,
+} from './sanitation-intelligence.service.js';
+import { SanitationIntelligencePrompt } from './prompts/sanitation-intelligence.prompt.js';
+import { GeminiSanitationIntelligenceInterpreter } from './interpreters/gemini-sanitation-intelligence.interpreter.js';
+
 @Module({
     imports: [
         ObservationDataModule,
@@ -127,12 +141,14 @@ import { GeminiInternetIntelligenceInterpreter } from './interpreters/gemini-int
                 floodingEvidenceConsolidator: FloodingEvidenceConsolidator,
                 securityEvidenceConsolidator: SecurityEvidenceConsolidator,
                 internetEvidenceConsolidator: InternetEvidenceConsolidator,
+                sanitationEvidenceConsolidator: SanitationEvidenceConsolidator,
             ) => [
                     powerEvidenceConsolidator,
                     waterEvidenceConsolidator,
                     floodingEvidenceConsolidator,
                     securityEvidenceConsolidator,
                     internetEvidenceConsolidator,
+                    sanitationEvidenceConsolidator,
                 ],
             inject: [
                 PowerEvidenceConsolidator,
@@ -140,6 +156,7 @@ import { GeminiInternetIntelligenceInterpreter } from './interpreters/gemini-int
                 FloodingEvidenceConsolidator,
                 SecurityEvidenceConsolidator,
                 InternetEvidenceConsolidator,
+                SanitationEvidenceConsolidator,
             ],
         },
 
@@ -183,6 +200,21 @@ import { GeminiInternetIntelligenceInterpreter } from './interpreters/gemini-int
             provide: INTERNET_INTELLIGENCE_INTERPRETER,
             useExisting: GeminiInternetIntelligenceInterpreter,
         },
+
+        SanitationAgreementService,
+        SanitationAgreementClassifier,
+        SanitationEvidenceAnalysisService,
+        SanitationEvidenceConsolidator,
+        SanitationClaimAgreementService,
+        SanitationClaimAgreementClassifier,
+        SanitationClaimAgreementAnalysisService,
+        SanitationIntelligenceService,
+        SanitationIntelligencePrompt,
+        GeminiSanitationIntelligenceInterpreter,
+        {
+            provide: SANITATION_INTELLIGENCE_INTERPRETER,
+            useExisting: GeminiSanitationIntelligenceInterpreter,
+        },
         ConfidenceCalibrationService,
 
         SecurityAgreementService,
@@ -220,6 +252,9 @@ import { GeminiInternetIntelligenceInterpreter } from './interpreters/gemini-int
         InternetEvidenceAnalysisService,
         InternetClaimAgreementAnalysisService,
         InternetIntelligenceService,
+        SanitationEvidenceAnalysisService,
+        SanitationClaimAgreementAnalysisService,
+        SanitationIntelligenceService,
     ],
 })
 export class IntelligenceModule { }
