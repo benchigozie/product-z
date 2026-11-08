@@ -15,6 +15,8 @@ import { InternetIntelligenceRunner } from './internet-intelligence.runner.js';
 import { InternetIntelligenceDevelopmentController } from './internet-intelligence-development.controller.js';
 import { SanitationIntelligenceRunner } from './sanitation-intelligence.runner.js';
 import { SanitationIntelligenceDevelopmentController } from './sanitation-intelligence-development.controller.js';
+import { RoadAccessIntelligenceRunner } from './road-access-intelligence.runner.js';
+import { RoadAccessIntelligenceDevelopmentController } from './road-access-intelligence-development.controller.js';
 
 
 
@@ -30,6 +32,7 @@ import { SanitationIntelligenceDevelopmentController } from './sanitation-intell
         SecurityIntelligenceDevelopmentController,
         InternetIntelligenceDevelopmentController,
         SanitationIntelligenceDevelopmentController,
+        RoadAccessIntelligenceDevelopmentController,
     ],
     providers: [
         PowerIntelligenceRunner,
@@ -39,6 +42,7 @@ import { SanitationIntelligenceDevelopmentController } from './sanitation-intell
         SecurityIntelligenceRunner,
         InternetIntelligenceRunner,
         SanitationIntelligenceRunner,
+        RoadAccessIntelligenceRunner,
     ],
     exports: [
         PowerIntelligenceRunner,
@@ -47,6 +51,7 @@ import { SanitationIntelligenceDevelopmentController } from './sanitation-intell
         SecurityIntelligenceRunner,
         InternetIntelligenceRunner,
         SanitationIntelligenceRunner,
+        RoadAccessIntelligenceRunner,
     ],
 })
 export class IntelligenceDevelopmentModule {}

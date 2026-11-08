@@ -5,6 +5,7 @@ import { FloodingCondition } from '../enums/flooding-condition.enum.js';
 import { SecurityCondition } from '../enums/security-condition.enum.js';
 import { InternetCondition } from '../enums/internet-condition.enum.js';
 import { SanitationConclusion } from '../enums/sanitation-conclusion.enum.js';
+import { RoadAccessConclusion } from '../enums/road-access-conclusion.enum.js';
 
 export function powerToConclusionState(
     condition: PowerCondition,
@@ -83,6 +84,23 @@ export function sanitationToConclusionState(
         case SanitationConclusion.UNSANITARY:
             return ConclusionState.PRESENT;
         case SanitationConclusion.UNRESOLVED:
+            return ConclusionState.UNRESOLVED;
+    }
+}
+
+
+
+export function roadAccessToConclusionState(
+    conclusion: RoadAccessConclusion,
+): ConclusionState {
+    switch (conclusion) {
+        case RoadAccessConclusion.WELL_ACCESSIBLE:
+            return ConclusionState.ABSENT;
+        case RoadAccessConclusion.ACCESSIBLE_BUT_POOR:
+            return ConclusionState.MIXED;
+        case RoadAccessConclusion.LIMITED_ACCESS:
+            return ConclusionState.PRESENT;
+        case RoadAccessConclusion.UNRESOLVED:
             return ConclusionState.UNRESOLVED;
     }
 }

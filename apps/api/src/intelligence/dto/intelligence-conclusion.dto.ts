@@ -15,6 +15,9 @@ import { WaterCondition } from '../enums/water-condition.enum.js';
 import { InternetCondition } from '../enums/internet-condition.enum.js';
 import { SanitationConclusion } from '../enums/sanitation-conclusion.enum.js';
 
+
+import { RoadAccessConclusion } from '../enums/road-access-conclusion.enum.js';
+
 const VALID_CONCLUSIONS: readonly string[] = [
     ...Object.values(PowerCondition),
     ...Object.values(WaterCondition),
@@ -22,8 +25,8 @@ const VALID_CONCLUSIONS: readonly string[] = [
     ...Object.values(SecurityCondition),
     ...Object.values(InternetCondition),
     ...Object.values(SanitationConclusion),
+    ...Object.values(RoadAccessConclusion),
 ];
-
 
 
 export class IntelligenceConclusionDto {

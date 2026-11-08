@@ -57,6 +57,7 @@ export class InterpretObservationWorker {
             ObservationCategory.SECURITY,
             ObservationCategory.INTERNET,
             ObservationCategory.SANITATION,
+            ObservationCategory.ROAD_ACCESS,
         ];
     
         if (!supportedCategories.includes(category)) {

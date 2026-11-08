@@ -32,6 +32,10 @@ import { SanitationEvidenceAnalysisService } from '../evidence/sanitation-eviden
 import { SanitationClaimAgreementAnalysisService } from '../consolidation/strategies/sanitation-claim-agreement-analysis.service.js';
 import { SanitationIntelligenceService } from '../sanitation-intelligence.service.js';
 
+import { RoadAccessEvidenceAnalysisService } from '../evidence/road-access-evidence-analysis.service.js';
+import { RoadAccessClaimAgreementAnalysisService } from '../consolidation/strategies/road-access-claim-agreement-analysis.service.js';
+import { RoadAccessIntelligenceService } from '../road-access-intelligence.service.js';
+
 const CATEGORY_PROMPT_VERSION: Record<string, string> = {
     POWER: '1',
     WATER: '1',
@@ -39,6 +43,7 @@ const CATEGORY_PROMPT_VERSION: Record<string, string> = {
     SECURITY: '1',
     INTERNET: '1',
     SANITATION: '1',
+    ROAD_ACCESS: '1',
 };
 
 @Injectable()
@@ -74,6 +79,10 @@ export class IntelligenceRecomputeService {
         private readonly sanitationAnalysis: SanitationEvidenceAnalysisService,
         private readonly sanitationClaimAgreement: SanitationClaimAgreementAnalysisService,
         private readonly sanitationIntelligence: SanitationIntelligenceService,
+
+        private readonly roadAccessAnalysis: RoadAccessEvidenceAnalysisService,
+        private readonly roadAccessClaimAgreement: RoadAccessClaimAgreementAnalysisService,
+        private readonly roadAccessIntelligence: RoadAccessIntelligenceService,
     ) { }
 
     async recompute(job: IntelligenceRecomputeJobData): Promise<void> {
@@ -512,7 +521,36 @@ export class IntelligenceRecomputeService {
                     considerations: result.considerations,
                 };
             }
-            
+
+            case ObservationCategory.ROAD_ACCESS: {
+                const evidenceAnalysis = await this.roadAccessAnalysis.analyze(
+                    observations,
+                );
+                const evidenceAssessments = this.evidenceWeighting.analyze(
+                    observations,
+                    evidenceAnalysis,
+                );
+                const consolidatedEvidence =
+                    this.evidenceConsolidation.consolidate(observations);
+                const claimAgreementAnalysis =
+                    this.roadAccessClaimAgreement.analyze(consolidatedEvidence);
+                const result = await this.roadAccessIntelligence.interpret({
+                    observations,
+                    evidenceAnalysis,
+                    evidenceAssessments,
+                    consolidatedEvidence,
+                    claimAgreementAnalysis,
+                });
+                return {
+                    conclusion: result.conclusion,
+                    confidence: result.confidence,
+                    reason: result.reason,
+                    reasonSignals: result.reasonSignals,
+                    evidenceReferences: result.evidenceReferences,
+                    considerations: result.considerations,
+                };
+            }
+
             default:
                 throw new Error(
                     `Unsupported category for recompute: ${category}`,

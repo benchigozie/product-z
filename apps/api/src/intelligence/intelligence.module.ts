@@ -100,6 +100,20 @@ import {
 import { SanitationIntelligencePrompt } from './prompts/sanitation-intelligence.prompt.js';
 import { GeminiSanitationIntelligenceInterpreter } from './interpreters/gemini-sanitation-intelligence.interpreter.js';
 
+import { RoadAccessAgreementService } from './evidence/road-access-agreement.service.js';
+import { RoadAccessAgreementClassifier } from './evidence/road-access-agreement.classifier.js';
+import { RoadAccessEvidenceAnalysisService } from './evidence/road-access-evidence-analysis.service.js';
+import { RoadAccessEvidenceConsolidator } from './consolidation/strategies/road-access-evidence-consolidator.service.js';
+import { RoadAccessClaimAgreementService } from './consolidation/strategies/road-access-claim-agreement.service.js';
+import { RoadAccessClaimAgreementClassifier } from './consolidation/strategies/road-access-claim-agreement.classifier.js';
+import { RoadAccessClaimAgreementAnalysisService } from './consolidation/strategies/road-access-claim-agreement-analysis.service.js';
+import {
+    RoadAccessIntelligenceService,
+    ROAD_ACCESS_INTELLIGENCE_INTERPRETER,
+} from './road-access-intelligence.service.js';
+import { RoadAccessIntelligencePrompt } from './prompts/road-access-intelligence.prompt.js';
+import { GeminiRoadAccessIntelligenceInterpreter } from './interpreters/gemini-road-access-intelligence.interpreter.js';
+
 @Module({
     imports: [
         ObservationDataModule,
@@ -142,14 +156,16 @@ import { GeminiSanitationIntelligenceInterpreter } from './interpreters/gemini-s
                 securityEvidenceConsolidator: SecurityEvidenceConsolidator,
                 internetEvidenceConsolidator: InternetEvidenceConsolidator,
                 sanitationEvidenceConsolidator: SanitationEvidenceConsolidator,
+                roadAccessEvidenceConsolidator: RoadAccessEvidenceConsolidator,
             ) => [
-                    powerEvidenceConsolidator,
-                    waterEvidenceConsolidator,
-                    floodingEvidenceConsolidator,
-                    securityEvidenceConsolidator,
-                    internetEvidenceConsolidator,
-                    sanitationEvidenceConsolidator,
-                ],
+                powerEvidenceConsolidator,
+                waterEvidenceConsolidator,
+                floodingEvidenceConsolidator,
+                securityEvidenceConsolidator,
+                internetEvidenceConsolidator,
+                sanitationEvidenceConsolidator,
+                roadAccessEvidenceConsolidator,
+            ],
             inject: [
                 PowerEvidenceConsolidator,
                 WaterEvidenceConsolidator,
@@ -157,6 +173,7 @@ import { GeminiSanitationIntelligenceInterpreter } from './interpreters/gemini-s
                 SecurityEvidenceConsolidator,
                 InternetEvidenceConsolidator,
                 SanitationEvidenceConsolidator,
+                RoadAccessEvidenceConsolidator,
             ],
         },
 
@@ -231,6 +248,21 @@ import { GeminiSanitationIntelligenceInterpreter } from './interpreters/gemini-s
             provide: SECURITY_INTELLIGENCE_INTERPRETER,
             useExisting: GeminiSecurityIntelligenceInterpreter,
         },
+
+        RoadAccessAgreementService,
+        RoadAccessAgreementClassifier,
+        RoadAccessEvidenceAnalysisService,
+        RoadAccessEvidenceConsolidator,
+        RoadAccessClaimAgreementService,
+        RoadAccessClaimAgreementClassifier,
+        RoadAccessClaimAgreementAnalysisService,
+        RoadAccessIntelligenceService,
+        RoadAccessIntelligencePrompt,
+        GeminiRoadAccessIntelligenceInterpreter,
+        {
+            provide: ROAD_ACCESS_INTELLIGENCE_INTERPRETER,
+            useExisting: GeminiRoadAccessIntelligenceInterpreter,
+        },
     ],
     exports: [
         IntelligenceService,
@@ -255,6 +287,9 @@ import { GeminiSanitationIntelligenceInterpreter } from './interpreters/gemini-s
         SanitationEvidenceAnalysisService,
         SanitationClaimAgreementAnalysisService,
         SanitationIntelligenceService,
+        RoadAccessEvidenceAnalysisService,
+        RoadAccessClaimAgreementAnalysisService,
+        RoadAccessIntelligenceService,
     ],
 })
 export class IntelligenceModule { }

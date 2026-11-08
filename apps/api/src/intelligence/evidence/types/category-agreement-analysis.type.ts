@@ -4,6 +4,7 @@ import type { FloodingAgreementResult } from './flooding-agreement.type.js';
 import { ObservationCategory } from '../../../observation/enums/observation-category.enum.js';
 import type { SecurityAgreementResult } from './security-agreement.type.js';
 import type { SanitationAgreementResult } from './sanitation-agreement.type.js';
+import type { RoadAccessAgreementResult } from './road-access-agreement.type.js';
 
 
 export interface PowerCategoryAgreementAnalysis {
@@ -62,11 +63,21 @@ export interface SanitationCategoryAgreementAnalysis {
     agreement: SanitationAgreementResult;
 }
 
-// Add to the union:
+
+export interface RoadAccessCategoryAgreementAnalysis {
+    category: ObservationCategory.ROAD_ACCESS;
+    firstObservationId: string;
+    secondObservationId: string;
+    classification: EvidenceAgreementClassification;
+    timeDifferenceInDays: number;
+    agreement: RoadAccessAgreementResult;
+}
+
 export type CategoryAgreementAnalysis =
     | PowerCategoryAgreementAnalysis
     | WaterCategoryAgreementAnalysis
     | FloodingCategoryAgreementAnalysis
     | SecurityCategoryAgreementAnalysis
     | InternetCategoryAgreementAnalysis
-    | SanitationCategoryAgreementAnalysis;
+    | SanitationCategoryAgreementAnalysis
+    | RoadAccessCategoryAgreementAnalysis;
