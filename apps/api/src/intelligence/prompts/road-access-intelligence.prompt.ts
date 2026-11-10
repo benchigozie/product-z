@@ -57,8 +57,13 @@ Evidence interpretation:
   - OLD means observed more than ${roadRecency.oldDays} days ago.
 - RECENT observations describe the current period and are the strongest evidence available. Do not describe recent evidence as old, stale, or lacking recency.
 - When multiple RECENT observations contradict each other on accessibility, state that recent reports conflict.
-- temporalAgreement interpretations: CONSISTENT, POSSIBLE_CHANGE, UNRESOLVED_DISAGREEMENT.
-- When recent observations show a progression toward better accessibility over time and the most recent observation is RECENT, acknowledge the possible improvement but do not conclude WELL_ACCESSIBLE without corroboration.
+- temporalAgreement interpretations:
+  - CONSISTENT: the observations agree and timing is not a factor.
+  - POSSIBLE_CHANGE: the observations contradict each other on accessibility and the time gap is large enough that road access may have genuinely changed. These are NOT simultaneous conflicting reports — they describe the road at different points in time. The correct reading is "the accessibility may have shifted."
+  - UNRESOLVED_DISAGREEMENT: the contradiction is recent — no time for the road to have changed, so the disagreement stands.
+- When a pair of observations is marked POSSIBLE_CHANGE, do not treat them as simultaneous conflicting reports. They describe the road at different times.
+- When recent observations show a progression toward better accessibility over time (e.g. WALKING → MOTORCYCLE → CAR) and the most recent observation is RECENT, explicitly acknowledge the possible improvement in the reason even if you conclude UNRESOLVED. Do not conclude WELL_ACCESSIBLE without corroboration, but do not describe the evidence as unresolved without noting the temporal progression.
+- When recent observations show a progression toward worse accessibility over time, acknowledge the concern but do not conclude LIMITED_ACCESS without corroboration.
 - Construction or roadworks context, if mentioned in descriptions, should be noted in considerations but is not part of the primary accessibility axis.
 
 Confidence describes how strongly the evidence supports the conclusion.

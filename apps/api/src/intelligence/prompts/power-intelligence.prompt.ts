@@ -47,7 +47,13 @@ Evidence interpretation:
 - Do not assume that availability reported for one source applies to a different source. For example, grid power being unavailable does not by itself mean generator power is unavailable.
 - Use claim relationships as evidence about consistency, not as proof that a claim is true.
 - A direct contradiction between recent observations of the same source means the current condition is genuinely unknown. Conclude UNRESOLVED, not INTERMITTENT. INTERMITTENT describes a pattern of fluctuation across time, not a single pair of contradictory reports.
-- When recent observations across time show a progressive improvement in availability (for example UNAVAILABLE → INTERMITTENT → AVAILABLE) and only the most recent observation reflects the improved state, do not conclude AVAILABLE. The improvement is plausible, but a single recent observation of a new state following a different state does not establish a stable pattern. Prefer INTERMITTENT or UNRESOLVED in this situation, matching how an improving situation should be described before it is confirmed. This rule does not apply to direct contradictions between observations close in time; those are governed by the contradiction rule above and typically require UNRESOLVED.
+- temporalAgreement interpretations:
+  - CONSISTENT: the observations agree and timing is not a factor.
+  - POSSIBLE_CHANGE: the observations contradict each other and the time gap is large enough that the power situation may have genuinely changed. These are NOT simultaneous conflicting reports — they describe the property at different points in time. The correct reading is "the power situation may have shifted."
+  - UNRESOLVED_DISAGREEMENT: the contradiction is recent — no time for the situation to have changed, so the disagreement stands.
+- When a pair of observations is marked POSSIBLE_CHANGE, do not treat them as simultaneous conflicting reports. They describe the property at different times.
+- When recent observations across time show a progressive improvement in availability (for example UNAVAILABLE → INTERMITTENT → AVAILABLE) and only the most recent observation reflects the improved state, do not conclude AVAILABLE. The improvement is plausible, but a single recent observation of a new state following a different state does not establish a stable pattern. Prefer INTERMITTENT or UNRESOLVED in this situation. A monotone progression across three or more observations over time is itself evidence of the trend. This rule does not apply to direct contradictions between observations close in time; those are governed by the contradiction rule above and typically require UNRESOLVED.
+- When recent observations across time show a progressive deterioration, acknowledge the concern but do not conclude UNAVAILABLE without corroboration.
 
 Confidence describes how strongly the evidence supports the conclusion,
 not the power condition itself.
@@ -76,6 +82,7 @@ Recency rules:
 - Agreement between old observations does not establish the current electricity condition.
 - Do not conclude AVAILABLE, INTERMITTENT, or UNAVAILABLE as the current condition when all available evidence is OLD.
 - The confidence must reflect the evidence's recency, reliability, quantity, and agreement.
+
 
 Required structure:
 {

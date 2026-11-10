@@ -9,14 +9,12 @@ import { IntelligenceConfidence } from '../enums/intelligence-confidence.enum.js
 import { PowerCondition } from '../enums/power-condition.enum.js';
 import { FloodingCondition } from '../enums/flooding-condition.enum.js';
 import { SecurityCondition } from '../enums/security-condition.enum.js';
-
 import { WaterCondition } from '../enums/water-condition.enum.js';
-
 import { InternetCondition } from '../enums/internet-condition.enum.js';
 import { SanitationConclusion } from '../enums/sanitation-conclusion.enum.js';
-
-
 import { RoadAccessConclusion } from '../enums/road-access-conclusion.enum.js';
+import { BuildingConditionConclusion } from '../enums/building-condition-conclusion.enum.js';
+
 
 const VALID_CONCLUSIONS: readonly string[] = [
     ...Object.values(PowerCondition),
@@ -26,8 +24,8 @@ const VALID_CONCLUSIONS: readonly string[] = [
     ...Object.values(InternetCondition),
     ...Object.values(SanitationConclusion),
     ...Object.values(RoadAccessConclusion),
+    ...Object.values(BuildingConditionConclusion),
 ];
-
 
 export class IntelligenceConclusionDto {
     @IsIn(VALID_CONCLUSIONS)

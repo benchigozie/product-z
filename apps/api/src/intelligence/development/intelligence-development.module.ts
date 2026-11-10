@@ -17,6 +17,9 @@ import { SanitationIntelligenceRunner } from './sanitation-intelligence.runner.j
 import { SanitationIntelligenceDevelopmentController } from './sanitation-intelligence-development.controller.js';
 import { RoadAccessIntelligenceRunner } from './road-access-intelligence.runner.js';
 import { RoadAccessIntelligenceDevelopmentController } from './road-access-intelligence-development.controller.js';
+import { BuildingConditionIntelligenceRunner } from './building-condition-intelligence.runner.js';
+import { BuildingConditionIntelligenceDevelopmentController } from './building-condition-intelligence-development.controller.js';
+
 
 
 
@@ -33,6 +36,7 @@ import { RoadAccessIntelligenceDevelopmentController } from './road-access-intel
         InternetIntelligenceDevelopmentController,
         SanitationIntelligenceDevelopmentController,
         RoadAccessIntelligenceDevelopmentController,
+        BuildingConditionIntelligenceDevelopmentController,
     ],
     providers: [
         PowerIntelligenceRunner,
@@ -43,6 +47,7 @@ import { RoadAccessIntelligenceDevelopmentController } from './road-access-intel
         InternetIntelligenceRunner,
         SanitationIntelligenceRunner,
         RoadAccessIntelligenceRunner,
+        BuildingConditionIntelligenceRunner,
     ],
     exports: [
         PowerIntelligenceRunner,
@@ -52,6 +57,7 @@ import { RoadAccessIntelligenceDevelopmentController } from './road-access-intel
         InternetIntelligenceRunner,
         SanitationIntelligenceRunner,
         RoadAccessIntelligenceRunner,
+        BuildingConditionIntelligenceRunner,
     ],
 })
 export class IntelligenceDevelopmentModule {}

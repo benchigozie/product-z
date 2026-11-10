@@ -2,6 +2,7 @@ import type { ObservationListResult } from '../../../observation/types/observati
 import { ObservationCategory } from '../../../observation/enums/observation-category.enum.js';
 import { SanitationCondition } from '../../../observation/types/sanitation/sanitation-condition.type.js';
 import type { SanitationData } from '../../../observation/types/sanitation/sanitation-data.type.js';
+import { daysAgo } from './relative-date.helper.js';
 
 function sanitationObservation(
     id: string,
@@ -31,7 +32,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: SanitationCondition.CLEAN,
                 description: 'Waste collected regularly, area kept clean.',
             },
-            '2026-10-30T12:00:00.000Z',
+            daysAgo(11),
         ),
         sanitationObservation(
             'cmocksanitation000000000002',
@@ -39,14 +40,14 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: SanitationCondition.CLEAN,
                 description: 'No visible waste or sanitation issues.',
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
         sanitationObservation(
             'cmocksanitation000000000003',
             {
                 condition: SanitationCondition.CLEAN,
             },
-            '2026-10-20T12:00:00.000Z',
+            daysAgo(21),
         ),
     ],
 
@@ -57,7 +58,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: SanitationCondition.CLEAN,
                 description: 'Area appears well-maintained.',
             },
-            '2026-11-01T12:00:00.000Z',
+            daysAgo(9),
         ),
         sanitationObservation(
             'cmocksanitation000000000005',
@@ -65,7 +66,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: SanitationCondition.VERY_POOR,
                 description: 'Waste piled up, drains blocked.',
             },
-            '2026-10-31T12:00:00.000Z',
+            daysAgo(10),
         ),
     ],
 
@@ -76,7 +77,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: SanitationCondition.VERY_POOR,
                 description: 'Waste management was poor.',
             },
-            '2026-07-15T12:00:00.000Z',
+            daysAgo(118),
         ),
         sanitationObservation(
             'cmocksanitation000000000007',
@@ -84,14 +85,14 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: SanitationCondition.FAIR,
                 description: 'Improved collection frequency.',
             },
-            '2026-09-10T12:00:00.000Z',
+            daysAgo(61),
         ),
         sanitationObservation(
             'cmocksanitation000000000008',
             {
                 condition: SanitationCondition.CLEAN,
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
     ],
 
@@ -101,14 +102,14 @@ const scenarios: Record<string, ObservationListResult> = {
             {
                 condition: SanitationCondition.CLEAN,
             },
-            '2025-03-15T12:00:00.000Z',
+            daysAgo(605),
         ),
         sanitationObservation(
             'cmocksanitation000000000010',
             {
                 condition: SanitationCondition.CLEAN,
             },
-            '2025-04-15T12:00:00.000Z',
+            daysAgo(574),
         ),
     ],
 
@@ -118,7 +119,7 @@ const scenarios: Record<string, ObservationListResult> = {
             {
                 condition: SanitationCondition.FAIR,
             },
-            '2026-10-30T12:00:00.000Z',
+            daysAgo(11),
         ),
     ],
 
@@ -129,7 +130,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: SanitationCondition.FAIR,
                 description: 'Some litter visible but manageable.',
             },
-            '2026-10-30T12:00:00.000Z',
+            daysAgo(11),
         ),
         sanitationObservation(
             'cmocksanitation000000000013',
@@ -137,14 +138,14 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: SanitationCondition.POOR,
                 description: 'Waste collection is inconsistent.',
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
         sanitationObservation(
             'cmocksanitation000000000014',
             {
                 condition: SanitationCondition.FAIR,
             },
-            '2026-10-20T12:00:00.000Z',
+            daysAgo(21),
         ),
     ],
 };

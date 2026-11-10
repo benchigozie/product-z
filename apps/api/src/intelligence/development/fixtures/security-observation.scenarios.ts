@@ -4,6 +4,7 @@ import { SecurityAccessControl } from '../../../observation/types/security/secur
 import { SecurityPersonnel } from '../../../observation/types/security/security-personnel.type.js';
 import { SecurityFeature } from '../../../observation/types/security/security-feature.type.js';
 import type { SecurityData } from '../../../observation/types/security/security-data.type.js';
+import { daysAgo } from './relative-date.helper.js';
 
 function securityObservation(
     id: string,
@@ -37,7 +38,7 @@ const scenarios: Record<string, ObservationListResult> = {
                     SecurityFeature.GUARD_POST,
                 ],
             },
-            '2026-10-28T12:00:00.000Z',
+            daysAgo(13),
         ),
         securityObservation(
             'cmocksecurity0000000000002',
@@ -46,7 +47,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 personnel: SecurityPersonnel.PRESENT,
                 features: [SecurityFeature.GATE, SecurityFeature.CCTV],
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
         securityObservation(
             'cmocksecurity0000000000003',
@@ -55,7 +56,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 personnel: SecurityPersonnel.PRESENT,
                 features: [SecurityFeature.GATE],
             },
-            '2026-10-20T12:00:00.000Z',
+            daysAgo(21),
         ),
     ],
 
@@ -67,7 +68,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 personnel: SecurityPersonnel.PRESENT,
                 features: [SecurityFeature.GATE, SecurityFeature.GUARD_POST],
             },
-            '2026-10-30T12:00:00.000Z',
+            daysAgo(11),
         ),
         securityObservation(
             'cmocksecurity0000000000005',
@@ -76,7 +77,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 personnel: SecurityPersonnel.NONE_OBSERVED,
                 features: [],
             },
-            '2026-10-29T12:00:00.000Z',
+            daysAgo(12),
         ),
     ],
 
@@ -87,7 +88,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 accessControl: SecurityAccessControl.OPEN_ACCESS,
                 personnel: SecurityPersonnel.NONE_OBSERVED,
             },
-            '2026-07-15T12:00:00.000Z',
+            daysAgo(118),
         ),
         securityObservation(
             'cmocksecurity0000000000007',
@@ -95,7 +96,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 accessControl: SecurityAccessControl.CONTROLLED_ACCESS,
                 personnel: SecurityPersonnel.PRESENT,
             },
-            '2026-09-10T12:00:00.000Z',
+            daysAgo(61),
         ),
         securityObservation(
             'cmocksecurity0000000000008',
@@ -104,7 +105,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 personnel: SecurityPersonnel.PRESENT,
                 features: [SecurityFeature.GATE, SecurityFeature.CCTV],
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
     ],
 
@@ -115,7 +116,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 accessControl: SecurityAccessControl.OPEN_ACCESS,
                 personnel: SecurityPersonnel.NONE_OBSERVED,
             },
-            '2025-03-15T12:00:00.000Z',
+            daysAgo(605),
         ),
         securityObservation(
             'cmocksecurity0000000000010',
@@ -123,7 +124,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 accessControl: SecurityAccessControl.OPEN_ACCESS,
                 personnel: SecurityPersonnel.NONE_OBSERVED,
             },
-            '2025-04-15T12:00:00.000Z',
+            daysAgo(574),
         ),
     ],
 
@@ -134,7 +135,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 accessControl: SecurityAccessControl.CONTROLLED_ACCESS,
                 personnel: SecurityPersonnel.PRESENT,
             },
-            '2026-10-28T12:00:00.000Z',
+            daysAgo(13),
         ),
     ],
 
@@ -146,7 +147,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 personnel: SecurityPersonnel.PRESENT,
                 features: [SecurityFeature.GATE],
             },
-            '2026-10-30T12:00:00.000Z',
+            daysAgo(11),
         ),
         securityObservation(
             'cmocksecurity0000000000013',
@@ -155,7 +156,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 personnel: SecurityPersonnel.NONE_OBSERVED,
                 features: [SecurityFeature.GATE],
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
         securityObservation(
             'cmocksecurity0000000000014',
@@ -164,7 +165,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 personnel: SecurityPersonnel.PRESENT,
                 features: [SecurityFeature.GATE],
             },
-            '2026-10-20T12:00:00.000Z',
+            daysAgo(21),
         ),
     ],
 };

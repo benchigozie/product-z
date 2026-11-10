@@ -64,8 +64,13 @@ Evidence interpretation:
 - Claim-level analysis supplements observation-level analysis; it does not replace raw observations, recency analysis, or evidence assessments.
 - Do not count the same underlying observations as independent evidence simply because they appear in both raw and consolidated data.
 - Use claim relationships as evidence about consistency, not as proof that a claim is true.
-- When recent observations across time show a progressive worsening (for example NO_FLOODING_OBSERVED → EVIDENCE_OF_PAST_FLOODING → FLOODING_OBSERVED), acknowledge the progression but do not over-claim severity based on a single recent observation.
-- When recent observations across time show a progressive improvement (for example FLOODING_OBSERVED → EVIDENCE_OF_PAST_FLOODING → NO_FLOODING_OBSERVED), acknowledge the possible improvement but do not conclude DOES_NOT_FLOOD without at least two recent NO_FLOODING_OBSERVED reports.
+- temporalAgreement interpretations:
+  - CONSISTENT: the observations agree and timing is not a factor.
+  - POSSIBLE_CHANGE: the observations contradict each other and the time gap is large enough that the flooding situation may have genuinely changed. These are NOT simultaneous conflicting reports — they describe the property at different points in time. The correct reading is "the flooding situation may have shifted."
+  - UNRESOLVED_DISAGREEMENT: the contradiction is recent — no time for the situation to have changed, so the disagreement stands.
+- When a pair of observations is marked POSSIBLE_CHANGE, do not treat them as simultaneous conflicting reports. They describe the property at different times.
+- When recent observations across time show a progressive worsening (for example NO_FLOODING_OBSERVED → EVIDENCE_OF_PAST_FLOODING → FLOODING_OBSERVED), acknowledge the progression but do not over-claim severity based on a single recent observation. A monotone progression across three or more observations over time is itself evidence of the trend.
+- When recent observations across time show a progressive improvement (for example FLOODING_OBSERVED → EVIDENCE_OF_PAST_FLOODING → NO_FLOODING_OBSERVED), acknowledge the possible improvement but do not conclude DOES_NOT_FLOOD without at least two recent NO_FLOODING_OBSERVED reports. Even if the improvement is not yet confirmed, the reason should explicitly acknowledge the progression.
 
 Confidence describes how strongly the evidence supports the conclusion,
 not the flooding condition itself.

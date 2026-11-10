@@ -114,6 +114,21 @@ import {
 import { RoadAccessIntelligencePrompt } from './prompts/road-access-intelligence.prompt.js';
 import { GeminiRoadAccessIntelligenceInterpreter } from './interpreters/gemini-road-access-intelligence.interpreter.js';
 
+
+import { BuildingConditionAgreementService } from './evidence/building-condition-agreement.service.js';
+import { BuildingConditionAgreementClassifier } from './evidence/building-condition-agreement.classifier.js';
+import { BuildingConditionEvidenceAnalysisService } from './evidence/building-condition-evidence-analysis.service.js';
+import { BuildingConditionEvidenceConsolidator } from './consolidation/strategies/building-condition-evidence-consolidator.service.js';
+import { BuildingConditionClaimAgreementService } from './consolidation/strategies/building-condition-claim-agreement.service.js';
+import { BuildingConditionClaimAgreementClassifier } from './consolidation/strategies/building-condition-claim-agreement.classifier.js';
+import { BuildingConditionClaimAgreementAnalysisService } from './consolidation/strategies/building-condition-claim-agreement-analysis.service.js';
+import {
+    BuildingConditionIntelligenceService,
+    BUILDING_CONDITION_INTELLIGENCE_INTERPRETER,
+} from './building-condition-intelligence.service.js';
+import { BuildingConditionIntelligencePrompt } from './prompts/building-condition-intelligence.prompt.js';
+import { GeminiBuildingConditionIntelligenceInterpreter } from './interpreters/gemini-building-condition-intelligence.interpreter.js';
+
 @Module({
     imports: [
         ObservationDataModule,
@@ -157,6 +172,7 @@ import { GeminiRoadAccessIntelligenceInterpreter } from './interpreters/gemini-r
                 internetEvidenceConsolidator: InternetEvidenceConsolidator,
                 sanitationEvidenceConsolidator: SanitationEvidenceConsolidator,
                 roadAccessEvidenceConsolidator: RoadAccessEvidenceConsolidator,
+                buildingConditionEvidenceConsolidator: BuildingConditionEvidenceConsolidator,
             ) => [
                 powerEvidenceConsolidator,
                 waterEvidenceConsolidator,
@@ -165,6 +181,7 @@ import { GeminiRoadAccessIntelligenceInterpreter } from './interpreters/gemini-r
                 internetEvidenceConsolidator,
                 sanitationEvidenceConsolidator,
                 roadAccessEvidenceConsolidator,
+                buildingConditionEvidenceConsolidator,
             ],
             inject: [
                 PowerEvidenceConsolidator,
@@ -174,6 +191,7 @@ import { GeminiRoadAccessIntelligenceInterpreter } from './interpreters/gemini-r
                 InternetEvidenceConsolidator,
                 SanitationEvidenceConsolidator,
                 RoadAccessEvidenceConsolidator,
+                BuildingConditionEvidenceConsolidator,
             ],
         },
 
@@ -263,6 +281,21 @@ import { GeminiRoadAccessIntelligenceInterpreter } from './interpreters/gemini-r
             provide: ROAD_ACCESS_INTELLIGENCE_INTERPRETER,
             useExisting: GeminiRoadAccessIntelligenceInterpreter,
         },
+
+        BuildingConditionAgreementService,
+        BuildingConditionAgreementClassifier,
+        BuildingConditionEvidenceAnalysisService,
+        BuildingConditionEvidenceConsolidator,
+        BuildingConditionClaimAgreementService,
+        BuildingConditionClaimAgreementClassifier,
+        BuildingConditionClaimAgreementAnalysisService,
+        BuildingConditionIntelligenceService,
+        BuildingConditionIntelligencePrompt,
+        GeminiBuildingConditionIntelligenceInterpreter,
+        {
+            provide: BUILDING_CONDITION_INTELLIGENCE_INTERPRETER,
+            useExisting: GeminiBuildingConditionIntelligenceInterpreter,
+        },
     ],
     exports: [
         IntelligenceService,
@@ -290,6 +323,9 @@ import { GeminiRoadAccessIntelligenceInterpreter } from './interpreters/gemini-r
         RoadAccessEvidenceAnalysisService,
         RoadAccessClaimAgreementAnalysisService,
         RoadAccessIntelligenceService,
+        BuildingConditionEvidenceAnalysisService,
+        BuildingConditionClaimAgreementAnalysisService,
+        BuildingConditionIntelligenceService,
     ],
 })
 export class IntelligenceModule { }

@@ -6,6 +6,7 @@ import { SecurityCondition } from '../enums/security-condition.enum.js';
 import { InternetCondition } from '../enums/internet-condition.enum.js';
 import { SanitationConclusion } from '../enums/sanitation-conclusion.enum.js';
 import { RoadAccessConclusion } from '../enums/road-access-conclusion.enum.js';
+import { BuildingConditionConclusion } from '../enums/building-condition-conclusion.enum.js';
 
 export function powerToConclusionState(
     condition: PowerCondition,
@@ -101,6 +102,23 @@ export function roadAccessToConclusionState(
         case RoadAccessConclusion.LIMITED_ACCESS:
             return ConclusionState.PRESENT;
         case RoadAccessConclusion.UNRESOLVED:
+            return ConclusionState.UNRESOLVED;
+    }
+}
+
+
+
+export function buildingConditionToConclusionState(
+    conclusion: BuildingConditionConclusion,
+): ConclusionState {
+    switch (conclusion) {
+        case BuildingConditionConclusion.SOUND:
+            return ConclusionState.ABSENT;
+        case BuildingConditionConclusion.CONCERNING:
+            return ConclusionState.MIXED;
+        case BuildingConditionConclusion.UNSAFE:
+            return ConclusionState.PRESENT;
+        case BuildingConditionConclusion.UNRESOLVED:
             return ConclusionState.UNRESOLVED;
     }
 }

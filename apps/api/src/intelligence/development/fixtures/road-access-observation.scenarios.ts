@@ -3,6 +3,7 @@ import { ObservationCategory } from '../../../observation/enums/observation-cate
 import { RoadAccessibility } from '../../../observation/types/road/road-accessibility.type.js';
 import { RoadCondition } from '../../../observation/types/road/road-condition.type.js';
 import type { RoadAccessData } from '../../../observation/types/road/road-access-data.type.js';
+import { daysAgo } from './relative-date.helper.js';
 
 function roadObservation(
     id: string,
@@ -36,7 +37,7 @@ const scenarios: Record<string, ObservationListResult> = {
                     RoadAccessibility.CAR,
                 ],
             },
-            '2026-11-01T12:00:00.000Z',
+            daysAgo(9),
         ),
         roadObservation(
             'cmockroadaccess000000000002',
@@ -48,7 +49,7 @@ const scenarios: Record<string, ObservationListResult> = {
                     RoadAccessibility.CAR,
                 ],
             },
-            '2026-10-28T12:00:00.000Z',
+            daysAgo(13),
         ),
         roadObservation(
             'cmockroadaccess000000000003',
@@ -56,7 +57,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: RoadCondition.GOOD,
                 accessibility: [RoadAccessibility.WALKING, RoadAccessibility.CAR],
             },
-            '2026-10-22T12:00:00.000Z',
+            daysAgo(19),
         ),
     ],
 
@@ -71,7 +72,7 @@ const scenarios: Record<string, ObservationListResult> = {
                     RoadAccessibility.CAR,
                 ],
             },
-            '2026-11-02T12:00:00.000Z',
+            daysAgo(8),
         ),
         roadObservation(
             'cmockroadaccess000000000005',
@@ -79,7 +80,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: RoadCondition.VERY_POOR,
                 accessibility: [RoadAccessibility.WALKING],
             },
-            '2026-11-01T12:00:00.000Z',
+            daysAgo(9),
         ),
     ],
 
@@ -90,7 +91,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: RoadCondition.VERY_POOR,
                 accessibility: [RoadAccessibility.WALKING],
             },
-            '2026-07-15T12:00:00.000Z',
+            daysAgo(118),
         ),
         roadObservation(
             'cmockroadaccess000000000007',
@@ -101,7 +102,7 @@ const scenarios: Record<string, ObservationListResult> = {
                     RoadAccessibility.MOTORCYCLE,
                 ],
             },
-            '2026-09-10T12:00:00.000Z',
+            daysAgo(61),
         ),
         roadObservation(
             'cmockroadaccess000000000008',
@@ -113,7 +114,7 @@ const scenarios: Record<string, ObservationListResult> = {
                     RoadAccessibility.CAR,
                 ],
             },
-            '2026-10-28T12:00:00.000Z',
+            daysAgo(13),
         ),
     ],
 
@@ -124,7 +125,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: RoadCondition.GOOD,
                 accessibility: [RoadAccessibility.WALKING, RoadAccessibility.CAR],
             },
-            '2025-03-15T12:00:00.000Z',
+            daysAgo(605),
         ),
         roadObservation(
             'cmockroadaccess000000000010',
@@ -132,7 +133,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: RoadCondition.GOOD,
                 accessibility: [RoadAccessibility.WALKING, RoadAccessibility.CAR],
             },
-            '2025-04-15T12:00:00.000Z',
+            daysAgo(574),
         ),
     ],
 
@@ -147,7 +148,7 @@ const scenarios: Record<string, ObservationListResult> = {
                     RoadAccessibility.CAR,
                 ],
             },
-            '2026-10-30T12:00:00.000Z',
+            daysAgo(11),
         ),
     ],
 
@@ -162,7 +163,7 @@ const scenarios: Record<string, ObservationListResult> = {
                     RoadAccessibility.CAR,
                 ],
             },
-            '2026-11-01T12:00:00.000Z',
+            daysAgo(9),
         ),
         roadObservation(
             'cmockroadaccess000000000013',
@@ -170,7 +171,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 condition: RoadCondition.VERY_POOR,
                 accessibility: [RoadAccessibility.WALKING, RoadAccessibility.CAR],
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
     ],
 };

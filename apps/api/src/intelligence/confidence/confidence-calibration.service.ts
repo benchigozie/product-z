@@ -49,7 +49,7 @@ export class ConfidenceCalibrationService {
         const hasRecentContradiction = evidenceAnalysis.agreement.some(
             (a) =>
                 a.classification ===
-                    EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE &&
+                EvidenceAgreementClassification.CONTRADICTORY_EVIDENCE &&
                 recentObservationIds.has(a.firstObservationId) &&
                 recentObservationIds.has(a.secondObservationId),
         );
@@ -63,8 +63,13 @@ export class ConfidenceCalibrationService {
         }
 
         // Rule 5: 3+ recent agreeing observations → HIGH allowed. No cap.
+        // Rule 5: 3+ recent agreeing observations → HIGH forced.
         if (recentCount >= 3) {
-            return proposedConfidence;
+            return this.apply(proposedConfidence, IntelligenceConfidence.HIGH, {
+                rule: 'three-plus-recent-observations',
+                recentCount,
+                conclusion,
+            });
         }
 
         // Rule 2 + fallback: 1 or 2 recent observations, no contradiction
@@ -106,8 +111,8 @@ export class ConfidenceCalibrationService {
         if (proposed !== calibrated) {
             this.logger.debug(
                 `Calibrated confidence ${proposed} → ${calibrated} ` +
-                    `(rule=${context.rule}, recentCount=${context.recentCount}, ` +
-                    `conclusion=${context.conclusion})`,
+                `(rule=${context.rule}, recentCount=${context.recentCount}, ` +
+                `conclusion=${context.conclusion})`,
             );
         }
 

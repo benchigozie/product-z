@@ -4,6 +4,7 @@ import { Availability } from '../../../observation/types/common/availability.typ
 import { Reliability } from '../../../observation/types/common/reliability.type.js';
 import { WaterSource } from '../../../observation/types/water/water-source.type.js';
 import type { WaterData } from '../../../observation/types/water/water-data.type.js';
+import { daysAgo } from './relative-date.helper.js';
 
 function waterObservation(
     id: string,
@@ -34,7 +35,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.GOOD,
             },
-            '2026-10-15T12:00:00.000Z',
+            daysAgo(26),
         ),
         waterObservation(
             'cmockwater00000000000002',
@@ -43,7 +44,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.GOOD,
             },
-            '2026-10-12T12:00:00.000Z',
+            daysAgo(29),
         ),
         waterObservation(
             'cmockwater00000000000003',
@@ -52,7 +53,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.FAIR,
             },
-            '2026-10-08T12:00:00.000Z',
+            daysAgo(33),
         ),
     ],
 
@@ -64,7 +65,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.GOOD,
             },
-            '2026-10-17T12:00:00.000Z',
+            daysAgo(24),
         ),
         waterObservation(
             'cmockwater00000000000005',
@@ -73,7 +74,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.UNAVAILABLE,
                 reliability: Reliability.VERY_POOR,
             },
-            '2026-10-16T12:00:00.000Z',
+            daysAgo(25),
         ),
     ],
 
@@ -85,7 +86,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.UNAVAILABLE,
                 reliability: Reliability.VERY_POOR,
             },
-            '2026-07-15T12:00:00.000Z',
+            daysAgo(118),
         ),
         waterObservation(
             'cmockwater00000000000007',
@@ -94,7 +95,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.INTERMITTENT,
                 reliability: Reliability.FAIR,
             },
-            '2026-09-20T12:00:00.000Z',
+            daysAgo(51),
         ),
         waterObservation(
             'cmockwater00000000000008',
@@ -103,7 +104,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.GOOD,
             },
-            '2026-10-15T12:00:00.000Z',
+            daysAgo(26),
         ),
     ],
 
@@ -115,7 +116,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.UNAVAILABLE,
                 reliability: Reliability.VERY_POOR,
             },
-            '2025-08-15T12:00:00.000Z',
+            daysAgo(452),
         ),
         waterObservation(
             'cmockwater00000000000010',
@@ -124,7 +125,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.UNAVAILABLE,
                 reliability: Reliability.POOR,
             },
-            '2025-09-15T12:00:00.000Z',
+            daysAgo(421),
         ),
     ],
 
@@ -135,7 +136,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 source: [WaterSource.WATER_VENDOR],
                 availability: Availability.INTERMITTENT,
             },
-            '2026-10-15T12:00:00.000Z',
+            daysAgo(26),
         ),
     ],
 
@@ -150,7 +151,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.GOOD,
             },
-            '2026-10-15T12:00:00.000Z',
+            daysAgo(26),
         ),
     ],
 };

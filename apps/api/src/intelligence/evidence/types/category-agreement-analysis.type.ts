@@ -5,6 +5,8 @@ import { ObservationCategory } from '../../../observation/enums/observation-cate
 import type { SecurityAgreementResult } from './security-agreement.type.js';
 import type { SanitationAgreementResult } from './sanitation-agreement.type.js';
 import type { RoadAccessAgreementResult } from './road-access-agreement.type.js';
+import type { BuildingConditionAgreementResult } from './building-condition-agreement.type.js';
+
 
 
 export interface PowerCategoryAgreementAnalysis {
@@ -73,6 +75,16 @@ export interface RoadAccessCategoryAgreementAnalysis {
     agreement: RoadAccessAgreementResult;
 }
 
+  
+export interface BuildingConditionCategoryAgreementAnalysis {
+    category: ObservationCategory.BUILDING_CONDITION;
+    firstObservationId: string;
+    secondObservationId: string;
+    classification: EvidenceAgreementClassification;
+    timeDifferenceInDays: number;
+    agreement: BuildingConditionAgreementResult;
+}
+
 export type CategoryAgreementAnalysis =
     | PowerCategoryAgreementAnalysis
     | WaterCategoryAgreementAnalysis
@@ -80,4 +92,5 @@ export type CategoryAgreementAnalysis =
     | SecurityCategoryAgreementAnalysis
     | InternetCategoryAgreementAnalysis
     | SanitationCategoryAgreementAnalysis
-    | RoadAccessCategoryAgreementAnalysis;
+    | RoadAccessCategoryAgreementAnalysis
+    | BuildingConditionCategoryAgreementAnalysis;

@@ -5,6 +5,7 @@ import { Reliability } from '../../../observation/types/common/reliability.type.
 import { Coverage } from '../../../observation/types/internet/coverage.type.js';
 import { InternetConnectionType } from '../../../observation/types/internet/internet-connection-type.type.js';
 import type { InternetData } from '../../../observation/types/internet/internet-data.type.js';
+import { daysAgo } from './relative-date.helper.js';
 
 function internetObservation(
     id: string,
@@ -37,7 +38,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 reliability: Reliability.GOOD,
                 coverage: Coverage.GOOD,
             },
-            '2026-10-28T12:00:00.000Z',
+            daysAgo(13),
         ),
         internetObservation(
             'cmockinternet0000000000002',
@@ -48,7 +49,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 reliability: Reliability.GOOD,
                 coverage: Coverage.GOOD,
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
         internetObservation(
             'cmockinternet0000000000003',
@@ -58,7 +59,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.FAIR,
             },
-            '2026-10-20T12:00:00.000Z',
+            daysAgo(21),
         ),
     ],
 
@@ -72,7 +73,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 reliability: Reliability.GOOD,
                 coverage: Coverage.GOOD,
             },
-            '2026-10-30T12:00:00.000Z',
+            daysAgo(11),
         ),
         internetObservation(
             'cmockinternet0000000000005',
@@ -82,7 +83,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.UNAVAILABLE,
                 coverage: Coverage.POOR,
             },
-            '2026-10-29T12:00:00.000Z',
+            daysAgo(12),
         ),
     ],
 
@@ -95,7 +96,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.UNAVAILABLE,
                 coverage: Coverage.POOR,
             },
-            '2026-07-15T12:00:00.000Z',
+            daysAgo(118),
         ),
         internetObservation(
             'cmockinternet0000000000007',
@@ -106,7 +107,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 reliability: Reliability.FAIR,
                 coverage: Coverage.FAIR,
             },
-            '2026-09-10T12:00:00.000Z',
+            daysAgo(61),
         ),
         internetObservation(
             'cmockinternet0000000000008',
@@ -117,7 +118,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 reliability: Reliability.GOOD,
                 coverage: Coverage.GOOD,
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
     ],
 
@@ -130,7 +131,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.GOOD,
             },
-            '2025-03-15T12:00:00.000Z',
+            daysAgo(605),
         ),
         internetObservation(
             'cmockinternet0000000000010',
@@ -140,7 +141,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.GOOD,
             },
-            '2025-04-15T12:00:00.000Z',
+            daysAgo(574),
         ),
     ],
 
@@ -154,7 +155,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 reliability: Reliability.FAIR,
                 coverage: Coverage.FAIR,
             },
-            '2026-10-28T12:00:00.000Z',
+            daysAgo(13),
         ),
     ],
 
@@ -167,7 +168,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.GOOD,
             },
-            '2026-10-28T12:00:00.000Z',
+            daysAgo(13),
         ),
         internetObservation(
             'cmockinternet0000000000013',
@@ -177,7 +178,7 @@ const scenarios: Record<string, ObservationListResult> = {
                 availability: Availability.AVAILABLE,
                 reliability: Reliability.FAIR,
             },
-            '2026-10-25T12:00:00.000Z',
+            daysAgo(16),
         ),
     ],
 };

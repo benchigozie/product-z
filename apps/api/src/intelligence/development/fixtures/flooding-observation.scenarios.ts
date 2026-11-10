@@ -4,6 +4,7 @@ import { Severity } from '../../../observation/types/common/severity.type.js';
 import { FloodingOccurrence } from '../../../observation/types/flooding/flooding-occurrence.type.js';
 import { FloodingExtent } from '../../../observation/types/flooding/flooding-extent.type.js';
 import type { FloodingData } from '../../../observation/types/flooding/flooding-data.type.js';
+import { daysAgo } from './relative-date.helper.js';
 
 function floodingObservation(
     id: string,
@@ -34,7 +35,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.STREET,
                 severity: Severity.MODERATE,
             },
-            '2026-10-15T12:00:00.000Z',
+            daysAgo(26),
         ),
         floodingObservation(
             'cmockflooding0000000000002',
@@ -43,7 +44,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.IMMEDIATE_ACCESS,
                 severity: Severity.MODERATE,
             },
-            '2026-10-10T12:00:00.000Z',
+            daysAgo(31),
         ),
         floodingObservation(
             'cmockflooding0000000000003',
@@ -52,7 +53,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.STREET,
                 severity: Severity.MINOR,
             },
-            '2026-10-05T12:00:00.000Z',
+            daysAgo(36),
         ),
     ],
 
@@ -64,7 +65,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.STREET,
                 severity: Severity.MODERATE,
             },
-            '2026-10-20T12:00:00.000Z',
+            daysAgo(21),
         ),
         floodingObservation(
             'cmockflooding0000000000005',
@@ -72,7 +73,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 occurrence: FloodingOccurrence.NO_FLOODING_OBSERVED,
                 extent: FloodingExtent.PROPERTY,
             },
-            '2026-10-19T12:00:00.000Z',
+            daysAgo(22),
         ),
     ],
 
@@ -84,7 +85,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.PROPERTY,
                 severity: Severity.SEVERE,
             },
-            '2026-07-15T12:00:00.000Z',
+            daysAgo(118),
         ),
         floodingObservation(
             'cmockflooding0000000000007',
@@ -93,7 +94,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.STREET,
                 severity: Severity.MODERATE,
             },
-            '2026-09-10T12:00:00.000Z',
+            daysAgo(61),
         ),
         floodingObservation(
             'cmockflooding0000000000008',
@@ -101,7 +102,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 occurrence: FloodingOccurrence.NO_FLOODING_OBSERVED,
                 extent: FloodingExtent.PROPERTY,
             },
-            '2026-10-15T12:00:00.000Z',
+            daysAgo(26),
         ),
     ],
 
@@ -113,7 +114,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.PROPERTY,
                 severity: Severity.SEVERE,
             },
-            '2025-03-15T12:00:00.000Z',
+            daysAgo(605),
         ),
         floodingObservation(
             'cmockflooding0000000000010',
@@ -122,7 +123,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.STREET,
                 severity: Severity.MODERATE,
             },
-            '2025-04-15T12:00:00.000Z',
+            daysAgo(574),
         ),
     ],
 
@@ -133,7 +134,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 occurrence: FloodingOccurrence.EVIDENCE_OF_PAST_FLOODING,
                 extent: FloodingExtent.STREET,
             },
-            '2026-10-15T12:00:00.000Z',
+            daysAgo(26),
         ),
     ],
 
@@ -146,7 +147,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 severity: Severity.MINOR,
                 conditions: 'Visible water marks on the exterior wall.',
             },
-            '2026-10-15T12:00:00.000Z',
+            daysAgo(26),
         ),
         floodingObservation(
             'cmockflooding0000000000013',
@@ -155,7 +156,7 @@ export const floodingObservationScenarios: Record<string, ObservationListResult>
                 extent: FloodingExtent.IMMEDIATE_ACCESS,
                 conditions: 'Damp patch on the ground floor.',
             },
-            '2026-10-08T12:00:00.000Z',
+            daysAgo(33),
         ),
     ],
 };

@@ -28,7 +28,7 @@ type PowerObservationScenarios = {
     multiplePowerSources: ObservationListResult;
 };
 
-const NOW = new Date('2026-10-12T12:00:00.000Z');
+const NOW = new Date();
 
 function daysAgo(days: number): Date {
     return new Date(

@@ -36,6 +36,10 @@ import { RoadAccessEvidenceAnalysisService } from '../evidence/road-access-evide
 import { RoadAccessClaimAgreementAnalysisService } from '../consolidation/strategies/road-access-claim-agreement-analysis.service.js';
 import { RoadAccessIntelligenceService } from '../road-access-intelligence.service.js';
 
+import { BuildingConditionEvidenceAnalysisService } from '../evidence/building-condition-evidence-analysis.service.js';
+import { BuildingConditionClaimAgreementAnalysisService } from '../consolidation/strategies/building-condition-claim-agreement-analysis.service.js';
+import { BuildingConditionIntelligenceService } from '../building-condition-intelligence.service.js';
+
 const CATEGORY_PROMPT_VERSION: Record<string, string> = {
     POWER: '1',
     WATER: '1',
@@ -44,6 +48,7 @@ const CATEGORY_PROMPT_VERSION: Record<string, string> = {
     INTERNET: '1',
     SANITATION: '1',
     ROAD_ACCESS: '1',
+    BUILDING_CONDITION: '1',
 };
 
 @Injectable()
@@ -83,6 +88,10 @@ export class IntelligenceRecomputeService {
         private readonly roadAccessAnalysis: RoadAccessEvidenceAnalysisService,
         private readonly roadAccessClaimAgreement: RoadAccessClaimAgreementAnalysisService,
         private readonly roadAccessIntelligence: RoadAccessIntelligenceService,
+
+        private readonly buildingConditionAnalysis: BuildingConditionEvidenceAnalysisService,
+        private readonly buildingConditionClaimAgreement: BuildingConditionClaimAgreementAnalysisService,
+        private readonly buildingConditionIntelligence: BuildingConditionIntelligenceService,
     ) { }
 
     async recompute(job: IntelligenceRecomputeJobData): Promise<void> {
@@ -535,6 +544,36 @@ export class IntelligenceRecomputeService {
                 const claimAgreementAnalysis =
                     this.roadAccessClaimAgreement.analyze(consolidatedEvidence);
                 const result = await this.roadAccessIntelligence.interpret({
+                    observations,
+                    evidenceAnalysis,
+                    evidenceAssessments,
+                    consolidatedEvidence,
+                    claimAgreementAnalysis,
+                });
+                return {
+                    conclusion: result.conclusion,
+                    confidence: result.confidence,
+                    reason: result.reason,
+                    reasonSignals: result.reasonSignals,
+                    evidenceReferences: result.evidenceReferences,
+                    considerations: result.considerations,
+                };
+            }
+
+            case ObservationCategory.BUILDING_CONDITION: {
+                const evidenceAnalysis =
+                    await this.buildingConditionAnalysis.analyze(observations);
+                const evidenceAssessments = this.evidenceWeighting.analyze(
+                    observations,
+                    evidenceAnalysis,
+                );
+                const consolidatedEvidence =
+                    this.evidenceConsolidation.consolidate(observations);
+                const claimAgreementAnalysis =
+                    this.buildingConditionClaimAgreement.analyze(
+                        consolidatedEvidence,
+                    );
+                const result = await this.buildingConditionIntelligence.interpret({
                     observations,
                     evidenceAnalysis,
                     evidenceAssessments,

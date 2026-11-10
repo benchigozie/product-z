@@ -1,4 +1,3 @@
-
 import type {
     ObservationResult,
 } from '../../../observation/types/observation-result.type.js';
@@ -27,7 +26,7 @@ export interface PowerObservationOverrides {
 
 type PowerObservation = NonNullable<ObservationResult>;
 
-const DEFAULT_TIMESTAMP = new Date('2026-10-10T12:00:00.000Z');
+const DEFAULT_TIMESTAMP = new Date();
 
 export function createPowerObservation(
     overrides: PowerObservationOverrides = {},
