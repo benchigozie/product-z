@@ -10,12 +10,22 @@ import { IntelligenceRecomputeProcessor } from './intelligence-recompute.process
 import { IntelligenceRecomputeScheduler } from './intelligence-recompute.scheduler.js';
 import { INTELLIGENCE_RECOMPUTE_QUEUE } from './intelligence-recompute.constants.js';
 
+import { IntelligenceSummaryProcessor } from './intelligence-summary.processor.js';
+import { IntelligenceSummaryDebugController } from './intelligence-summary-debug.controller.js';
+import { INTELLIGENCE_SUMMARY_QUEUE } from './intelligence-summary.queue.constants.js';
+
+import { SessionModule } from '../../session/session.module.js';
+
 @Module({
     imports: [
         forwardRef(() => IntelligenceModule),
         BullModule.registerQueue({
             name: INTELLIGENCE_RECOMPUTE_QUEUE,
         }),
+        BullModule.registerQueue({
+            name: INTELLIGENCE_SUMMARY_QUEUE,
+        }),
+        SessionModule,
     ],
     providers: [
         {
@@ -35,7 +45,9 @@ import { INTELLIGENCE_RECOMPUTE_QUEUE } from './intelligence-recompute.constants
         IntelligenceRecomputeService,
         IntelligenceRecomputeProcessor,
         IntelligenceRecomputeScheduler,
+        IntelligenceSummaryProcessor,
     ],
+    controllers: [IntelligenceSummaryDebugController],
     exports: [
         IntelligenceRecomputeService,
         BullModule,

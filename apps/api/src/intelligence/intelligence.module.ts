@@ -129,6 +129,10 @@ import {
 import { BuildingConditionIntelligencePrompt } from './prompts/building-condition-intelligence.prompt.js';
 import { GeminiBuildingConditionIntelligenceInterpreter } from './interpreters/gemini-building-condition-intelligence.interpreter.js';
 
+import { IntelligenceSummaryService } from './summary/intelligence-summary.service.js';
+import { IntelligenceSummaryPrompt } from './summary/prompts/intelligence-summary.prompt.js';
+import { IntelligenceSummaryValidationService } from './summary/intelligence-summary.validation.js';
+
 @Module({
     imports: [
         ObservationDataModule,
@@ -174,15 +178,15 @@ import { GeminiBuildingConditionIntelligenceInterpreter } from './interpreters/g
                 roadAccessEvidenceConsolidator: RoadAccessEvidenceConsolidator,
                 buildingConditionEvidenceConsolidator: BuildingConditionEvidenceConsolidator,
             ) => [
-                powerEvidenceConsolidator,
-                waterEvidenceConsolidator,
-                floodingEvidenceConsolidator,
-                securityEvidenceConsolidator,
-                internetEvidenceConsolidator,
-                sanitationEvidenceConsolidator,
-                roadAccessEvidenceConsolidator,
-                buildingConditionEvidenceConsolidator,
-            ],
+                    powerEvidenceConsolidator,
+                    waterEvidenceConsolidator,
+                    floodingEvidenceConsolidator,
+                    securityEvidenceConsolidator,
+                    internetEvidenceConsolidator,
+                    sanitationEvidenceConsolidator,
+                    roadAccessEvidenceConsolidator,
+                    buildingConditionEvidenceConsolidator,
+                ],
             inject: [
                 PowerEvidenceConsolidator,
                 WaterEvidenceConsolidator,
@@ -296,6 +300,9 @@ import { GeminiBuildingConditionIntelligenceInterpreter } from './interpreters/g
             provide: BUILDING_CONDITION_INTELLIGENCE_INTERPRETER,
             useExisting: GeminiBuildingConditionIntelligenceInterpreter,
         },
+        IntelligenceSummaryPrompt,
+        IntelligenceSummaryValidationService,
+        IntelligenceSummaryService,
     ],
     exports: [
         IntelligenceService,
@@ -326,6 +333,7 @@ import { GeminiBuildingConditionIntelligenceInterpreter } from './interpreters/g
         BuildingConditionEvidenceAnalysisService,
         BuildingConditionClaimAgreementAnalysisService,
         BuildingConditionIntelligenceService,
+        IntelligenceSummaryService,
     ],
 })
 export class IntelligenceModule { }

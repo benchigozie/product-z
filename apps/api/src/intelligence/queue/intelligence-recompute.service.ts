@@ -40,6 +40,17 @@ import { BuildingConditionEvidenceAnalysisService } from '../evidence/building-c
 import { BuildingConditionClaimAgreementAnalysisService } from '../consolidation/strategies/building-condition-claim-agreement-analysis.service.js';
 import { BuildingConditionIntelligenceService } from '../building-condition-intelligence.service.js';
 
+import { IntelligenceSummaryService } from '../summary/intelligence-summary.service.js';
+import type { CategoryIntelligenceForSummary, SummarySubjectType } from '../summary/prompts/intelligence-summary.prompt.js';
+import { InjectQueue } from '@nestjs/bullmq';
+import type { Queue } from 'bullmq';
+import {
+    INTELLIGENCE_SUMMARY_JOB,
+    INTELLIGENCE_SUMMARY_QUEUE,
+    SUMMARY_DEBOUNCE_MS,
+    SUMMARY_JOB_OPTIONS,
+} from './intelligence-summary.queue.constants.js';
+
 const CATEGORY_PROMPT_VERSION: Record<string, string> = {
     POWER: '1',
     WATER: '1',
@@ -92,6 +103,9 @@ export class IntelligenceRecomputeService {
         private readonly buildingConditionAnalysis: BuildingConditionEvidenceAnalysisService,
         private readonly buildingConditionClaimAgreement: BuildingConditionClaimAgreementAnalysisService,
         private readonly buildingConditionIntelligence: BuildingConditionIntelligenceService,
+
+        @InjectQueue(INTELLIGENCE_SUMMARY_QUEUE)
+        private readonly summaryQueue: Queue,
     ) { }
 
     async recompute(job: IntelligenceRecomputeJobData): Promise<void> {
@@ -225,6 +239,16 @@ export class IntelligenceRecomputeService {
             this.logger.log(
                 `Recomputed ${job.category} intelligence for property ${propertyId} (reason: ${job.reason})`,
             );
+
+            await this.summaryQueue.add(
+                INTELLIGENCE_SUMMARY_JOB,
+                { propertyId },
+                {
+                    ...SUMMARY_JOB_OPTIONS,
+                    delay: SUMMARY_DEBOUNCE_MS,
+                    jobId: `summary:prop:${propertyId}`,
+                },
+            );
         });
     }
 
@@ -343,6 +367,16 @@ export class IntelligenceRecomputeService {
 
             this.logger.log(
                 `Recomputed ${job.category} intelligence for place ${placeId} (reason: ${job.reason})`,
+            );
+
+            await this.summaryQueue.add(
+                INTELLIGENCE_SUMMARY_JOB,
+                { placeId },
+                {
+                    ...SUMMARY_JOB_OPTIONS,
+                    delay: SUMMARY_DEBOUNCE_MS,
+                    jobId: `summary:place:${placeId}`,
+                },
             );
         });
     }
