@@ -133,6 +133,8 @@ import { IntelligenceSummaryService } from './summary/intelligence-summary.servi
 import { IntelligenceSummaryPrompt } from './summary/prompts/intelligence-summary.prompt.js';
 import { IntelligenceSummaryValidationService } from './summary/intelligence-summary.validation.js';
 
+import { IntelligenceRepository } from './intelligence.repository.js';
+
 @Module({
     imports: [
         ObservationDataModule,
@@ -303,6 +305,7 @@ import { IntelligenceSummaryValidationService } from './summary/intelligence-sum
         IntelligenceSummaryPrompt,
         IntelligenceSummaryValidationService,
         IntelligenceSummaryService,
+        IntelligenceRepository,
     ],
     exports: [
         IntelligenceService,
@@ -334,6 +337,7 @@ import { IntelligenceSummaryValidationService } from './summary/intelligence-sum
         BuildingConditionClaimAgreementAnalysisService,
         BuildingConditionIntelligenceService,
         IntelligenceSummaryService,
+        IntelligenceRepository,
     ],
 })
 export class IntelligenceModule { }
