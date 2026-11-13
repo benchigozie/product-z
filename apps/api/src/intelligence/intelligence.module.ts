@@ -338,6 +338,7 @@ import { IntelligenceRepository } from './intelligence.repository.js';
         BuildingConditionIntelligenceService,
         IntelligenceSummaryService,
         IntelligenceRepository,
+        GeminiClient,
     ],
 })
 export class IntelligenceModule { }

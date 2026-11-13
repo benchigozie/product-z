@@ -13,6 +13,11 @@ import { IntelligenceModule } from '../intelligence/intelligence.module.js';
 import { IntelligenceQueueModule } from '../intelligence/queue/intelligence-queue.module.js';
 import { ObservationDataModule } from './data/observation-data.module.js';
 
+import { ObservationTextController } from './observation-text.controller.js';
+import { ObservationIngestionService } from '../intelligence/ingestion/observation-ingestion.service.js';
+import { ObservationIngestionPrompt } from '../intelligence/ingestion/prompts/observation-ingestion.prompt.js';
+import { ObservationIngestionValidationService } from '../intelligence/ingestion/observation-ingestion.validation.js';
+
 @Module({
     imports: [
         SessionModule,
@@ -26,6 +31,7 @@ import { ObservationDataModule } from './data/observation-data.module.js';
 
     controllers: [
         ObservationController,
+        ObservationTextController,
     ],
 
     providers: [
@@ -37,6 +43,9 @@ import { ObservationDataModule } from './data/observation-data.module.js';
             provide: OBSERVATION_JOB_QUEUE,
             useExisting: ObservationJobQueueService,
         },
+        ObservationIngestionService,
+        ObservationIngestionPrompt,
+        ObservationIngestionValidationService,
     ],
 })
-export class ObservationModule {}
+export class ObservationModule { }
