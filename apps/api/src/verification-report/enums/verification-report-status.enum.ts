@@ -1,0 +1,8 @@
+export enum VerificationReportStatus {
+    REQUESTED = 'REQUESTED',
+    IN_PROGRESS = 'IN_PROGRESS',
+    PENDING_REVIEW = 'PENDING_REVIEW',
+    PUBLISHED = 'PUBLISHED',
+    REJECTED = 'REJECTED',
+    CANCELLED = 'CANCELLED',
+}

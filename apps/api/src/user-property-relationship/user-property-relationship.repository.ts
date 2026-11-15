@@ -86,4 +86,13 @@ export class UserPropertyRelationshipRepository {
       })
       .all();
   }
+
+  async findByUserAndProperty(
+    userId: string,
+    propertyId: string,
+): Promise<UserPropertyRelationshipListResult> {
+    return this.prisma.db.orm.public.UserPropertyRelationship
+        .where({ userId, propertyId })
+        .all();
+}
 }

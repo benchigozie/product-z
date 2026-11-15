@@ -16,6 +16,9 @@ import { IntelligenceAdminModule } from './intelligence/admin/intelligence-admin
 import { IntelligenceQueueModule } from './intelligence/queue/intelligence-queue.module.js';
 import { IntelligenceDevelopmentModule } from './intelligence/development/intelligence-development.module.js';
 import { QueueRootModule } from './intelligence/queue/queue-root.module.js';
+import { VerificationReportModule } from './verification-report/verification-report.module.js';
+
+
 
 @Module({
   imports: [
@@ -37,6 +40,7 @@ import { QueueRootModule } from './intelligence/queue/queue-root.module.js';
     IntelligenceQueueModule,
     IntelligenceDevelopmentModule,
     QueueRootModule,
+    VerificationReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,6 +19,8 @@ import { UserPropertyRelationshipUserController } from './user-property-relation
   ],
   exports: [
     UserPropertyRelationshipService,
+    UserPropertyRelationshipRepository,
+    
   ],
 })
 export class UserPropertyRelationshipModule {}

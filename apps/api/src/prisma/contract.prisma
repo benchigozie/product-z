@@ -106,6 +106,7 @@ model Property {
   childRelationships  PropertyRelationship[] @relation("PropertyAsChild")
   userRelationships UserPropertyRelationship[]
   intelligence Intelligence?
+  verificationReports VerificationReport[]
 }
 
 model PropertyRelationship {
@@ -175,6 +176,8 @@ model User {
 
   verificationTokens VerificationToken[]
 
+  verificationReports         VerificationReport[] @relation("VerificationReportVerifier")
+  reviewedVerificationReports VerificationReport[] @relation("VerificationReportReviewer")
   createdAt temporal.createdAt()
   updatedAt temporal.updatedAt()
   deletedAt DateTime?
@@ -455,4 +458,56 @@ enum IntelligenceRecomputeReason {
   PROMPT_CHANGE
   MANUAL
   RETRY
+}
+
+
+enum VerificationReportScope {
+  @@type("pg/text@1")
+  PROPERTY
+}
+
+enum VerificationReportStatus {
+  @@type("pg/text@1")
+  REQUESTED
+  IN_PROGRESS
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+  CANCELLED
+}
+
+model VerificationReport {
+  id String @id @default(cuid(2))
+
+  propertyId String
+  verifierId String
+
+  scope  VerificationReportScope  @default(PROPERTY)
+  status VerificationReportStatus @default(REQUESTED)
+
+  recordingUrl             String?
+  recordingStartedAt       DateTime?
+  recordingEndedAt         DateTime?
+  recordingDurationSeconds Int?
+
+  latitude  Float?
+  longitude Float?
+
+  reviewerId  String?
+  reviewNotes String?
+  reviewedAt  DateTime?
+
+  requestedAt DateTime  @default(now())
+  publishedAt DateTime?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  property Property @relation(fields: [propertyId], references: [id])
+  verifier User     @relation("VerificationReportVerifier", fields: [verifierId], references: [id])
+  reviewer User?    @relation("VerificationReportReviewer", fields: [reviewerId], references: [id])
+
+  @@index([propertyId])
+  @@index([verifierId])
+  @@index([status])
 }
