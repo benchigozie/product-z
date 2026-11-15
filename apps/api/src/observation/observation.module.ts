@@ -17,6 +17,7 @@ import { ObservationTextController } from './observation-text.controller.js';
 import { ObservationIngestionService } from '../intelligence/ingestion/observation-ingestion.service.js';
 import { ObservationIngestionPrompt } from '../intelligence/ingestion/prompts/observation-ingestion.prompt.js';
 import { ObservationIngestionValidationService } from '../intelligence/ingestion/observation-ingestion.validation.js';
+import { RawContributionRepository } from './raw-contribution.repository.js';
 
 @Module({
     imports: [
@@ -46,6 +47,11 @@ import { ObservationIngestionValidationService } from '../intelligence/ingestion
         ObservationIngestionService,
         ObservationIngestionPrompt,
         ObservationIngestionValidationService,
+        RawContributionRepository,
     ],
+
+    exports: [
+        RawContributionRepository,
+    ]
 })
 export class ObservationModule { }

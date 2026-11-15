@@ -6,9 +6,12 @@ import { PropertyRepository } from './property.repository.js';
 import { PropertyService } from './property.service.js';
 import { PropertyIntelligenceService } from './intelligence.service.js';
 import { IntelligenceModule } from '../intelligence/intelligence.module.js';
+import { ObservationModule } from '../observation/observation.module.js';
+
+
 
 @Module({
-    imports: [IntelligenceModule],
+    imports: [IntelligenceModule, ObservationModule],
     controllers: [
         PropertyIntelligenceController,
         PropertyController,
