@@ -10,7 +10,7 @@ import { SessionAuthGuard } from './guards/session-auth.guard.js';
 import { GoogleStrategy } from './google.strategy.js';
 import { PassportModule } from '@nestjs/passport';
 import { UserPropertyRelationshipModule } from '../user-property-relationship/user-property-relationship.module.js';
-
+import { RolesGuard } from './guards/roles.guard.js';
 
 @Module({
   imports: [
@@ -21,9 +21,10 @@ import { UserPropertyRelationshipModule } from '../user-property-relationship/us
     UserPropertyRelationshipModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, SessionAuthGuard, GoogleStrategy],
+  providers: [AuthService, SessionAuthGuard, GoogleStrategy, RolesGuard],
   exports: [
     SessionAuthGuard,
+    RolesGuard,
   ],
 })
 export class AuthModule {}
