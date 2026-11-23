@@ -79,8 +79,8 @@ export class RoadAccessEvidenceAnalysisService {
 
                 const timeDifferenceInDays =
                     Math.abs(
-                        firstObservation.observedAt.getTime() -
-                            secondObservation.observedAt.getTime(),
+                        firstObservation.observedAt.epochMilliseconds -
+                            secondObservation.observedAt.epochMilliseconds,
                     ) /
                     (1000 * 60 * 60 * 24);
 

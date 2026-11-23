@@ -83,8 +83,8 @@ export class WaterEvidenceAnalysisService {
 
                 const timeDifferenceInDays =
                     Math.abs(
-                        firstObservation.observedAt.getTime() -
-                        secondObservation.observedAt.getTime(),
+                        firstObservation.observedAt.epochMilliseconds -
+                        secondObservation.observedAt.epochMilliseconds,
                     ) / (1000 * 60 * 60 * 24);
 
                 const agreementResult = this.waterAgreementService.compare(
