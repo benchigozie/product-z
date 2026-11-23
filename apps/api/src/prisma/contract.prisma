@@ -101,12 +101,36 @@ model Property {
   state   State   @relation(fields: [stateId], references: [id])
   place   Place?  @relation(fields: [placeId], references: [id])
 
+  bedrooms        Int?
+  bathrooms       Int?
+  sizeSqm         Float?
+
+  isProvisional   Boolean @default(false)
+  createdByUserId String?
+  mergedIntoId    String?
+
   observations Observation[]
   parentRelationships PropertyRelationship[] @relation("PropertyAsParent")
   childRelationships  PropertyRelationship[] @relation("PropertyAsChild")
   userRelationships UserPropertyRelationship[]
   intelligence Intelligence?
   verificationReports VerificationReport[]
+
+  createdBy  User?      @relation("PropertyCreatedBy", fields: [createdByUserId], references: [id])
+  mergedInto Property?  @relation("PropertyMergedInto", fields: [mergedIntoId], references: [id])
+  mergedFrom Property[] @relation("PropertyMergedInto")
+
+  listings Listing[]
+  media    PropertyMedia[]
+
+  mergesFrom PropertyMerge[] @relation("PropertyMergeFrom")
+  mergesTo   PropertyMerge[] @relation("PropertyMergeTo")
+
+  referrals   ListingReferral[]
+  inspections Inspection[]
+  
+  matchSuggestionsAsSource    MatchSuggestion[] @relation("MatchSuggestionSource")
+  matchSuggestionsAsCandidate MatchSuggestion[] @relation("MatchSuggestionCandidate")
 }
 
 model PropertyRelationship {
@@ -182,6 +206,29 @@ model User {
   updatedAt temporal.updatedAt()
   deletedAt DateTime?
 
+  role UserRole @default(USER)
+
+    listingsCreated Listing[] @relation("ListingCreatedBy")
+  listingsFlagged Listing[] @relation("ListingFlaggedBy")
+  mediaCreated    Media[]   @relation("MediaCreatedBy")
+
+  inspectionsRequested Inspection[] @relation("InspectionRequester")
+  inspectionsAssigned  Inspection[] @relation("InspectionInspector")
+  inspectionsCancelled Inspection[] @relation("InspectionCancelledBy")
+
+  availability           AgentAvailability[]
+  availabilityExceptions AgentAvailabilityException[]
+
+  listingReferrals ListingReferral[]
+
+  reportsMade     Report[] @relation("ReportReporter")
+  reportsResolved Report[] @relation("ReportResolver")
+
+  propertyMergesActed    PropertyMerge[] @relation("PropertyMergeActor")
+  propertyMergesReversed PropertyMerge[] @relation("PropertyMergeReverser")
+
+  propertiesCreated Property[] @relation("PropertyCreatedBy")
+
 }
 
 
@@ -252,6 +299,8 @@ model Session {
   tokenHash String @unique
 
   expiresAt DateTime
+
+  listingReferrals ListingReferral[]
 
   user User @relation(
     fields: [userId],
@@ -510,4 +559,504 @@ model VerificationReport {
   @@index([propertyId])
   @@index([verifierId])
   @@index([status])
+}
+
+
+
+
+enum UserRole {
+  @@type("pg/text@1")
+  USER
+  OPS
+  ADMIN
+}
+
+enum ListingKind {
+  @@type("pg/text@1")
+  RENT
+  SALE
+}
+
+enum ListingStatus {
+  @@type("pg/text@1")
+  DRAFT
+  ACTIVE
+  PAUSED
+  PENDING_REVIEW
+  FILLED
+  EXPIRED
+  WITHDRAWN
+}
+
+enum PricePeriod {
+  @@type("pg/text@1")
+  MONTHLY
+  YEARLY
+  TOTAL
+}
+
+enum FeeType {
+  @@type("pg/text@1")
+  LEGAL
+  CAUTION
+  SERVICE_CHARGE
+  AGENCY
+  INSPECTION_FEE
+  OTHER
+}
+
+enum MediaPurpose {
+  @@type("pg/text@1")
+  PROPERTY_PHOTO
+  LISTING_PHOTO
+}
+
+enum MediaStatus {
+  @@type("pg/text@1")
+  PENDING
+  READY
+  FAILED
+  DELETED
+}
+
+enum PropertyMediaSource {
+  @@type("pg/text@1")
+  OWNER_UPLOAD
+  LISTING_PROMOTED
+  OPS_CURATED
+}
+
+enum InspectionStatus {
+  @@type("pg/text@1")
+  REQUESTED
+  SCHEDULED
+  STARTED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum InspectorKind {
+  @@type("pg/text@1")
+  LISTING_AGENT
+  PRODUCT_Z_AGENT
+}
+
+enum ReportTargetType {
+  @@type("pg/text@1")
+  LISTING
+  AGENT
+  PROPERTY
+  USER
+}
+
+enum ReportReason {
+  @@type("pg/text@1")
+  MISREPRESENTATION
+  FRAUD
+  SPAM
+  INAPPROPRIATE_CONTENT
+  DUPLICATE_LISTING
+  OTHER
+}
+
+enum ReportStatus {
+  @@type("pg/text@1")
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+
+model Media {
+  id String @id @default(cuid(2))
+
+  storageKey String
+  url        String
+
+  mime String
+  size Int
+
+  width           Int?
+  height          Int?
+  durationSeconds Int?
+
+  purpose MediaPurpose
+  status  MediaStatus @default(PENDING)
+
+  createdByUserId String?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  createdBy User? @relation("MediaCreatedBy", fields: [createdByUserId], references: [id])
+
+  propertyMedia PropertyMedia[]
+  listingMedia  ListingMedia[]
+
+  @@index([purpose])
+  @@index([status])
+  @@index([createdByUserId])
+}
+
+model PropertyMedia {
+  id String @id @default(cuid(2))
+
+  propertyId String
+  mediaId    String
+
+  sortOrder Int    @default(0)
+  caption   String?
+  source    PropertyMediaSource @default(OWNER_UPLOAD)
+
+  hiddenAt        DateTime?
+  hiddenByMergeId String?
+
+  createdAt temporal.createdAt()
+
+  property      Property      @relation(fields: [propertyId], references: [id])
+  media         Media         @relation(fields: [mediaId], references: [id])
+  hiddenByMerge PropertyMerge? @relation("PropertyMediaHiddenByMerge", fields: [hiddenByMergeId], references: [id])
+
+  @@unique([propertyId, mediaId])
+  @@index([propertyId, sortOrder])
+}
+
+model ListingMedia {
+  id String @id @default(cuid(2))
+
+  listingId String
+  mediaId   String
+
+  sortOrder Int    @default(0)
+  caption   String?
+
+  createdAt temporal.createdAt()
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  media   Media   @relation(fields: [mediaId], references: [id])
+
+  @@unique([listingId, mediaId])
+  @@index([listingId, sortOrder])
+}
+
+model Listing {
+  id String @id @default(cuid(2))
+
+  propertyId      String
+  createdByUserId String
+
+  kind   ListingKind
+  status ListingStatus @default(DRAFT)
+
+  title       String
+  description String?
+
+  displayLocation String
+
+  bedrooms  Int?
+  bathrooms Int?
+  sizeSqm   Float?
+
+  features Json?
+
+  inspectionFeeDiscouraged Boolean @default(false)
+
+  publishedAt DateTime?
+  expiresAt   DateTime?
+
+  flaggedAt       DateTime?
+  flaggedByUserId String?
+  flagReason      String?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+  deletedAt DateTime?
+
+  property  Property @relation(fields: [propertyId], references: [id])
+  createdBy User     @relation("ListingCreatedBy", fields: [createdByUserId], references: [id])
+  flaggedBy User?    @relation("ListingFlaggedBy", fields: [flaggedByUserId], references: [id])
+
+  price ListingPrice?
+  fees  ListingFee[]
+  media ListingMedia[]
+
+  inspections Inspection[]
+  referrals   ListingReferral[]
+
+  @@index([propertyId])
+  @@index([createdByUserId])
+  @@index([status])
+  @@index([kind, status])
+  @@index([expiresAt])
+  @@index([publishedAt])
+}
+
+model ListingPrice {
+  id String @id @default(cuid(2))
+
+  listingId String @unique
+
+  amount   Int 
+  currency String  @default("NGN")
+  period   PricePeriod
+  years    Int?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ListingFee {
+  id String @id @default(cuid(2))
+
+  listingId String
+  type      FeeType
+  amount   Int 
+  currency  String  @default("NGN")
+  notes     String?
+
+  createdAt temporal.createdAt()
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([type])
+}
+
+model AgentAvailability {
+  id String @id @default(cuid(2))
+
+  agentId String
+
+  /// 0 = Sunday ... 6 = Saturday
+  dayOfWeek Int
+  startTime String
+  endTime   String
+
+  timezone String @default("Africa/Lagos")
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  agent User @relation("AgentAvailability", fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+  @@unique([agentId, dayOfWeek, startTime, endTime])
+}
+
+model AgentAvailabilityException {
+  id String @id @default(cuid(2))
+
+  agentId String
+  date    Date
+  reason  String?
+
+  createdAt temporal.createdAt()
+
+  agent User @relation("AgentAvailabilityException", fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, date])
+  @@index([agentId])
+}
+
+model Inspection {
+  id String @id @default(cuid(2))
+
+  propertyId String
+  listingId  String
+
+  requesterId String
+  inspectorId String
+
+  inspectorKind InspectorKind @default(LISTING_AGENT)
+
+  status InspectionStatus @default(REQUESTED)
+
+  scheduledAt       DateTime?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  cancelledByUserId String?
+  cancelReason      String?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  property    Property @relation(fields: [propertyId], references: [id])
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  requester   User     @relation("InspectionRequester", fields: [requesterId], references: [id])
+  inspector   User     @relation("InspectionInspector", fields: [inspectorId], references: [id])
+  cancelledBy User?    @relation("InspectionCancelledBy", fields: [cancelledByUserId], references: [id])
+
+  review InspectionReview?
+
+  @@index([propertyId])
+  @@index([listingId])
+  @@index([requesterId])
+  @@index([inspectorId])
+  @@index([status, scheduledAt])
+}
+
+model InspectionReview {
+  id String @id @default(cuid(2))
+
+  inspectionId String @unique
+
+  agentRating    Int
+  agentText      String?
+  propertyRating Int?
+  propertyText   String?
+
+  createdAt temporal.createdAt()
+
+  inspection Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@index([agentRating])
+}
+
+model ListingReferral {
+  id String @id @default(cuid(2))
+
+  listingId  String
+  propertyId String
+
+  anonymousId String?
+  userId      String?
+  sessionId   String?
+
+  createdAt temporal.createdAt()
+
+  listing  Listing  @relation(fields: [listingId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+  user     User?    @relation(fields: [userId], references: [id])
+  session  Session? @relation(fields: [sessionId], references: [id])
+
+  @@index([listingId])
+  @@index([propertyId])
+  @@index([userId])
+  @@index([anonymousId])
+}
+
+model Report {
+  id String @id @default(cuid(2))
+
+  targetType ReportTargetType
+  targetId   String
+
+  reporterId String
+
+  reason  ReportReason
+  details String?
+
+  status ReportStatus @default(OPEN)
+
+  resolvedByUserId String?
+  resolutionNotes  String?
+  resolvedAt       DateTime?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  reporter   User  @relation("ReportReporter", fields: [reporterId], references: [id])
+  resolvedBy User? @relation("ReportResolver", fields: [resolvedByUserId], references: [id])
+   matchSuggestions MatchSuggestion[] @relation("MatchSuggestionReport")
+
+  @@index([targetType, targetId])
+  @@index([reporterId])
+  @@index([status])
+}
+
+model PropertyMerge {
+  id String @id @default(cuid(2))
+
+  fromPropertyId String
+  toPropertyId   String
+
+  actorId String
+  reason  String?
+
+  reversedAt   DateTime?
+  reversedById String?
+
+  createdAt temporal.createdAt()
+
+  fromProperty Property @relation("PropertyMergeFrom", fields: [fromPropertyId], references: [id])
+  toProperty   Property @relation("PropertyMergeTo",   fields: [toPropertyId],   references: [id])
+  actor        User     @relation("PropertyMergeActor",    fields: [actorId],      references: [id])
+  reversedBy   User?    @relation("PropertyMergeReverser", fields: [reversedById], references: [id])
+
+  hiddenPropertyMedia PropertyMedia[] @relation("PropertyMediaHiddenByMerge")
+
+  matchSuggestions MatchSuggestion[] @relation("MatchSuggestionMerge")
+
+  @@index([fromPropertyId])
+  @@index([toPropertyId])
+  @@index([reversedAt])
+}
+
+
+
+
+enum MatchSuggestionStatus {
+  @@type("pg/text@1")
+  PENDING
+  PARTIALLY_CONFIRMED
+  CONFIRMED
+  DISPUTED
+  EXPIRED
+}
+
+enum MatchSuggestionActorRole {
+  @@type("pg/text@1")
+  CREATOR
+  AGENT
+  LANDLORD
+  TENANT
+  OPS
+  ADMIN
+}
+
+
+model MatchSuggestion {
+  id String @id @default(cuid(2))
+
+  sourcePropertyId    String
+  candidatePropertyId String
+
+  score   Float
+  reasons Json
+
+  status MatchSuggestionStatus @default(PENDING)
+
+  sourceConfirmedByUserId String?
+  sourceConfirmedByRole   MatchSuggestionActorRole?
+  sourceConfirmedAt       DateTime?
+
+  candidateConfirmedByUserId String?
+  candidateConfirmedByRole   MatchSuggestionActorRole?
+  candidateConfirmedAt       DateTime?
+
+  disputedByUserId String?
+  disputedByRole   MatchSuggestionActorRole?
+  disputedAt       DateTime?
+  disputeReason    String?
+
+  mergeId  String?
+  reportId String?
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  sourceProperty    Property @relation("MatchSuggestionSource",    fields: [sourcePropertyId],    references: [id])
+  candidateProperty Property @relation("MatchSuggestionCandidate", fields: [candidatePropertyId], references: [id])
+  merge  PropertyMerge? @relation("MatchSuggestionMerge",  fields: [mergeId],  references: [id])
+  report Report?        @relation("MatchSuggestionReport", fields: [reportId], references: [id])
+
+  @@unique([sourcePropertyId, candidatePropertyId], map: "match_suggestion_pair_unique")
+  @@index([status, createdAt])
+  @@index([sourcePropertyId])
+  @@index([candidatePropertyId])
 }

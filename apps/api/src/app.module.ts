@@ -17,6 +17,9 @@ import { IntelligenceQueueModule } from './intelligence/queue/intelligence-queue
 import { IntelligenceDevelopmentModule } from './intelligence/development/intelligence-development.module.js';
 import { QueueRootModule } from './intelligence/queue/queue-root.module.js';
 import { VerificationReportModule } from './verification-report/verification-report.module.js';
+import { MediaModule } from './media/media.module.js';
+import { ListingModule } from './listing/listing.module.js';
+import { MatchModule } from './match/match.module.js';
 
 
 
@@ -41,6 +44,9 @@ import { VerificationReportModule } from './verification-report/verification-rep
     IntelligenceDevelopmentModule,
     QueueRootModule,
     VerificationReportModule,
+    MediaModule,
+    ListingModule,
+    MatchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
