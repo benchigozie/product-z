@@ -1,0 +1,446 @@
+[
+  {
+    "id": "table.matchSuggestion",
+    "label": "Create table \"matchSuggestion\"",
+    "summary": "Creates table \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"matchSuggestion\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"matchSuggestion\"",
+        "sql": "CREATE TABLE \"public\".\"matchSuggestion\" (\n  \"candidateConfirmedAt\" timestamptz,\n  \"candidateConfirmedByRole\" text,\n  \"candidateConfirmedByUserId\" text,\n  \"candidatePropertyId\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"disputeReason\" text,\n  \"disputedAt\" timestamptz,\n  \"disputedByRole\" text,\n  \"disputedByUserId\" text,\n  \"id\" text NOT NULL,\n  \"mergeId\" text,\n  \"reasons\" json NOT NULL,\n  \"reportId\" text,\n  \"score\" float8 NOT NULL,\n  \"sourceConfirmedAt\" timestamptz,\n  \"sourceConfirmedByRole\" text,\n  \"sourceConfirmedByUserId\" text,\n  \"sourcePropertyId\" text NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"matchSuggestion_candidateConfirmedByRole_check_5f2bbd35\" CHECK (\"candidateConfirmedByRole\" IN ('CREATOR', 'AGENT', 'LANDLORD', 'TENANT', 'OPS', 'ADMIN')),\n  CONSTRAINT \"matchSuggestion_disputedByRole_check_2534f9ff\" CHECK (\"disputedByRole\" IN ('CREATOR', 'AGENT', 'LANDLORD', 'TENANT', 'OPS', 'ADMIN')),\n  CONSTRAINT \"matchSuggestion_sourceConfirmedByRole_check_24c86f6e\" CHECK (\"sourceConfirmedByRole\" IN ('CREATOR', 'AGENT', 'LANDLORD', 'TENANT', 'OPS', 'ADMIN')),\n  CONSTRAINT \"matchSuggestion_status_check_73c7ad9a\" CHECK (\"status\" IN ('PENDING', 'PARTIALLY_CONFIRMED', 'CONFIRMED', 'DISPUTED', 'EXPIRED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"matchSuggestion\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.matchSuggestion.match_suggestion_pair_unique",
+    "label": "Add unique constraint on \"matchSuggestion\" (sourcePropertyId, candidatePropertyId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "match_suggestion_pair_unique",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"match_suggestion_pair_unique\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "match_suggestion_pair_unique",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"match_suggestion_pair_unique\"",
+        "sql": "ALTER TABLE \"public\".\"matchSuggestion\" ADD CONSTRAINT \"match_suggestion_pair_unique\" UNIQUE (\"sourcePropertyId\", \"candidatePropertyId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"match_suggestion_pair_unique\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "match_suggestion_pair_unique",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.matchSuggestion.matchSuggestion_candidatePropertyId_idx_c4ce9dfd",
+    "label": "Create index \"matchSuggestion_candidatePropertyId_idx_c4ce9dfd\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "matchSuggestion_candidatePropertyId_idx_c4ce9dfd",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"matchSuggestion_candidatePropertyId_idx_c4ce9dfd\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_candidatePropertyId_idx_c4ce9dfd\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"matchSuggestion_candidatePropertyId_idx_c4ce9dfd\"",
+        "sql": "CREATE INDEX \"matchSuggestion_candidatePropertyId_idx_c4ce9dfd\" ON \"public\".\"matchSuggestion\" (\"candidatePropertyId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"matchSuggestion_candidatePropertyId_idx_c4ce9dfd\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_candidatePropertyId_idx_c4ce9dfd\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.matchSuggestion.matchSuggestion_mergeId_idx_e7839b99",
+    "label": "Create index \"matchSuggestion_mergeId_idx_e7839b99\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "matchSuggestion_mergeId_idx_e7839b99",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"matchSuggestion_mergeId_idx_e7839b99\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_mergeId_idx_e7839b99\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"matchSuggestion_mergeId_idx_e7839b99\"",
+        "sql": "CREATE INDEX \"matchSuggestion_mergeId_idx_e7839b99\" ON \"public\".\"matchSuggestion\" (\"mergeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"matchSuggestion_mergeId_idx_e7839b99\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_mergeId_idx_e7839b99\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.matchSuggestion.matchSuggestion_reportId_idx_d163019e",
+    "label": "Create index \"matchSuggestion_reportId_idx_d163019e\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "matchSuggestion_reportId_idx_d163019e",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"matchSuggestion_reportId_idx_d163019e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_reportId_idx_d163019e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"matchSuggestion_reportId_idx_d163019e\"",
+        "sql": "CREATE INDEX \"matchSuggestion_reportId_idx_d163019e\" ON \"public\".\"matchSuggestion\" (\"reportId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"matchSuggestion_reportId_idx_d163019e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_reportId_idx_d163019e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.matchSuggestion.matchSuggestion_sourcePropertyId_idx_fc483cc6",
+    "label": "Create index \"matchSuggestion_sourcePropertyId_idx_fc483cc6\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "matchSuggestion_sourcePropertyId_idx_fc483cc6",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"matchSuggestion_sourcePropertyId_idx_fc483cc6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_sourcePropertyId_idx_fc483cc6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"matchSuggestion_sourcePropertyId_idx_fc483cc6\"",
+        "sql": "CREATE INDEX \"matchSuggestion_sourcePropertyId_idx_fc483cc6\" ON \"public\".\"matchSuggestion\" (\"sourcePropertyId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"matchSuggestion_sourcePropertyId_idx_fc483cc6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_sourcePropertyId_idx_fc483cc6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.matchSuggestion.matchSuggestion_status_createdAt_idx_58610442",
+    "label": "Create index \"matchSuggestion_status_createdAt_idx_58610442\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "matchSuggestion_status_createdAt_idx_58610442",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"matchSuggestion_status_createdAt_idx_58610442\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_status_createdAt_idx_58610442\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"matchSuggestion_status_createdAt_idx_58610442\"",
+        "sql": "CREATE INDEX \"matchSuggestion_status_createdAt_idx_58610442\" ON \"public\".\"matchSuggestion\" (\"status\", \"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"matchSuggestion_status_createdAt_idx_58610442\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matchSuggestion_status_createdAt_idx_58610442\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.matchSuggestion.matchSuggestion_sourcePropertyId_fkey",
+    "label": "Add foreign key \"matchSuggestion_sourcePropertyId_fkey\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "matchSuggestion_sourcePropertyId_fkey",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"matchSuggestion_sourcePropertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matchSuggestion_sourcePropertyId_fkey",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"matchSuggestion_sourcePropertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"matchSuggestion\"\nADD CONSTRAINT \"matchSuggestion_sourcePropertyId_fkey\"\nFOREIGN KEY (\"sourcePropertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"matchSuggestion_sourcePropertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matchSuggestion_sourcePropertyId_fkey",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.matchSuggestion.matchSuggestion_candidatePropertyId_fkey",
+    "label": "Add foreign key \"matchSuggestion_candidatePropertyId_fkey\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "matchSuggestion_candidatePropertyId_fkey",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"matchSuggestion_candidatePropertyId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matchSuggestion_candidatePropertyId_fkey",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"matchSuggestion_candidatePropertyId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"matchSuggestion\"\nADD CONSTRAINT \"matchSuggestion_candidatePropertyId_fkey\"\nFOREIGN KEY (\"candidatePropertyId\")\nREFERENCES \"public\".\"property\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"matchSuggestion_candidatePropertyId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matchSuggestion_candidatePropertyId_fkey",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.matchSuggestion.matchSuggestion_mergeId_fkey",
+    "label": "Add foreign key \"matchSuggestion_mergeId_fkey\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "matchSuggestion_mergeId_fkey",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"matchSuggestion_mergeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matchSuggestion_mergeId_fkey",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"matchSuggestion_mergeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"matchSuggestion\"\nADD CONSTRAINT \"matchSuggestion_mergeId_fkey\"\nFOREIGN KEY (\"mergeId\")\nREFERENCES \"public\".\"propertyMerge\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"matchSuggestion_mergeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matchSuggestion_mergeId_fkey",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.matchSuggestion.matchSuggestion_reportId_fkey",
+    "label": "Add foreign key \"matchSuggestion_reportId_fkey\" on \"matchSuggestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "matchSuggestion_reportId_fkey",
+        "table": "matchSuggestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"matchSuggestion_reportId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matchSuggestion_reportId_fkey",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"matchSuggestion_reportId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"matchSuggestion\"\nADD CONSTRAINT \"matchSuggestion_reportId_fkey\"\nFOREIGN KEY (\"reportId\")\nREFERENCES \"public\".\"report\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"matchSuggestion_reportId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matchSuggestion_reportId_fkey",
+          "public",
+          "\"public\".\"matchSuggestion\""
+        ]
+      }
+    ]
+  }
+]

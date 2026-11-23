@@ -11,6 +11,10 @@ dotenv.config({ path: envFile });
 
 const { db } = await import('../src/prisma/db.js');
 
+type CountryRow = { id: string; code: string; name: string };
+type StateRow = { id: string; code: string; name: string; countryId: string };
+type UserRow = { id: string; role: string };
+
 console.log('Product Z seed started');
 console.log(`Environment: ${process.env.NODE_ENV}`);
 console.log(`Loaded: ${envFile}`);
@@ -39,7 +43,7 @@ try {
 
   console.log(`Seeded ${countries.length} countries`);
 
-  const countryRows = await db.orm.public.Country.all();
+  const countryRows = (await db.orm.public.Country.all()) as CountryRow[];
 
   const countryIds = new Map(
     countryRows.map((country) => [country.code, country.id]),
@@ -72,8 +76,8 @@ try {
 
   console.log(`Seeded ${states.length} states/subdivisions`);
 
-  const seededCountries = await db.orm.public.Country.all();
-  const seededStates = await db.orm.public.State.all();
+  const seededCountries = (await db.orm.public.Country.all()) as CountryRow[];
+  const seededStates = (await db.orm.public.State.all()) as StateRow[];
 
   if (seededCountries.length !== countries.length) {
     throw new Error(
@@ -85,6 +89,22 @@ try {
     throw new Error(
       `Expected ${states.length} states/subdivisions, found ${seededStates.length}`,
     );
+  }
+
+  // Promote a user to OPS for local testing.
+  // Change this email to one that exists in your DB.
+  const opsEmail = 'asoyabenedict@gmail.com';
+  const opsUser = (await db.orm.public.User.first({
+    email: opsEmail,
+  })) as UserRow | null;
+
+  if (!opsUser) {
+    console.warn(`No user with email ${opsEmail} — skipping OPS promotion`);
+  } else {
+    await db.orm.public.User
+      .where({ id: opsUser.id })
+      .update({ role: 'OPS' });
+    console.log(`Promoted ${opsEmail} to OPS`);
   }
 
   console.log('Seed verification passed');

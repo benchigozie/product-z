@@ -29,11 +29,14 @@
     "db:seed:dev": "NODE_ENV=development tsx prisma/seed.ts",
     "db:seed:prod": "NODE_ENV=production tsx prisma/seed.ts",
     "intelligence:power:dev": "NODE_ENV=development tsx src/intelligence/development/run-power-intelligence.ts",
-    "db:plan": "prisma contract emit && prisma migration plan --from $(cat migrations/app/refs/db.json | jq -r .hash) --name",
+    "db:plan": "prisma contract emit && prisma migration plan --from $(cat migrations/app/refs/db.json | jq -r .hash)",
     "db:apply": "prisma db migrate --advance-ref db",
-    "login": "curl -sS -X POST http://localhost:4000/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"testuser@gmail.com\",\"password\":\"testpassword123\"}' -c /tmp/cookies.txt | jq ."
+    "login:demo": "curl -sS -X POST http://localhost:4000/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"testuser@gmail.com\",\"password\":\"testpassword123\"}' -c /tmp/cookies.txt | jq .",
+    "test:merge": "NODE_ENV=development vitest run --config ./vitest.config.merge.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1169.0",
+    "@aws-sdk/s3-request-presigner": "^3.1169.0",
     "@google/genai": "^2.30.0",
     "@js-temporal/polyfill": "^0.5.1",
     "@nestjs/bullmq": "^12.0.0",
@@ -62,7 +65,7 @@
     "@nestjs/mau": "^0.2.6",
     "@nestjs/schematics": "^12.0.0",
     "@nestjs/testing": "^12.0.1",
-    "@prisma/cli-engine": "0.2.3",
+    "@prisma/cli-engine": "0.6.1",
     "@prisma/orm-extension-postgis": "8.0.0-rc.8",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
@@ -77,6 +80,7 @@
     "prisma": "8.0.0-rc.10",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
+    "temporal-spec": "^1.0.1",
     "tsx": "^4.23.13",
     "typescript": "^6.0.2",
     "vite-tsconfig-paths": "^5.1.4",
