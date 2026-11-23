@@ -53,13 +53,14 @@ export class UserRepository {
   }): Promise<UserResult> {
     return this.prisma.db.orm.public.User.create({
       email: data.email,
-      passwordCredential: (credential) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      passwordCredential: (credential: any) =>
         credential.create({
           passwordHash: data.passwordHash,
         }),
     });
   }
-
+  
   async createOAuthUser(data: {
     email: string;
     provider: 'GOOGLE';
@@ -71,20 +72,21 @@ export class UserRepository {
       email: data.email,
       emailVerified: true,
   
-      profile: (profile) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      profile: (profile: any) =>
         profile.create({
           displayName: data.displayName,
           avatarUrl: data.avatarUrl,
         }),
   
-      oauthAccounts: (account) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      oauthAccounts: (account: any) =>
         account.create({
           provider: data.provider,
           providerAccountId: data.providerAccountId,
         }),
     });
   }
-
   async findByOAuthAccount(
     provider: 'GOOGLE',
     providerAccountId: string,

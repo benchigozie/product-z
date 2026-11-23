@@ -3,6 +3,8 @@ export type UserResult = {
   email: string;
   emailVerified: boolean;
   status: string;
+  role: 'USER' | 'OPS' | 'ADMIN';
   createdAt: Date;
   updatedAt: Date;
 };
+
