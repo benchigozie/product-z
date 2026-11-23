@@ -62,14 +62,9 @@ export class ConfidenceCalibrationService {
             });
         }
 
-        // Rule 5: 3+ recent agreeing observations → HIGH allowed. No cap.
-        // Rule 5: 3+ recent agreeing observations → HIGH forced.
+     
         if (recentCount >= 3) {
-            return this.apply(proposedConfidence, IntelligenceConfidence.HIGH, {
-                rule: 'three-plus-recent-observations',
-                recentCount,
-                conclusion,
-            });
+            return proposedConfidence;
         }
 
         // Rule 2 + fallback: 1 or 2 recent observations, no contradiction
