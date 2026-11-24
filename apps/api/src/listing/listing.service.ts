@@ -13,8 +13,12 @@ import { ListingRepository } from './listing.repository.js';
 import { MatchSuggestionService } from '../match/match-suggestion.service.js';
 import type { CreateListingDto } from './dto/create-listing.dto.js';
 import type { UpdateListingDto } from './dto/update-listing.dto.js';
-import type { ListingRow } from './types/listing-result.type.js';
-import type { ListingDetail } from './types/listing-result.type.js';
+
+import type {
+  ListingDetail,
+  ListingRow,
+  ListingStatus,
+} from './types/listing-result.type.js';
 
 @Injectable()
 export class ListingService {
@@ -263,5 +267,90 @@ export class ListingService {
     address: string | null;
   }): string {
     return p.address ?? p.placeId ?? '';
+  }
+
+  async publish(userId: string, id: string): Promise<ListingDetail> {
+    const listing = await this.repo.findById(id);
+    if (!listing) throw new NotFoundException('Listing not found');
+  
+    await this.assertCanManage(userId, listing);
+  
+    if (listing.status !== 'DRAFT') {
+      throw new ConflictException('Only DRAFT listings can be published');
+    }
+  
+    // Gates
+    const [price, media] = await Promise.all([
+      this.repo.findPriceByListingId(id),
+      this.repo.findMediaByListingId(id),
+    ]);
+  
+    if (!price) {
+      throw new BadRequestException('A price is required to publish');
+    }
+    if (media.length === 0) {
+      throw new BadRequestException('At least one photo is required to publish');
+    }
+    if (!listing.displayLocation) {
+      throw new BadRequestException('displayLocation is required to publish');
+    }
+  
+    const expiresAt =
+      listing.expiresAt ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  
+    await this.repo.updateListing(id, {
+      status: 'ACTIVE',
+      publishedAt: new Date(),
+      expiresAt,
+    });
+  
+    return this.getById(id);
+  }
+  
+  async pause(userId: string, id: string): Promise<ListingDetail> {
+    return this.transition(userId, id, 'ACTIVE', 'PAUSED');
+  }
+  
+  async activate(userId: string, id: string): Promise<ListingDetail> {
+    return this.transition(userId, id, 'PAUSED', 'ACTIVE');
+  }
+  
+  async withdraw(userId: string, id: string): Promise<ListingDetail> {
+    const listing = await this.repo.findById(id);
+    if (!listing) throw new NotFoundException('Listing not found');
+    await this.assertCanManage(userId, listing);
+  
+    if (!['ACTIVE', 'PAUSED', 'DRAFT', 'PENDING_REVIEW'].includes(listing.status)) {
+      throw new ConflictException(
+        `Cannot withdraw from status ${listing.status}`,
+      );
+    }
+  
+    await this.repo.updateStatus(id, 'WITHDRAWN');
+    return this.getById(id);
+  }
+  
+  async markFilled(userId: string, id: string): Promise<ListingDetail> {
+    return this.transition(userId, id, 'ACTIVE', 'FILLED');
+  }
+  
+  private async transition(
+    userId: string,
+    id: string,
+    from: ListingStatus,
+    to: ListingStatus,
+  ): Promise<ListingDetail> {
+    const listing = await this.repo.findById(id);
+    if (!listing) throw new NotFoundException('Listing not found');
+    await this.assertCanManage(userId, listing);
+  
+    if (listing.status !== from) {
+      throw new ConflictException(
+        `Expected status ${from}, got ${listing.status}`,
+      );
+    }
+  
+    await this.repo.updateStatus(id, to);
+    return this.getById(id);
   }
 }

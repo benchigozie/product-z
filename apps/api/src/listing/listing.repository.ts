@@ -8,6 +8,7 @@ import type {
   ListingRow,
   PropertyType,
   FeeType,
+  ListingStatus,
 } from './types/listing-result.type.js';
 
 import type { Temporal } from 'temporal-spec';
@@ -249,4 +250,19 @@ export class ListingRepository {
 
     return verification !== null;
   }
+
+  async updateStatus(id: string, status: ListingStatus): Promise<ListingRow | null> {
+    return this.prisma.db.orm.public.Listing
+      .where({ id })
+      .update({ status }) as Promise<ListingRow | null>;
+  }
+  
+  async findExpiredActiveListings(now: Date): Promise<ListingRow[]> {
+  const rows = await this.prisma.db.orm.public.Listing
+    .where((l) => l.status.eq('ACTIVE'))
+    .where((l) => l.expiresAt.isNotNull())
+    .where((l) => l.expiresAt.lt(now))
+    .all();
+  return rows as ListingRow[];
+}
 }
