@@ -13,7 +13,8 @@ import { ListingRepository } from './listing.repository.js';
 import { MatchSuggestionService } from '../match/match-suggestion.service.js';
 import type { CreateListingDto } from './dto/create-listing.dto.js';
 import type { UpdateListingDto } from './dto/update-listing.dto.js';
-
+import type { BrowseListingsDto } from './dto/browse-listings.dto.js';
+import type { ListingBrowseResult } from './types/listing-result.type.js';
 import type {
   ListingDetail,
   ListingRow,
@@ -50,16 +51,15 @@ export class ListingService {
   // ---------- Create ----------
 
   async create(userId: string, dto: CreateListingDto): Promise<ListingDetail> {
-    // 1. Resolve property: attach existing OR create provisional
     const propertyId = await this.resolveProperty(userId, dto);
 
-    // 2. Create listing in DRAFT
-    //    expiresAt column is temporal-typed; Temporal.Instant cannot add
-    //    calendar units like days (they're ambiguous without a time zone),
-    //    so we add hours explicitly.
+    // Temporal.Instant cannot add calendar units (days are ambiguous without a
+    // time zone), so express the window in hours.
     const expiresAt = dto.expiresInDays
-    ? TemporalRuntime.Now.instant().add({ hours: dto.expiresInDays * 24 }) as Temporal.Instant
-    : null;
+      ? (TemporalRuntime.Now.instant().add({
+          hours: dto.expiresInDays * 24,
+        }) as Temporal.Instant)
+      : null;
 
     const listing = await this.repo.createListing({
       propertyId,
@@ -75,7 +75,6 @@ export class ListingService {
       expiresAt: expiresAt ?? undefined,
     });
 
-    // 3. Price + fees
     await this.repo.createPrice({
       listingId: listing.id,
       amount: dto.price.amountKobo,
@@ -96,7 +95,6 @@ export class ListingService {
       );
     }
 
-    // 4. Media
     if (dto.mediaIds && dto.mediaIds.length > 0) {
       await this.repo.attachMedia({
         listingId: listing.id,
@@ -104,9 +102,7 @@ export class ListingService {
       });
     }
 
-    // 5. Fire-and-forget: look for possible duplicate properties.
-    //    Deliberately not awaited — a failure here must not fail listing
-    //    creation. Generation is idempotent, so retries are safe.
+    // Fire-and-forget dedup pass; failure must not fail listing creation.
     void this.matchSuggestionService
       .generateForProperty(propertyId)
       .catch((err) => {
@@ -136,7 +132,6 @@ export class ListingService {
       return property.id;
     }
 
-    // Creating a new provisional property: required fields
     if (!dto.propertyType || !dto.countryId || !dto.stateId) {
       throw new BadRequestException(
         'When creating a new property, propertyType, countryId, and stateId are required.',
@@ -205,7 +200,8 @@ export class ListingService {
     const patch: Record<string, unknown> = {};
     if (dto.title !== undefined) patch.title = dto.title;
     if (dto.description !== undefined) patch.description = dto.description;
-    if (dto.displayLocation !== undefined) patch.displayLocation = dto.displayLocation;
+    if (dto.displayLocation !== undefined)
+      patch.displayLocation = dto.displayLocation;
     if (dto.bedrooms !== undefined) patch.bedrooms = dto.bedrooms;
     if (dto.bathrooms !== undefined) patch.bathrooms = dto.bathrooms;
     if (dto.sizeSqm !== undefined) patch.sizeSqm = dto.sizeSqm;
@@ -269,71 +265,76 @@ export class ListingService {
     return p.address ?? p.placeId ?? '';
   }
 
+  // ---------- Transitions ----------
+
   async publish(userId: string, id: string): Promise<ListingDetail> {
     const listing = await this.repo.findById(id);
     if (!listing) throw new NotFoundException('Listing not found');
-  
+
     await this.assertCanManage(userId, listing);
-  
+
     if (listing.status !== 'DRAFT') {
       throw new ConflictException('Only DRAFT listings can be published');
     }
-  
-    // Gates
+
     const [price, media] = await Promise.all([
       this.repo.findPriceByListingId(id),
       this.repo.findMediaByListingId(id),
     ]);
-  
+
     if (!price) {
       throw new BadRequestException('A price is required to publish');
     }
     if (media.length === 0) {
-      throw new BadRequestException('At least one photo is required to publish');
+      throw new BadRequestException(
+        'At least one photo is required to publish',
+      );
     }
     if (!listing.displayLocation) {
       throw new BadRequestException('displayLocation is required to publish');
     }
-  
-    const expiresAt =
-      listing.expiresAt ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  
+
+    const now = TemporalRuntime.Now.instant();
+    const expiresAt = listing.expiresAt ?? now.add({ hours: 24 * 30 });
+
     await this.repo.updateListing(id, {
       status: 'ACTIVE',
-      publishedAt: new Date(),
+      publishedAt: now,
       expiresAt,
     });
-  
+
     return this.getById(id);
   }
-  
+
   async pause(userId: string, id: string): Promise<ListingDetail> {
     return this.transition(userId, id, 'ACTIVE', 'PAUSED');
   }
-  
+
   async activate(userId: string, id: string): Promise<ListingDetail> {
     return this.transition(userId, id, 'PAUSED', 'ACTIVE');
   }
-  
+
   async withdraw(userId: string, id: string): Promise<ListingDetail> {
     const listing = await this.repo.findById(id);
     if (!listing) throw new NotFoundException('Listing not found');
     await this.assertCanManage(userId, listing);
-  
-    if (!['ACTIVE', 'PAUSED', 'DRAFT', 'PENDING_REVIEW'].includes(listing.status)) {
+
+    if (
+      !['ACTIVE', 'PAUSED', 'DRAFT', 'PENDING_REVIEW'].includes(listing.status)
+    ) {
       throw new ConflictException(
         `Cannot withdraw from status ${listing.status}`,
       );
     }
-  
+
     await this.repo.updateStatus(id, 'WITHDRAWN');
     return this.getById(id);
   }
-  
+
   async markFilled(userId: string, id: string): Promise<ListingDetail> {
     return this.transition(userId, id, 'ACTIVE', 'FILLED');
   }
-  
+
   private async transition(
     userId: string,
     id: string,
@@ -343,14 +344,28 @@ export class ListingService {
     const listing = await this.repo.findById(id);
     if (!listing) throw new NotFoundException('Listing not found');
     await this.assertCanManage(userId, listing);
-  
+
     if (listing.status !== from) {
       throw new ConflictException(
         `Expected status ${from}, got ${listing.status}`,
       );
     }
-  
+
     await this.repo.updateStatus(id, to);
     return this.getById(id);
+  }
+
+  async browse(dto: BrowseListingsDto): Promise<ListingBrowseResult> {
+    return this.repo.browse({
+      stateId: dto.stateId,
+      placeId: dto.placeId,
+      kind: dto.kind,
+      propertyType: dto.propertyType,
+      bedrooms: dto.bedrooms,
+      q: dto.q,
+      sort: dto.sort,
+      cursor: dto.cursor,
+      limit: dto.limit ?? 20,
+    });
   }
 }

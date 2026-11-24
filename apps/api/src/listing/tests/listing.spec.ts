@@ -289,4 +289,31 @@ describe('ListingService', () => {
       );
     });
   });
+
+  describe('browse', () => {
+    it('passes filters through', async () => {
+      repo.browse = vi.fn().mockResolvedValue({ items: [], nextCursor: null });
+  
+      const result = await service.browse({
+        stateId: 's1',
+        kind: 'RENT',
+        bedrooms: 2,
+        sort: 'newest',
+        limit: 20,
+      });
+  
+      expect(result.items).toEqual([]);
+      expect(repo.browse).toHaveBeenCalledWith({
+        stateId: 's1',
+        placeId: undefined,
+        kind: 'RENT',
+        propertyType: undefined,
+        bedrooms: 2,
+        q: undefined,
+        sort: 'newest',
+        cursor: undefined,
+        limit: 20,
+      });
+    });
+  });
 });

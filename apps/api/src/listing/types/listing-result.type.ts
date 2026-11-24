@@ -76,3 +76,28 @@ export type ListingPriceRow = {
 
   export type FeeType =
   | 'LEGAL' | 'CAUTION' | 'SERVICE_CHARGE' | 'AGENCY' | 'INSPECTION_FEE' | 'OTHER';
+
+
+  export type ListingBrowseItem = {
+    id: string;
+    kind: 'RENT' | 'SALE';
+    title: string;
+    displayLocation: string;
+    bedrooms: number | null;
+    bathrooms: number | null;
+    sizeSqm: number | null;
+    price: {
+      amount: number;
+      currency: string;
+      period: 'MONTHLY' | 'YEARLY' | 'TOTAL';
+      years: number | null;
+    } | null;
+    hasInspectionFee: boolean;
+    primaryPhotoUrl: string | null;
+    publishedAt: Date | null;
+  };
+  
+  export type ListingBrowseResult = {
+    items: ListingBrowseItem[];
+    nextCursor: string | null;
+  };

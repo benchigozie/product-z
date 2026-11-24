@@ -19,6 +19,11 @@ import { CreateListingDto } from './dto/create-listing.dto.js';
 import { UpdateListingDto } from './dto/update-listing.dto.js';
 import { ListingDetail } from './types/listing-result.type.js';
 
+import { BrowseListingsDto } from './dto/browse-listings.dto.js';
+import type { ListingBrowseResult } from './types/listing-result.type.js';
+
+
+
 @Controller('listings')
 export class ListingController {
   constructor(private readonly listingService: ListingService) { }
@@ -107,5 +112,10 @@ export class ListingController {
     @Param('id') id: string,
   ): Promise<ListingDetail> {
     return this.listingService.markFilled(user.id, id);
+  }
+
+  @Get()
+  browse(@Query() dto: BrowseListingsDto): Promise<ListingBrowseResult> {
+    return this.listingService.browse(dto);
   }
 }

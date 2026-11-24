@@ -31,7 +31,7 @@ type PropertyRow = {
 
 @Injectable()
 export class ListingRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   // ---------- Property (for the dedup flow) ----------
 
@@ -256,13 +256,157 @@ export class ListingRepository {
       .where({ id })
       .update({ status }) as Promise<ListingRow | null>;
   }
-  
+
   async findExpiredActiveListings(now: Date): Promise<ListingRow[]> {
-  const rows = await this.prisma.db.orm.public.Listing
-    .where((l) => l.status.eq('ACTIVE'))
-    .where((l) => l.expiresAt.isNotNull())
-    .where((l) => l.expiresAt.lt(now))
-    .all();
-  return rows as ListingRow[];
-}
+    const rows = await this.prisma.db.orm.public.Listing
+      .where((l) => l.status.eq('ACTIVE'))
+      .where((l) => l.expiresAt.isNotNull())
+      .where((l) => l.expiresAt.lt(now))
+      .all();
+    return rows as ListingRow[];
+  }
+
+  async browse(params: {
+    stateId?: string;
+    placeId?: string;
+    kind?: 'RENT' | 'SALE';
+    propertyType?: PropertyType;
+    bedrooms?: number;
+    q?: string;
+    sort?: 'newest';
+    cursor?: string;
+    limit: number;
+  }): Promise<{ items: any[]; nextCursor: string | null }> {
+    const limit = Math.min(params.limit, 50);
+  
+    // 1. If location/propertyType filter is present, get matching property IDs first.
+    let propertyIds: string[] | undefined;
+    if (params.stateId || params.placeId || params.propertyType) {
+      let propQuery = this.prisma.db.orm.public.Property
+        .where((p) => p.mergedIntoId.isNull());
+      if (params.stateId) {
+        propQuery = propQuery.where({ stateId: params.stateId });
+      }
+      if (params.placeId) {
+        propQuery = propQuery.where({ placeId: params.placeId });
+      }
+      if (params.propertyType) {
+        propQuery = propQuery.where({ propertyType: params.propertyType });
+      }
+      const props = (await propQuery.select('id').all()) as { id: string }[];
+      propertyIds = props.map((p) => p.id);
+      if (propertyIds.length === 0) {
+        return { items: [], nextCursor: null };
+      }
+    }
+  
+    // 2. Build listing query.
+    let query = this.prisma.db.orm.public.Listing
+      .where({ status: 'ACTIVE' })
+      .where((l) => l.deletedAt.isNull());
+  
+    if (params.kind) {
+      query = query.where({ kind: params.kind });
+    }
+    if (params.bedrooms !== undefined) {
+      query = query.where((l) => l.bedrooms.gte(params.bedrooms!));
+    }
+    if (propertyIds) {
+      query = query.where((l) => l.propertyId.in(propertyIds));
+    }
+    if (params.q) {
+      const like = `%${params.q}%`;
+      query = query.where((l) => l.title.ilike(like));
+    }
+    if (params.cursor) {
+      query = query.where((l) => l.id.gt(params.cursor!));
+    }
+  
+    // Sort — newest only for now.
+    query = query.orderBy((l) => l.publishedAt.desc());
+  
+    const rows = (await query.limit(limit + 1).all()) as any[];
+    const hasNext = rows.length > limit;
+    const items = hasNext ? rows.slice(0, limit) : rows;
+  
+    // 3. Batch-enrich: prices, inspection fees, primary photo.
+    const listingIds = items.map((r) => r.id);
+    if (listingIds.length === 0) {
+      return { items: [], nextCursor: null };
+    }
+  
+    const prices = (await this.prisma.db.orm.public.ListingPrice
+      .where((lp) => lp.listingId.in(listingIds))
+      .all()) as Array<{
+      listingId: string;
+      amount: number;
+      currency: string;
+      period: 'MONTHLY' | 'YEARLY' | 'TOTAL';
+      years: number | null;
+    }>;
+    const priceByListing = new Map(prices.map((p) => [p.listingId, p]));
+  
+    const feeRows = (await this.prisma.db.orm.public.ListingFee
+      .where((lf) => lf.listingId.in(listingIds))
+      .where({ type: 'INSPECTION_FEE' })
+      .all()) as Array<{ listingId: string }>;
+    const feeSet = new Set(feeRows.map((f) => f.listingId));
+  
+    const mediaRows = (await this.prisma.db.orm.public.ListingMedia
+      .where((lm) => lm.listingId.in(listingIds))
+      .all()) as Array<{ listingId: string; mediaId: string; sortOrder: number }>;
+    const firstMediaByListing = new Map<
+      string,
+      { mediaId: string; sortOrder: number }
+    >();
+    for (const m of mediaRows) {
+      const existing = firstMediaByListing.get(m.listingId);
+      if (!existing || m.sortOrder < existing.sortOrder) {
+        firstMediaByListing.set(m.listingId, m);
+      }
+    }
+  
+    const mediaIds = Array.from(firstMediaByListing.values()).map(
+      (m) => m.mediaId,
+    );
+    const mediaObjects = mediaIds.length
+      ? ((await this.prisma.db.orm.public.Media
+          .where((m) => m.id.in(mediaIds))
+          .all()) as Array<{ id: string; url: string }>)
+      : [];
+    const urlById = new Map(mediaObjects.map((m) => [m.id, m.url]));
+  
+    // 4. Assemble.
+    const resultItems = items.map((r) => {
+      const price = priceByListing.get(r.id);
+      const firstMedia = firstMediaByListing.get(r.id);
+      return {
+        id: r.id,
+        kind: r.kind,
+        title: r.title,
+        displayLocation: r.displayLocation,
+        bedrooms: r.bedrooms,
+        bathrooms: r.bathrooms,
+        sizeSqm: r.sizeSqm,
+        publishedAt: r.publishedAt,
+        price: price
+          ? {
+              amount: price.amount,
+              currency: price.currency,
+              period: price.period,
+              years: price.years,
+            }
+          : null,
+        hasInspectionFee: feeSet.has(r.id),
+        primaryPhotoUrl: firstMedia
+          ? (urlById.get(firstMedia.mediaId) ?? null)
+          : null,
+      };
+    });
+  
+    return {
+      items: resultItems,
+      nextCursor: hasNext ? items[items.length - 1].id : null,
+    };
+  }
 }
