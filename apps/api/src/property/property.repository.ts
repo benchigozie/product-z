@@ -6,11 +6,6 @@ import type { PropertyListResult, PropertyResult } from './types/property-result
 
 import { Temporal } from '@js-temporal/polyfill';
 
-/**
- * The type of the transaction client Prisma Contracts passes into
- * `db.transaction(fn)`. Same shape as `db` — `tx.orm`, `tx.sql`, etc. —
- * so we can type the transaction-scoped methods against it directly.
- */
 export type TxClient = Parameters<
   Parameters<PrismaService['db']['transaction']>[0]
 >[0] & {
@@ -92,11 +87,11 @@ export class PropertyRepository {
     return result;
   }
 
-  async findById(id: string) : Promise<PropertyResult> {
+  async findById(id: string): Promise<PropertyResult> {
     return this.prisma.db.orm.public.Property.first({ id });
   }
 
-  async findByPlaceId(placeId: string) : Promise<PropertyListResult> {
+  async findByPlaceId(placeId: string): Promise<PropertyListResult> {
     return this.prisma.db.orm.public.Property
       .where({ placeId })
       .all();
@@ -116,6 +111,9 @@ export class PropertyRepository {
    * The caller is responsible for opening the transaction and for the
    * non-transactional guards (existence, mergedIntoId, self-merge). This
    * method assumes those have passed.
+   *
+   * NOTE: Prisma 8's `.update()` on a filtered collection mutates only ONE
+   * matching row. Anywhere we mean "all matching rows", we use `.updateAll()`.
    */
   async mergePropertiesTx(
     tx: TxClient,
@@ -141,12 +139,12 @@ export class PropertyRepository {
     // 2. Listings — no unique conflicts on the propertyId side.
     await tx.orm.public.Listing
       .where({ propertyId: sourceId })
-      .update({ propertyId: targetId });
+      .updateAll({ propertyId: targetId });
 
     // 3. Observations — same.
     await tx.orm.public.Observation
       .where({ propertyId: sourceId })
-      .update({ propertyId: targetId });
+      .updateAll({ propertyId: targetId });
 
     // 4. PropertyMedia — collision on @@unique([propertyId, mediaId]).
     //    If the target already has this media, hide the source-side row
@@ -165,12 +163,13 @@ export class PropertyRepository {
       if (targetMediaIds.has(media.mediaId)) {
         // Collision — hide instead of reassign.
         await tx.orm.public.PropertyMedia
-        .where({ id: media.id })
-        .update({
-          hiddenAt: Temporal.Now.instant(),
-          hiddenByMergeId: mergeId,
-        });
+          .where({ id: media.id })
+          .update({
+            hiddenAt: Temporal.Now.instant(),
+            hiddenByMergeId: mergeId,
+          });
       } else {
+        // Single row by id — .update() is correct here.
         await tx.orm.public.PropertyMedia
           .where({ id: media.id })
           .update({ propertyId: targetId });
@@ -178,25 +177,11 @@ export class PropertyRepository {
     }
 
     // 5. UserPropertyRelationship — no unique constraint, safe to reassign.
-    //    A user who had relationships on both properties ends up with two
-    //    rows on the (now-merged) target — that's intentional temporal history.
     await tx.orm.public.UserPropertyRelationship
       .where({ propertyId: sourceId })
-      .update({ propertyId: targetId });
+      .updateAll({ propertyId: targetId });
 
-    // 6. PropertyRelationship — tricky, because childPropertyId is UNIQUE.
-    //
-    //    Two directions to handle:
-    //      a. Rows where source is PARENT (source contains X):
-    //         reassign parent → target, unless (target, X) already exists
-    //         (drop the source-side row) or X === target (self-reference,
-    //         drop the row).
-    //      b. Rows where source is CHILD (X contains source):
-    //         reassign child → target, unless (X, target) already exists
-    //         (drop) or X === target (self-reference, drop).
-    //
-    //    We do (a) first, then (b).
-
+    // 6. PropertyRelationship — childPropertyId is UNIQUE.
     // 6a. source is parent.
     const asParent = (await tx.orm.public.PropertyRelationship
       .where({ parentPropertyId: sourceId })
@@ -204,7 +189,6 @@ export class PropertyRepository {
 
     for (const rel of asParent) {
       if (rel.childPropertyId === targetId) {
-        // Would become (target, target) — drop.
         await tx.orm.public.PropertyRelationship.where({ id: rel.id }).delete();
         continue;
       }
@@ -215,7 +199,6 @@ export class PropertyRepository {
         })
         .first();
       if (existing) {
-        // Would duplicate an existing pair — drop.
         await tx.orm.public.PropertyRelationship.where({ id: rel.id }).delete();
       } else {
         await tx.orm.public.PropertyRelationship
@@ -231,7 +214,6 @@ export class PropertyRepository {
 
     if (asChild) {
       if (asChild.parentPropertyId === targetId) {
-        // Would become (target, target) — drop.
         await tx.orm.public.PropertyRelationship.where({ id: asChild.id }).delete();
       } else {
         const existing = await tx.orm.public.PropertyRelationship
@@ -253,21 +235,19 @@ export class PropertyRepository {
     // 7. VerificationReport.
     await tx.orm.public.VerificationReport
       .where({ propertyId: sourceId })
-      .update({ propertyId: targetId });
+      .updateAll({ propertyId: targetId });
 
     // 8. Inspection.
     await tx.orm.public.Inspection
       .where({ propertyId: sourceId })
-      .update({ propertyId: targetId });
+      .updateAll({ propertyId: targetId });
 
     // 9. ListingReferral.
     await tx.orm.public.ListingReferral
       .where({ propertyId: sourceId })
-      .update({ propertyId: targetId });
+      .updateAll({ propertyId: targetId });
 
-    // 10. Intelligence — propertyId is @unique, so if target already has one
-    //     we drop source's (it's stale post-merge anyway) and leave target's.
-    //     If only source has one, move it to target.
+    // 10. Intelligence — propertyId is @unique, at most one row on source.
     const sourceIntelligence = await tx.orm.public.Intelligence
       .where({ propertyId: sourceId })
       .first();
@@ -291,36 +271,28 @@ export class PropertyRepository {
       .where({ id: sourceId })
       .update({ mergedIntoId: targetId });
 
-    // 12. Expire any other open suggestions touching either property, so
-    //     the queue doesn't keep surfacing pairs that are now moot.
-    //     Four sequential updates — one per side — rather than a single
-    //     OR expression, which the fluent ORM API doesn't express cleanly.
+    // 12. Expire other open suggestions touching either property.
     for (const propertyId of [sourceId, targetId]) {
       await tx.orm.public.MatchSuggestion
         .where({ status: 'PENDING' })
         .where((s) => s.sourcePropertyId.eq(propertyId))
-        .update({ status: 'EXPIRED' });
+        .updateAll({ status: 'EXPIRED' });
 
       await tx.orm.public.MatchSuggestion
         .where({ status: 'PENDING' })
         .where((s) => s.candidatePropertyId.eq(propertyId))
-        .update({ status: 'EXPIRED' });
+        .updateAll({ status: 'EXPIRED' });
     }
 
     return { mergeId };
   }
 
   /**
-   * Reverse a merge. Assumes the caller has verified the merge exists and
-   * is not already reversed. Reverses each step of mergePropertiesTx in
-   * reverse order.
+   * Reverse a merge. Reverses each step of mergePropertiesTx in reverse order.
    *
    * v1 limitation: reversal is clean only if it happens before new content
    * accrues on the target property. Reassignment of listings/observations
-   * back to source is gated on createdAt < merge.createdAt — rows created
-   * after the merge stay on the target. A fully reversible merge would
-   * require per-row provenance columns (movedByMergeId) on each affected
-   * table; that is a v2 improvement.
+   * back to source is gated on createdAt < merge.createdAt.
    */
   async reverseMergeTx(
     tx: TxClient,
@@ -347,30 +319,30 @@ export class PropertyRepository {
       .where({ id: sourceId })
       .update({ mergedIntoId: null });
 
-    // 2. Un-hide media that was hidden by this merge.
+    // 2. Un-hide media that was hidden by this merge. Multiple rows.
     await tx.orm.public.PropertyMedia
       .where({ hiddenByMergeId: mergeId })
-      .update({ hiddenAt: null, hiddenByMergeId: null });
+      .updateAll({ hiddenAt: null, hiddenByMergeId: null });
 
     // 3. Reassign listings back to source where they were created before
-    //    the merge. Listings created on target after the merge stay there.
+    //    the merge. Multiple rows.
     await tx.orm.public.Listing
       .where({ propertyId: targetId })
       .where((l) => l.createdAt.lt(merge.createdAt))
-      .update({ propertyId: sourceId });
+      .updateAll({ propertyId: sourceId });
 
-    // 4. Same for observations.
+    // 4. Same for observations. Multiple rows.
     await tx.orm.public.Observation
       .where({ propertyId: targetId })
       .where((o) => o.createdAt.lt(merge.createdAt))
-      .update({ propertyId: sourceId });
+      .updateAll({ propertyId: sourceId });
 
     // 5. Mark the merge reversed.
     await tx.orm.public.PropertyMerge
-    .where({ id: mergeId })
-    .update({
-      reversedAt: Temporal.Now.instant(),
-      reversedById: actorUserId,
-    });
+      .where({ id: mergeId })
+      .update({
+        reversedAt: Temporal.Now.instant(),
+        reversedById: actorUserId,
+      });
   }
 }

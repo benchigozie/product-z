@@ -91,16 +91,22 @@ try {
     );
   }
 
-  // Promote a user to OPS for local testing.
-  // Change this email to one that exists in your DB.
-  const opsEmail = 'asoyabenedict@gmail.com';
-  const opsUser = (await db.orm.public.User.first({
-    email: opsEmail,
-  })) as UserRow | null;
+  // Promote local-dev users to OPS.
+  const opsEmails = [
+    'asoyabenedict@gmail.com',
+    'testuser@gmail.com',
+  ];
 
-  if (!opsUser) {
-    console.warn(`No user with email ${opsEmail} — skipping OPS promotion`);
-  } else {
+  for (const opsEmail of opsEmails) {
+    const opsUser = (await db.orm.public.User.first({
+      email: opsEmail,
+    })) as UserRow | null;
+
+    if (!opsUser) {
+      console.warn(`No user with email ${opsEmail} — skipping OPS promotion`);
+      continue;
+    }
+
     await db.orm.public.User
       .where({ id: opsUser.id })
       .update({ role: 'OPS' });

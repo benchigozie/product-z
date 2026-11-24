@@ -368,4 +368,77 @@ export class ListingService {
       limit: dto.limit ?? 20,
     });
   }
+
+  async recordReferral(params: {
+    listingId: string;
+    userId?: string;
+    anonymousId?: string;
+    sessionId?: string;
+  }) {
+    const listing = await this.repo.findById(params.listingId);
+    if (!listing) throw new NotFoundException('Listing not found');
+    if (listing.status !== 'ACTIVE') {
+      throw new ConflictException('Listing is not active');
+    }
+  
+    await this.repo.createReferral({
+      listingId: listing.id,
+      propertyId: listing.propertyId,
+      anonymousId: params.anonymousId,
+      userId: params.userId,
+      sessionId: params.sessionId,
+    });
+  
+    return { success: true };
+  }
+
+  async flag(userId: string, id: string, reason: string): Promise<ListingDetail> {
+    const listing = await this.repo.findById(id);
+    if (!listing) throw new NotFoundException('Listing not found');
+  
+    if (listing.status !== 'ACTIVE' && listing.status !== 'PAUSED') {
+      throw new ConflictException(
+        `Cannot flag from status ${listing.status}`,
+      );
+    }
+  
+    await this.repo.updateListing(id, {
+      status: 'PENDING_REVIEW',
+      flaggedAt: TemporalRuntime.Now.instant(),
+      flaggedByUserId: userId,
+      flagReason: reason,
+    });
+  
+    return this.getById(id);
+  }
+  
+  async approve(userId: string, id: string): Promise<ListingDetail> {
+    const listing = await this.repo.findById(id);
+    if (!listing) throw new NotFoundException('Listing not found');
+  
+    if (listing.status !== 'PENDING_REVIEW') {
+      throw new ConflictException('Only PENDING_REVIEW listings can be approved');
+    }
+  
+    await this.repo.updateListing(id, {
+      status: 'ACTIVE',
+      flaggedAt: null,
+      flaggedByUserId: null,
+      flagReason: null,
+    });
+  
+    return this.getById(id);
+  }
+  
+  async reject(userId: string, id: string): Promise<ListingDetail> {
+    const listing = await this.repo.findById(id);
+    if (!listing) throw new NotFoundException('Listing not found');
+  
+    if (listing.status !== 'PENDING_REVIEW') {
+      throw new ConflictException('Only PENDING_REVIEW listings can be rejected');
+    }
+  
+    await this.repo.updateStatus(id, 'WITHDRAWN');
+    return this.getById(id);
+  }
 }

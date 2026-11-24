@@ -409,4 +409,20 @@ export class ListingRepository {
       nextCursor: hasNext ? items[items.length - 1].id : null,
     };
   }
+
+  async createReferral(data: {
+    listingId: string;
+    propertyId: string;
+    anonymousId?: string;
+    userId?: string;
+    sessionId?: string;
+  }): Promise<void> {
+    await this.prisma.db.orm.public.ListingReferral.create({
+      listingId: data.listingId,
+      propertyId: data.propertyId,
+      anonymousId: data.anonymousId ?? null,
+      userId: data.userId ?? null,
+      sessionId: data.sessionId ?? null,
+    });
+  }
 }

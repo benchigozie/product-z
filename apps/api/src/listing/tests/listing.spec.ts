@@ -316,4 +316,55 @@ describe('ListingService', () => {
       });
     });
   });
+
+  describe('referral', () => {
+    it('rejects non-ACTIVE listings', async () => {
+      repo.findById.mockResolvedValue({ id: 'l1', status: 'DRAFT', propertyId: 'p1' });
+      await expect(
+        service.recordReferral({ listingId: 'l1', anonymousId: 'anon1' }),
+      ).rejects.toThrow(/not active/);
+    });
+  
+    it('writes a referral for ACTIVE listings', async () => {
+      repo.findById.mockResolvedValue({ id: 'l1', status: 'ACTIVE', propertyId: 'p1' });
+      repo.createReferral = vi.fn().mockResolvedValue(undefined);
+  
+      const result = await service.recordReferral({
+        listingId: 'l1',
+        userId: 'u1',
+        anonymousId: 'anon1',
+      });
+  
+      expect(result.success).toBe(true);
+      expect(repo.createReferral).toHaveBeenCalledWith({
+        listingId: 'l1',
+        propertyId: 'p1',
+        userId: 'u1',
+        anonymousId: 'anon1',
+        sessionId: undefined,
+      });
+    });
+  });
+  
+  describe('ops flagging', () => {
+    it('flag only from ACTIVE/PAUSED', async () => {
+      repo.findById.mockResolvedValue({
+        id: 'l1',
+        createdByUserId: 'u1',
+        status: 'DRAFT',
+        propertyId: 'p1',
+      });
+      await expect(service.flag('ops1', 'l1', 'spam')).rejects.toThrow(/Cannot flag/);
+    });
+  
+    it('approve only from PENDING_REVIEW', async () => {
+      repo.findById.mockResolvedValue({
+        id: 'l1',
+        status: 'ACTIVE',
+        createdByUserId: 'u1',
+        propertyId: 'p1',
+      });
+      await expect(service.approve('ops1', 'l1')).rejects.toThrow(/PENDING_REVIEW/);
+    });
+  });
 });

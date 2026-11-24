@@ -20,8 +20,7 @@ import { VerificationReportModule } from './verification-report/verification-rep
 import { MediaModule } from './media/media.module.js';
 import { ListingModule } from './listing/listing.module.js';
 import { MatchModule } from './match/match.module.js';
-
-
+import { OpsModule } from './ops/ops.module.js';
 
 
 @Module({
@@ -48,6 +47,8 @@ import { MatchModule } from './match/match.module.js';
     MediaModule,
     ListingModule,
     MatchModule,
+    ListingModule,
+    OpsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,6 +11,7 @@ import { GoogleStrategy } from './google.strategy.js';
 import { PassportModule } from '@nestjs/passport';
 import { UserPropertyRelationshipModule } from '../user-property-relationship/user-property-relationship.module.js';
 import { RolesGuard } from './guards/roles.guard.js';
+import { UserService } from '../user/user.service.js';
 
 @Module({
   imports: [
@@ -25,6 +26,8 @@ import { RolesGuard } from './guards/roles.guard.js';
   exports: [
     SessionAuthGuard,
     RolesGuard,
+    UserModule,
+   
   ],
 })
 export class AuthModule {}
